@@ -33,9 +33,9 @@ public class EquipoController {
 		
 		//attributes.add(new Atributo("attack"));
 		//attributes.add(new Atributo("HP"));
-		/*attributes.add(new Atributo("avoid injury rate"));
-		attributes.add(new Atributo("damage rate"));*/
-		//attributes.add(new Atributo("after using skill, recovers himself % HP by"));
+		/*attributes.add(new Atributo("avoid injury rate"));*/
+		attributes.add(new Atributo("damage rate"));
+		attributes.add(new Atributo("after using skill, recovers himself % HP by"));
 		attributes.add(new Atributo("HP"));
 		
 		return equipoServices.getSetsByAttributes(attributes);
