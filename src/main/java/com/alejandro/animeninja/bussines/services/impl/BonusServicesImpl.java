@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.services.BonusServices;
@@ -22,6 +23,14 @@ public class BonusServicesImpl implements BonusServices {
 		BonusAtributo b = new BonusAtributo();
 		b.setNombreAtributo("avoid injury rate");
 		return bonusRepository.findAll();
+	}
+
+
+	@Override
+	public List<Bonus> getBonusByAttributes(List<Atributo> atributos) {
+		BonusAtributo b = new BonusAtributo();
+		b.setNombreAtributo("avoid injury rate");
+		return bonusRepository.findByListOfAtributtes(atributos);
 	}
 
 }

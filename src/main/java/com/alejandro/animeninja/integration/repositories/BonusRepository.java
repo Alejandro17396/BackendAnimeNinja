@@ -9,7 +9,7 @@ import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.ClaveBonus;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 
-public interface BonusRepository  extends JpaRepository<Bonus, ClaveBonus>  {
+public interface BonusRepository  extends JpaRepository<Bonus, ClaveBonus>,BonusCustomRepository  {
 	
 	@Query(value = "select bonuses.* from bonuses join bonus_atributo "
 			+ "on bonus_atributo.id_bonus=bonuses.id and bonus_atributo.nombre_equipo=bonuses.nombre_equipo "

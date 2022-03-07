@@ -74,7 +74,7 @@ public class EquipoCustomRepositoryImpl implements EquipoCustomRepository {
 	}*/
 	
 	
-	public List<Equipo> findByListOfAtributtes(List<Atributo> atributos) {
+	public List<Equipo> findByListOfAtributtes(List <Atributo> atributos) {
 		CriteriaBuilder cb=entityManager.getCriteriaBuilder();
 		CriteriaQuery<Equipo> cq= cb.createQuery(Equipo.class);
 		List<Equipo> equipos =null;
