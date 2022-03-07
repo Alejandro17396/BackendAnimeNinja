@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
+import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
+import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 import com.alejandro.animeninja.integration.specifications.EquipoSpecification;
 
 
@@ -62,5 +64,24 @@ public class EquipoController {
 		}
 		
 		return equipoServices.getSetsBySpecification(specification);
+	}
+	
+	@GetMapping("/Combinaciones")
+	public List<Equipo> CombineSetsByAttributes(){
+		List<Atributo>attributes = new ArrayList<>();
+		
+		//attributes.add(new Atributo("attack"));
+		//attributes.add(new Atributo("HP"));
+		/*attributes.add(new Atributo("avoid injury rate"));*/
+		//attributes.add(new Atributo("damage rate"));
+		attributes.add(new Atributo("after using skill, recovers himself % HP by"));
+		attributes.add(new Atributo("HP"));
+		
+		Specification <Bonus> specification = Specification.where(null);
+		for(Atributo a : attributes) {
+			specification=specification.and(BonusSpecification.existBonusAtributoByAttribute(a));
+		}
+		
+		return equipoServices.generateCombinationSetsByBonus(specification);
 	}
 }
