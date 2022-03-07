@@ -7,7 +7,6 @@ import com.alejandro.animeninja.bussines.model.Equipo;
 
 public interface EquipoCustomRepository {
 	
-	List <Equipo> findByName(String nombre);
 	List <Equipo> findByListOfAtributtes(List <Atributo> atributos);
 
 }

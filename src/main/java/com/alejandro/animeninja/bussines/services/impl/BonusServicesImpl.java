@@ -3,6 +3,7 @@ package com.alejandro.animeninja.bussines.services.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
@@ -31,6 +32,12 @@ public class BonusServicesImpl implements BonusServices {
 		BonusAtributo b = new BonusAtributo();
 		b.setNombreAtributo("avoid injury rate");
 		return bonusRepository.findByListOfAtributtes(atributos);
+	}
+
+
+	@Override
+	public List<Bonus> getBonusBySpecification(Specification<Bonus> specification) {
+		return bonusRepository.findAll(specification);
 	}
 
 }

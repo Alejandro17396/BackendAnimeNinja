@@ -27,52 +27,6 @@ public class EquipoCustomRepositoryImpl implements EquipoCustomRepository {
 	
 	@Autowired
 	private EntityManager entityManager;
-
-	@Override
-	public List<Equipo> findByName(String nombre) {
-		
-		CriteriaBuilder cb=entityManager.getCriteriaBuilder();
-		CriteriaQuery<Equipo> cq= cb.createQuery(Equipo.class);
-		
-		Root <Equipo> equipo=cq.from(Equipo.class);
-		
-		Predicate namePredicate=cb.equal(equipo.get("nombre"), nombre);
-		Predicate namePredicate2=cb.equal(equipo.get("nombre"), nombre);
-		Predicate array[]= {namePredicate,namePredicate2};
-		cq.where(array);
-	
-	
-	
-		TypedQuery <Equipo> query = entityManager.createQuery(cq);
-		//cq.select(equipo).
-		return query.getResultList();
-		//https://tododev.wordpress.com/2013/02/04/creacion-de-consultas-dinamicas-en-jpa-sin-sql-ni-jpql/
-	}
-
-	/*@Override
-	public List<Equipo> findByListOfAtributtes(List<String> atributos) {
-		CriteriaBuilder cb=entityManager.getCriteriaBuilder();
-		CriteriaQuery<Equipo> cq= cb.createQuery(Equipo.class);
-		
-		
-		Root <Equipo> equipo=cq.from(Equipo.class);
-		List<Predicate> conditions = new ArrayList<Predicate>();
-		
-		
-		List <Subquery<Atributo>> subquerys= new ArrayList<>();
-		
-				
-		if(atributos!=null && atributos.size()>0){
-			
-			for() {
-				
-			}
-			
-		}
-		
-		return null;
-	}*/
-	
 	
 	public List<Equipo> findByListOfAtributtes(List <Atributo> atributos) {
 		CriteriaBuilder cb=entityManager.getCriteriaBuilder();

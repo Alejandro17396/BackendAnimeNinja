@@ -3,13 +3,15 @@ package com.alejandro.animeninja.integration.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.Equipo;
 
-public interface EquipoRepository extends JpaRepository<Equipo, String>,EquipoCustomRepository {
+public interface EquipoRepository extends JpaRepository<Equipo, String>
+			,EquipoCustomRepository,JpaSpecificationExecutor<Equipo> {
 	
 	//@Query("SELECT e FROM Equipo e WHERE EXIST(SELECT b FROM Bonus b WHERE b.equipo=e.nombre EXIST(SELECT ba FROM BonusAtributo WHERE ba.nombreAtributo=:atributo ))")
 	
