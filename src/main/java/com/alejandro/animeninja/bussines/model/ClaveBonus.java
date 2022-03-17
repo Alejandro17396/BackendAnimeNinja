@@ -14,6 +14,14 @@ public class ClaveBonus implements Serializable {
 	public Long getId() {
 		return id;
 	}
+	public ClaveBonus() {
+
+	}
+	public ClaveBonus(Long id, String equipo) {
+		super();
+		this.id = id;
+		this.equipo = equipo;
+	}
 	public void setId(Long id) {
 		this.id = id;
 	}

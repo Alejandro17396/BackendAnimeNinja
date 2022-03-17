@@ -37,7 +37,6 @@ public class Equipo implements Serializable {
 	}
 
 
-
 	public void setPartes(List<Parte> partes) {
 		this.partes = partes;
 	}
