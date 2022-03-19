@@ -49,5 +49,15 @@ public class BonusSpecification {
 		});
 	}
 	
+	public static Specification <Bonus> getBonusLessThanId(Long id){
+		return((bonus,cq,cb) ->{
+			Predicate lessThan=cb.lessThan(bonus.get(Bonus_.ID), id);
+
+			cq.distinct(true);
+			return cb.and(lessThan);
+			
+		});
+	}
+	
 
 }

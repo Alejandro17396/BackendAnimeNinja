@@ -25,8 +25,6 @@ public class Parte implements Serializable {
 	@OneToOne
 	@JoinColumn(name = "nombre_atributo")
 	private Atributo atributo;
-	
-	
 
 	@Column(name = "valor")
 	private Long valor;
@@ -53,6 +51,11 @@ public class Parte implements Serializable {
 
 	public void setValor(Long valor) {
 		this.valor = valor;
+	}
+
+	@Override
+	public String toString() {
+		return "Parte [nombre=" + nombre + ", atributo=" + atributo + ", valor=" + valor + "]";
 	}
 
 	@Override

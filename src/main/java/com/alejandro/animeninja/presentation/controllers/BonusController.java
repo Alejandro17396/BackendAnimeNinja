@@ -95,7 +95,7 @@ public class BonusController {
 		
 		Specification <Bonus> specification = Specification.where(null);
 		for(Atributo a : attributes) {
-			specification=specification.and(BonusSpecification.existBonusAtributoByAttribute(a));
+			specification=specification.or(BonusSpecification.existBonusAtributoByAttribute(a));
 		}
 		//List <Equipo> equipos = equipoServices.generateCombinationSetsByBonus(specification,attributes);
 		//System.out.println(equipos.size());

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,15 @@ public class ParteController {
 	@GetMapping
 	public List<Parte> getAll(){
 		return parteServices.getAll();
+	}
+	
+	@GetMapping("/like/{filter}")
+	public List<Parte> getLike(@PathVariable String filter){
+		return parteServices.getPartesLike("%"+filter+"%");
+	}
+	@GetMapping("/{nombre}")
+	public List<Parte> getByNombre(@PathVariable String nombre){
+		return parteServices.getPartesByNombre(nombre);
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.alejandro.animeninja.bussines.model.Bonus;
+import com.alejandro.animeninja.bussines.model.ClaveBonus;
 import com.alejandro.animeninja.bussines.model.Atributo;
 
 public interface BonusServices {
@@ -17,5 +18,6 @@ public interface BonusServices {
 
 	List<Bonus> getBonusCombination(Specification<Bonus> specification);
 	
+	Bonus getBonusById(ClaveBonus clave);
 
 }
