@@ -56,16 +56,9 @@ public class EquipoController {
 		return equipoServices.getSetsByAttributes(attributes);
 	}
 
-	@GetMapping("/filterBy")
+	@GetMapping("/filterSetsBy")
 	public List<Equipo> getSetsByAttributesSpecification(@RequestBody CreateComboSet attributes) {
-
-		Specification<Equipo> specification = Specification.where(null);
-		for (Atributo a : attributes.getAttributes()) {
-			specification = specification.and(EquipoSpecification.existsBonusAtributo(a));
-			System.out.println(a);
-		}
-
-		return equipoServices.getSetsBySpecification(specification);
+		return equipoServices.getSetsByAttributes(attributes.getAttributes());
 	}
 
 	/*

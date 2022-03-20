@@ -1,12 +1,26 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.alejandro.animeninja.bussines.model.Atributo;
+import com.alejandro.animeninja.bussines.model.Bonus;
+import com.alejandro.animeninja.bussines.model.BonusAccesorio;
+import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
+import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
+import com.alejandro.animeninja.bussines.model.SetAccesorioUtils;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
+import com.alejandro.animeninja.bussines.services.BonusAccesorioService;
 import com.alejandro.animeninja.integration.repositories.AccesorioRepository;
 
 @Service
@@ -14,10 +28,175 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 	@Autowired
 	private AccesorioRepository accesorioRepository;
-	
+
+	@Autowired
+	private BonusAccesorioService bonusService;
+
 	@Override
 	public List<SetAccesorio> getAll() {
 		return accesorioRepository.findAll();
+	}
+
+	@Override
+	public List<SetAccesorio> getBySpecification(Specification<SetAccesorio> specification) {
+		return accesorioRepository.findAll(specification);
+	}
+
+	@Override
+	public List<SetAccesorio> getComboAccesoriosBySpecification(Specification<BonusAccesorio> specification,
+			List<Atributo> attributes, boolean hardSearch) {
+		List<SetAccesorio> setAccesorios = accesorioRepository.findAll();
+		List<BonusAccesorio> bonuses;
+
+		if (hardSearch) {
+			bonuses = bonusService.getAll();
+		} else {
+			bonuses = bonusService.getBonusBySpecification(specification);
+		}
+
+		List<BonusAccesorio> bonusesForce = bonuses.stream().filter(x -> x.getTipo().equals("force"))
+				.collect(Collectors.toList());
+		bonuses.removeAll(bonusesForce);
+
+		bonusesForce.forEach(force -> {
+			createSetAccesorioCombo(force, bonuses, setAccesorios);
+		});
+
+		System.out.println("Antes" + setAccesorios.size());
+		removeCombosFull(setAccesorios);
+		removeCombosNotMatchAttributes(setAccesorios, attributes);
+
+		return setAccesorios;
+	}
+
+	public SetAccesorio getById(String nombre) {
+		Optional<SetAccesorio> aux = accesorioRepository.findById(nombre);
+		return aux.isPresent() ? aux.get() : null;
+	}
+
+	@Override
+	public List<SetAccesorio> mergeSetBonus(List<SetAccesorio> sets) {
+
+		sets.forEach(set -> {
+			Map<String, Long> mapa = new HashMap<String, Long>();
+			BonusAccesorio bonus = new BonusAccesorio();
+			bonus.setNombreAccesorioSet(set.getNombre());
+			bonus.setBonuses(new ArrayList<>());
+			for (BonusAccesorio b1 : set.getBonuses()) {
+				for (BonusAccesorioAtributo b : b1.getBonuses()) {
+					if (!mapa.containsKey(b.getNombreAtributo())) {
+						mapa.put(b.getNombreAtributo(), 0L);
+					}
+				}
+				for (BonusAccesorioAtributo b : b1.getBonuses()) {
+					if (mapa.containsKey(b.getNombreAtributo())) {
+						mapa.put(b.getNombreAtributo(), mapa.get(b.getNombreAtributo()) + b.getValor());
+					}
+				}
+			}
+
+			for (Map.Entry<String, Long> entry : mapa.entrySet()) {
+				BonusAccesorioAtributo miBonusAtributo = new BonusAccesorioAtributo();
+				miBonusAtributo.setNombreAtributo(entry.getKey());
+				miBonusAtributo.setValor(entry.getValue());
+				bonus.getBonuses().add(miBonusAtributo);
+			}
+			set.getBonuses().clear();
+			bonus.setTipo("total bonus");
+			set.getBonuses().add(bonus);
+		});
+
+		return sets;
+	}
+
+	@Override
+	public void filterSetByStats(List<SetAccesorio> sets, List<BonusAccesorioAtributo> attributesFilter) {
+
+		sets.removeIf(set -> {
+			Map<String, Long> mapa = new HashMap<String, Long>();
+			for (BonusAccesorioAtributo a : set.getBonuses().get(0).getBonuses()) {
+				mapa.put(a.getNombreAtributo(), a.getValor());
+			}
+			for (BonusAccesorioAtributo a : attributesFilter) {
+				Long aux = mapa.get(a.getNombreAtributo());
+				if (aux != null && aux < a.getValor()) {
+					return true;
+				}
+			}
+			return false;
+		});
+
+	}
+
+	@Override
+	public void addPartes(List<SetAccesorio> sets) {
+
+		sets.forEach(set->{
+			set.setPartes(new ArrayList<>());
+			set.getBonuses().forEach(bonus ->{
+			//	set.getPartes().add(getParteAcc)
+				
+			});
+		});
+
+	}
+	
+	// ==================================================================
+	// PRIVATEMETHODS
+	// ==========================================================================
+
+	private void removeCombosFull(List<SetAccesorio> setAccesorios) {
+		setAccesorios.removeIf(set -> {
+			if (SetAccesorioUtils.sameBonusSet(set)) {
+				return true;
+			}
+			return false;
+		});
+	}
+
+	private void removeCombosNotMatchAttributes(List<SetAccesorio> setAccesorios, List<Atributo> attributes) {
+
+		setAccesorios.removeIf(set -> {
+			if (isValid(set, (List<Atributo>) ((ArrayList<Atributo>) attributes).clone())) {
+				return false;
+			}
+			return true;
+		});
+	}
+
+	private boolean isValid(SetAccesorio set, List<Atributo> clone) {
+		clone.removeIf(atributo -> {
+			List<BonusAccesorio> bonuses = set.getBonuses();
+			for (BonusAccesorio b : bonuses) {
+				List<BonusAccesorioAtributo> bonusAccesorioAtributos = b.getBonuses();
+				for (BonusAccesorioAtributo bonusAccesorioAtributo : bonusAccesorioAtributos) {
+					if (bonusAccesorioAtributo.getNombreAtributo().equals(atributo.getNombre())) {
+						return true;
+					}
+				}
+			}
+			return false;
+		});
+
+		return (clone.size() == 0) ? true : false;
+	}
+
+	private void createSetAccesorioCombo(BonusAccesorio force, List<BonusAccesorio> bonuses,
+			List<SetAccesorio> setAccesorios) {
+
+		List<BonusAccesorio> chakraBonuses = bonuses.stream().filter(x -> x.getTipo().equals("chakra"))
+				.collect(Collectors.toList());
+		List<BonusAccesorio> agiBonuses = bonuses.stream().filter(x -> x.getTipo().equals("agility"))
+				.collect(Collectors.toList());
+		List<BonusAccesorio> powerBonuses = bonuses.stream().filter(x -> x.getTipo().equals("power"))
+				.collect(Collectors.toList());
+		chakraBonuses.forEach(chakra -> {
+			agiBonuses.forEach(agi -> {
+				powerBonuses.forEach(power -> {
+					setAccesorios.add(SetAccesorioUtils.createSetAccesorio(force, chakra, agi, power));
+				});
+			});
+		});
 	}
 
 }

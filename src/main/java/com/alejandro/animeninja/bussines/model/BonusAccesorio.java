@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="BONUSACCESORIOS")
+@IdClass(ClaveBonusAccesorio.class)
 public class BonusAccesorio implements Serializable {
 	
 
@@ -23,12 +25,12 @@ public class BonusAccesorio implements Serializable {
 
 	@Id
 	@Column(name="TIPO")
-	@JsonIgnore
+	//@JsonIgnore
 	private String tipo;
 	
 	@Id
 	@Column(name="NOMBRE_SET_ACCESORIOS")
-	@JsonIgnore
+	//@JsonIgnore
 	private	String nombreAccesorioSet;
 	
 	//@Transient

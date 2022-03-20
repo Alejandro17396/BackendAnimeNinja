@@ -27,6 +27,9 @@ public class ParteAccesorio implements Serializable {
 	@Column(name = "valor")
 	private Long valor;
 
+	
+	@Column(name="tipo")
+	private String tipo;
 	public ParteAccesorio() {
 	
 	}

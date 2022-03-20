@@ -30,7 +30,7 @@ public class ParteController {
 		return parteServices.getPartesLike("%"+filter+"%");
 	}
 	@GetMapping("/{nombre}")
-	public List<Parte> getByNombre(@PathVariable String nombre){
+	public Parte getByNombre(@PathVariable String nombre){
 		return parteServices.getPartesByNombre(nombre);
 	}
 
