@@ -20,6 +20,9 @@ public class ParteAccesorio implements Serializable {
 	@Column(name="NOMBRE")
 	private String nombre;
 	
+	@Column(name="nombre_set")
+	private String nombreSet;
+	
 	@OneToOne
 	@JoinColumn(name = "nombre_atributo")
 	private Atributo atributo;
@@ -49,6 +52,22 @@ public class ParteAccesorio implements Serializable {
 			return false;
 		ParteAccesorio other = (ParteAccesorio) obj;
 		return Objects.equals(nombre, other.nombre);
+	}
+
+	public String getNombreSet() {
+		return nombreSet;
+	}
+
+	public void setNombreSet(String nombreSet) {
+		this.nombreSet = nombreSet;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	public String getNombre() {

@@ -21,6 +21,7 @@ import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorioUtils;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.BonusAccesorioService;
+import com.alejandro.animeninja.bussines.services.ParteAccesorioService;
 import com.alejandro.animeninja.integration.repositories.AccesorioRepository;
 
 @Service
@@ -31,6 +32,9 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 	@Autowired
 	private BonusAccesorioService bonusService;
+	
+	@Autowired
+	private ParteAccesorioService parteAccesorioService;
 
 	@Override
 	public List<SetAccesorio> getAll() {
@@ -134,8 +138,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		sets.forEach(set->{
 			set.setPartes(new ArrayList<>());
 			set.getBonuses().forEach(bonus ->{
-			//	set.getPartes().add(getParteAcc)
-				
+			set.getPartes().addAll(parteAccesorioService.getParteAccesorioByBonus(bonus));	
 			});
 		});
 
