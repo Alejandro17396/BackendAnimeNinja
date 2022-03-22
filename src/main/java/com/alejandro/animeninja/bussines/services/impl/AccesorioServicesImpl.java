@@ -2,7 +2,6 @@ package com.alejandro.animeninja.bussines.services.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,10 +12,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
-import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
-import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorioUtils;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
@@ -32,7 +29,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 	@Autowired
 	private BonusAccesorioService bonusService;
-	
+
 	@Autowired
 	private ParteAccesorioService parteAccesorioService;
 
@@ -135,15 +132,21 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	@Override
 	public void addPartes(List<SetAccesorio> sets) {
 
-		sets.forEach(set->{
+		sets.forEach(set -> {
 			set.setPartes(new ArrayList<>());
-			set.getBonuses().forEach(bonus ->{
-			set.getPartes().addAll(parteAccesorioService.getParteAccesorioByBonus(bonus));	
+			set.getBonuses().forEach(bonus -> {
+				set.getPartes().addAll(parteAccesorioService.getParteAccesorioByBonus(bonus));
 			});
 		});
 
 	}
-	
+
+	@Override
+	public SetAccesorio getByNombre(String nombre) {
+		Optional <SetAccesorio> miSet= accesorioRepository.findById(nombre);
+		return miSet.isPresent() ? miSet.get() : null;
+	}
+
 	// ==================================================================
 	// PRIVATEMETHODS
 	// ==========================================================================

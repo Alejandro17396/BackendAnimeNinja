@@ -3,7 +3,6 @@ package com.alejandro.animeninja.bussines.sort.services.impl;
 import java.util.Comparator;
 
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
-import com.alejandro.animeninja.bussines.model.BonusAtributo;
 
 public class SortBonusAccesorioAtributo implements Comparator<BonusAccesorioAtributo>{
 

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 
 public interface BonusAccesorioService {

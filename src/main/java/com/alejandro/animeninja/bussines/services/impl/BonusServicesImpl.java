@@ -1,6 +1,5 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +13,6 @@ import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.ClaveBonus;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.integration.repositories.BonusRepository;
-import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 
 @Service
 public class BonusServicesImpl implements BonusServices {

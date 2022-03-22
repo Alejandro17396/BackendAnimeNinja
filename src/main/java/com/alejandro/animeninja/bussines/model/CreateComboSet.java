@@ -6,6 +6,7 @@ import java.util.Objects;
 
 public class CreateComboSet implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	List<Atributo> attributes;
 	List<BonusAtributo> attributesFilter;
 	List<Atributo> order;

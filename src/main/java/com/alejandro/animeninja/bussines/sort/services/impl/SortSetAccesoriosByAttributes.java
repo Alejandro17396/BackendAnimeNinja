@@ -2,11 +2,8 @@ package com.alejandro.animeninja.bussines.sort.services.impl;
 
 import java.util.Comparator;
 
-import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
-import com.alejandro.animeninja.bussines.model.BonusAtributo;
-import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 
 public class SortSetAccesoriosByAttributes implements Comparator <SetAccesorio>{

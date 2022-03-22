@@ -24,4 +24,6 @@ public interface AccesorioServices {
 
 	void addPartes(List<SetAccesorio> sets);
 
+	SetAccesorio getByNombre(String nombre);
+
 }

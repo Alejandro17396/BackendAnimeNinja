@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
-import com.alejandro.animeninja.bussines.model.Atributo_;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.BonusAtributo_;
 import com.alejandro.animeninja.bussines.model.Equipo;

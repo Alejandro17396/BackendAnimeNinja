@@ -19,8 +19,6 @@ import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.BonusAtributo_;
 import com.alejandro.animeninja.bussines.model.Bonus_;
-import com.alejandro.animeninja.bussines.model.Equipo;
-import com.alejandro.animeninja.bussines.model.Equipo_;
 import com.alejandro.animeninja.integration.repositories.BonusCustomRepository;
 
 @Repository

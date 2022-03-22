@@ -18,8 +18,7 @@ public class ParteAccesorioServiceImpl implements ParteAccesorioService {
 	
 	@Override
 	public List<ParteAccesorio> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return parteAccesorioRepository.findAll();
 	}
 
 	@Override

@@ -7,14 +7,11 @@ import javax.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
-import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo_;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio_;
-import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.BonusAtributo_;
-import com.alejandro.animeninja.bussines.model.Bonus_;
 
 public class BonusAccesorioSpecification {
 

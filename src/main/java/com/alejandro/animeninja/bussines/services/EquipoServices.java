@@ -24,4 +24,6 @@ public interface EquipoServices {
 	void filterSetByStats(List<Equipo> equipos, List<BonusAtributo> attributesFilter);
 
 	void addPartes(List<Equipo> equipos);
+	
+	Equipo getByNombre(String nombre);
 }

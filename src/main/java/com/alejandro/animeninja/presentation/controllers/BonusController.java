@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
-import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 

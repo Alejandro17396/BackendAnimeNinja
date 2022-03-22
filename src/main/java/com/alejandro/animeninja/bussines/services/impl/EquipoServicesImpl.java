@@ -144,7 +144,7 @@ public class EquipoServicesImpl implements EquipoServices {
 			}
 			for (BonusAtributo a : attributesFilter) {
 				Long aux = mapa.get(a.getNombreAtributo());
-				if (aux != null && aux < a.getValor()) {
+				if (aux != null && aux <= a.getValor()) {
 					return true;
 				}
 			}
@@ -168,6 +168,12 @@ public class EquipoServicesImpl implements EquipoServices {
 			}
 		});
 
+	}
+	
+	@Override
+	public Equipo getByNombre(String nombre) {
+		Optional<Equipo> miEquipo = equipoRepository.findById(nombre);
+		return miEquipo.isPresent()? miEquipo.get() : null;
 	}
 
 	// ===============================================================================
@@ -340,5 +346,7 @@ public class EquipoServicesImpl implements EquipoServices {
 		}
 
 	}
+
+	
 
 }
