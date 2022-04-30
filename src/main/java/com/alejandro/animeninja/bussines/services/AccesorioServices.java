@@ -16,7 +16,7 @@ public interface AccesorioServices {
 	List<SetAccesorio> getBySpecification(Specification<SetAccesorio> specification);
 
 	List<SetAccesorio> getComboAccesoriosBySpecification(Specification<BonusAccesorio> specification,
-			List<Atributo> attributes, boolean hardSearch);
+			List<Atributo> attributes, boolean hardSearch,String setName);
 
 	List<SetAccesorio> mergeSetBonus(List<SetAccesorio> sets);
 

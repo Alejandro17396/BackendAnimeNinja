@@ -20,4 +20,5 @@ public interface BonusServices {
 	
 	Bonus getBonusById(ClaveBonus clave);
 
+	List<Bonus> getBonusBySetStats(String parte,Long valor);
 }

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,6 +22,8 @@ import com.alejandro.animeninja.bussines.model.Parte;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.services.ParteServices;
+import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusById;
+import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusBySetStat;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortPartes;
 import com.alejandro.animeninja.integration.repositories.BonusRepository;
@@ -55,10 +58,23 @@ public class EquipoServicesImpl implements EquipoServices {
 	}
 
 	@Override
-	public List<Equipo> generateCombinationSetsByBonus(Specification<Bonus> specification, List<Atributo> attributes) {
+	public List<Equipo> generateCombinationSetsByBonus(Specification<Bonus> specification, List<Atributo> attributes,String setName) {
 		List<Equipo> equipos = new ArrayList<>();
-		List<Bonus> bonuses = bonusService.getBonusCombination(specification);
-
+		//bonusService.getBonusCombination(specification);
+		List<Bonus> bonuses;
+		String n=setName.replace(" set", "")+" kunai";
+		n=n.trim();
+		//System.out.println(n+"/");
+		Parte miParte= parteService.getPartesByNombre(n);
+		if(miParte!=null) {
+		bonuses = bonusService.getBonusBySetStats("", miParte.getValor());
+		//System.out.println("h");
+		Collections.sort(bonuses,new SortBonusById());
+		}else {
+		bonuses=bonusService.getAll();	
+		}
+		//List
+		//bonuses.forEach(x->System.out.println("n-"+x.toString()));
 		bonuses.removeIf(x -> {
 			if (x.getId() == 6) {
 				Optional<Equipo> equipoOptional = equipoRepository.findById(x.getEquipo());
@@ -69,7 +85,9 @@ public class EquipoServicesImpl implements EquipoServices {
 
 			return false;
 		});
-
+	
+		
+		
 		Iterator<Bonus> it = bonuses.iterator();
 		while (it.hasNext()) {
 			Bonus bonus = it.next();
@@ -83,9 +101,30 @@ public class EquipoServicesImpl implements EquipoServices {
 
 		removeCombosNotMatchAttributes(equipos, attributes);
 
+
+		
 		return equipos;
 	}
 
+	private void CreateComboType2F1(ArrayList<Bonus> bonuses, List<Equipo> equipos, Bonus bonus) {
+		// TODO Auto-generated method stub
+		Bonus aux=bonuses.get(0);
+		bonuses.remove(aux);
+		
+		bonuses.forEach(x->{
+			Equipo auxEquipo= new Equipo();
+			auxEquipo.setBonuses(new ArrayList<>());
+			auxEquipo.setNombre(bonus.getEquipo()+" "+aux.getEquipo()+" "+x.getEquipo());
+			auxEquipo.getBonuses().add(bonus);
+			auxEquipo.getBonuses().add(aux);
+			auxEquipo.getBonuses().add(x);
+			equipos.add(auxEquipo);
+		});
+		bonuses.add(aux);
+		
+	}
+
+	
 	@Override
 	public List<Equipo> mergeSetBonus(List<Equipo> equipos) {
 
@@ -144,7 +183,7 @@ public class EquipoServicesImpl implements EquipoServices {
 			}
 			for (BonusAtributo a : attributesFilter) {
 				Long aux = mapa.get(a.getNombreAtributo());
-				if (aux != null && aux <= a.getValor()) {
+				if (aux != null && aux < a.getValor()) {
 					return true;
 				}
 			}
@@ -155,18 +194,69 @@ public class EquipoServicesImpl implements EquipoServices {
 
 	@Override
 	public void addPartes(List<Equipo> equipos) {
-		equipos.forEach(x -> {
-			String[] fragments = x.getNombre().split("set");
-
-			for (int i = 0; i < fragments.length; i++) {
-				fragments[i] = fragments[i].trim();
-			}
-			if (fragments.length == 2) {
-				setPartsSet2(x, fragments);
-			} else {
-				setPartsSet3(x, fragments);
-			}
+		List<Equipo> equiposAux= this.getAll();
+		HashMap<String,Equipo> mapa= new HashMap<>();
+		equiposAux.forEach(x->mapa.put(x.getNombre(), x));
+		
+		equipos.forEach(x ->{
+			Collections.sort(x.getBonuses(), new SortBonusBySetStat(mapa).reversed());
 		});
+		HashMap<String,Parte> mapaPartes= new HashMap<>();
+		
+		equiposAux.forEach(x ->{
+			x.getPartes().forEach(y->{
+						mapaPartes.put(y.getNombre(), y);
+			});
+		});
+		
+		//equipos.removeIf(x->x.getBonuses().get(2).getId()==6L? true:false);
+		List <Equipo> equip= new ArrayList<>();
+		
+		equipos.removeIf(x->{
+			if(x.getBonuses().get(2).getId()==6L) {
+				equip.add(x);
+				return true;
+			}
+			return false;
+			});
+		
+		System.out.println("-----------------------------------------------------");
+		equip.forEach(x->System.out.println(x.toString()));
+		
+		System.out.println("-----------------------------------------------------");
+		equipos.forEach(x->{
+					
+					ArrayList<Parte> partes2 = new ArrayList<>();
+					
+					
+					for(int i=0;i<3;i++) {
+						String set=x.getBonuses().get(i).getEquipo().replace(" set", "");
+						switch(i) {
+							case 0:
+									String p1=set+" kunai";
+									String p2=set+" boots";
+									partes2.add(mapaPartes.get(p1));
+									partes2.add(mapaPartes.get(p2));
+							break;
+							
+							case 1:
+									String p3=set+" belt";
+									String p4=set+" coat";
+									partes2.add(mapaPartes.get(p3));
+									partes2.add(mapaPartes.get(p4));
+							break;
+							
+							case 2:
+									String p5=set+" armor";
+									String p6=set+" headband";
+									partes2.add(mapaPartes.get(p5));
+									partes2.add(mapaPartes.get(p6));
+							break;
+						}
+					}
+					x.setPartes(partes2);
+		});
+		equipos.addAll(equip);
 
 	}
 	

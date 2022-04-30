@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/bonuses")
 public class BonusController {
 
@@ -25,8 +27,13 @@ public class BonusController {
 	public List<Bonus> getAll() {
 		return bonusServices.getAll();
 	}
+	
+	@GetMapping("/sets")
+	public List<Bonus> getAll2() {
+		return bonusServices.getBonusBySetStats("kunai", 56000L);
+	}
 
-	@GetMapping("/otro")
+	@GetMapping("/otro") 
 	public List<Bonus> getSetsByAttributes() {
 		List<Atributo> attributes = new ArrayList<>();
 

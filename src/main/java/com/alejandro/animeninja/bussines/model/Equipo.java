@@ -97,11 +97,4 @@ public class Equipo implements Serializable {
 		return "Equipo [nombre=" + nombre + ", partes=" + partes + ", bonuses=" + bonuses + "]";
 	}
 
-
-
-	
-
-	
-
-	
 }

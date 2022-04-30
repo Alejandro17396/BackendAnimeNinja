@@ -26,4 +26,9 @@ public class BonusAccesorioServiceImpl implements BonusAccesorioService{
 		return bonusAccesorioRepository.findAll();
 	}
 
+	@Override
+	public List<BonusAccesorio> getBonusByParteBonus(Long valor) {
+		return bonusAccesorioRepository.findBySets(50000L);
+	}
+	
 }

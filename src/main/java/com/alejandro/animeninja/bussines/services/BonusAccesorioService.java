@@ -11,4 +11,6 @@ public interface BonusAccesorioService {
 	
 	List<BonusAccesorio> getBonusBySpecification(Specification<BonusAccesorio> specification);
 	List<BonusAccesorio> getAll();
+	List<BonusAccesorio> getBonusByParteBonus(Long valor);
+	
 }

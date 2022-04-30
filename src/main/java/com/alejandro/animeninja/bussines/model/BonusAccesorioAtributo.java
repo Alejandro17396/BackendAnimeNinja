@@ -17,12 +17,12 @@ public class BonusAccesorioAtributo implements Serializable {
 	
 	@Id
 	@Column(name="TIPO_BONUS")
-	@JsonIgnore
+	
 	private String tipoBonus;
 	
 	@Id
 	@Column(name="NOMBRE_SET_ACCESORIOS")
-	@JsonIgnore
+	
 	private String nombreSet;
 	
 	@Id

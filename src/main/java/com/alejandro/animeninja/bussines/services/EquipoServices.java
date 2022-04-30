@@ -17,7 +17,7 @@ public interface EquipoServices {
 
 	List<Equipo> getSetsBySpecification(Specification<Equipo> specification);
 
-	List<Equipo> generateCombinationSetsByBonus(Specification<Bonus> specification, List<Atributo> attributes);
+	List<Equipo> generateCombinationSetsByBonus(Specification<Bonus> specification, List<Atributo> attributes,String setName);
 
 	List<Equipo> mergeSetBonus(List<Equipo> equipos);
 

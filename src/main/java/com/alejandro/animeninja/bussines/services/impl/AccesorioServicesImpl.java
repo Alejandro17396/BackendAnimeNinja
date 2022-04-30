@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
+import com.alejandro.animeninja.bussines.model.ParteAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorioUtils;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
@@ -43,19 +45,48 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		return accesorioRepository.findAll(specification);
 	}
 
-	@Override
+	private ParteAccesorio getAmulet(SetAccesorio  a) {
+		
+		for(ParteAccesorio p:a.getPartes()) {
+			if(p.getNombre().contains("amulet")) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
+	@Override 
 	public List<SetAccesorio> getComboAccesoriosBySpecification(Specification<BonusAccesorio> specification,
-			List<Atributo> attributes, boolean hardSearch) {
+			List<Atributo> attributes, boolean hardSearch,String setName) {
 		List<SetAccesorio> setAccesorios = accesorioRepository.findAll();
 		List<BonusAccesorio> bonuses;
 
-		if (hardSearch) {
+		/*SetAccesorio aux=accesorioRepository.getById(setName);*/
+		String nombre =setName.replace("accessories", "");
+		nombre=nombre.trim();
+		nombre=nombre.trim();
+		nombre+=" amulet";
+		ParteAccesorio p =parteAccesorioService.getById(nombre);
+		System.out.println("Hemos dicho de buscar "+nombre);
+		/*if(aux!=null) {
+		p = getAmulet(aux);
+		}else {
+			p=null;
+		}*/
+		
+		if(p!=null) {
+			System.out.println("Por valor");
+			bonuses = bonusService.getBonusByParteBonus(p.getValor());
+		}else if (hardSearch) {
+			System.out.println("Todos");
 			bonuses = bonusService.getAll();
 		} else {
+			System.out.println("por especificacion");
 			bonuses = bonusService.getBonusBySpecification(specification);
 		}
+		
 
-		List<BonusAccesorio> bonusesForce = bonuses.stream().filter(x -> x.getTipo().equals("force"))
+		List<BonusAccesorio> bonusesForce = bonuses.stream().parallel().filter(x -> x.getTipo().equals("force"))
 				.collect(Collectors.toList());
 		bonuses.removeAll(bonusesForce);
 
@@ -65,8 +96,10 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 		System.out.println("Antes" + setAccesorios.size());
 		removeCombosFull(setAccesorios);
+		System.out.println("mdio"+setAccesorios.size());
 		removeCombosNotMatchAttributes(setAccesorios, attributes);
-
+		System.out.println("Despues---" + setAccesorios.size());
+		
 		return setAccesorios;
 	}
 
@@ -132,15 +165,24 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	@Override
 	public void addPartes(List<SetAccesorio> sets) {
 
-		sets.forEach(set -> {
+		
+		List <ParteAccesorio> partes=parteAccesorioService.getAll();
+		sets.parallelStream().forEach(set -> {
 			set.setPartes(new ArrayList<>());
-			set.getBonuses().forEach(bonus -> {
-				set.getPartes().addAll(parteAccesorioService.getParteAccesorioByBonus(bonus));
+			set.getBonuses().parallelStream().forEach(bonus -> {
+				List<ParteAccesorio> aux= new ArrayList<>();
+				//set.getPartes().addAll(parteAccesorioService.getParteAccesorioByBonus(bonus));
+				aux=partes.parallelStream().filter(parte ->filtrarPartes(parte,bonus)).collect(Collectors.toList());
+				set.getPartes().addAll(aux);
 			});
 		});
+	
 
 	}
-
+	private boolean filtrarPartes(ParteAccesorio parte,BonusAccesorio bonus) {
+		
+		return (parte.getNombreSet().equals(bonus.getNombreAccesorioSet()) && parte.getTipo().equals(bonus.getTipo())) ? true:false;
+	}
 	@Override
 	public SetAccesorio getByNombre(String nombre) {
 		Optional <SetAccesorio> miSet= accesorioRepository.findById(nombre);
@@ -151,6 +193,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	// PRIVATEMETHODS
 	// ==========================================================================
 
+	
 	private void removeCombosFull(List<SetAccesorio> setAccesorios) {
 		setAccesorios.removeIf(set -> {
 			if (SetAccesorioUtils.sameBonusSet(set)) {
@@ -190,11 +233,11 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	private void createSetAccesorioCombo(BonusAccesorio force, List<BonusAccesorio> bonuses,
 			List<SetAccesorio> setAccesorios) {
 
-		List<BonusAccesorio> chakraBonuses = bonuses.stream().filter(x -> x.getTipo().equals("chakra"))
+		List<BonusAccesorio> chakraBonuses = bonuses.stream().parallel().filter(x -> x.getTipo().equals("chakra"))
 				.collect(Collectors.toList());
-		List<BonusAccesorio> agiBonuses = bonuses.stream().filter(x -> x.getTipo().equals("agility"))
+		List<BonusAccesorio> agiBonuses = bonuses.stream().parallel().filter(x -> x.getTipo().equals("agility"))
 				.collect(Collectors.toList());
-		List<BonusAccesorio> powerBonuses = bonuses.stream().filter(x -> x.getTipo().equals("power"))
+		List<BonusAccesorio> powerBonuses = bonuses.stream().parallel().filter(x -> x.getTipo().equals("power"))
 				.collect(Collectors.toList());
 		chakraBonuses.forEach(chakra -> {
 			agiBonuses.forEach(agi -> {

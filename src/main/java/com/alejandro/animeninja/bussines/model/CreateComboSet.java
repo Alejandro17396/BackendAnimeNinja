@@ -10,6 +10,15 @@ public class CreateComboSet implements Serializable {
 	List<Atributo> attributes;
 	List<BonusAtributo> attributesFilter;
 	List<Atributo> order;
+	String setName;
+
+	public String getSetName() {
+		return setName;
+	}
+
+	public void setSetName(String setName) {
+		this.setName = setName;
+	}
 
 	public CreateComboSet() {
 		super();

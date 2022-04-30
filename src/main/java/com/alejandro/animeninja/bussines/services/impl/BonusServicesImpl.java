@@ -51,4 +51,10 @@ public class BonusServicesImpl implements BonusServices {
 		return miBonus.isPresent() ? miBonus.get() : null;
 	}
 
+	@Override
+	public List<Bonus> getBonusBySetStats(String parte, Long valor) {
+		// TODO Auto-generated method stub
+		return bonusRepository.findBySets(valor);
+	}
+
 }
