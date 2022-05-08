@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="BONUSACCESORIOS_ATRIBUTO")
 public class BonusAccesorioAtributo implements Serializable {

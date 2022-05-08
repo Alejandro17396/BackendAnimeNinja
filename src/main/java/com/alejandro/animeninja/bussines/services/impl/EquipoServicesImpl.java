@@ -3,10 +3,12 @@ package com.alejandro.animeninja.bussines.services.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,36 +60,30 @@ public class EquipoServicesImpl implements EquipoServices {
 	}
 
 	@Override
-	public List<Equipo> generateCombinationSetsByBonus(Specification<Bonus> specification, List<Atributo> attributes,String setName) {
+	public List<Equipo> generateCombinationSetsByBonus(Specification<Bonus> specification, List<Atributo> attributes,
+			String setName) {
 		List<Equipo> equipos = new ArrayList<>();
-		//bonusService.getBonusCombination(specification);
+		// bonusService.getBonusCombination(specification);
 		List<Bonus> bonuses;
-		String n=setName.replace(" set", "")+" kunai";
-		n=n.trim();
-		//System.out.println(n+"/");
-		Parte miParte= parteService.getPartesByNombre(n);
-		if(miParte!=null) {
-		bonuses = bonusService.getBonusBySetStats("", miParte.getValor());
-		//System.out.println("h");
-		Collections.sort(bonuses,new SortBonusById());
-		}else {
-		bonuses=bonusService.getAll();	
+		String n = setName.replace(" set", "") + " kunai";
+		n = n.trim();
+		Parte miParte = parteService.getPartesByNombre(n);
+		if (miParte != null) {
+			bonuses = bonusService.getBonusBySetStats("", miParte.getValor());
+			Collections.sort(bonuses, new SortBonusById());
+		} else {
+			bonuses = bonusService.getAll();
 		}
-		//List
-		//bonuses.forEach(x->System.out.println("n-"+x.toString()));
-		bonuses.removeIf(x -> {
-			if (x.getId() == 6) {
-				Optional<Equipo> equipoOptional = equipoRepository.findById(x.getEquipo());
+		bonuses.removeIf(bonus -> {
+			if (bonus.getId() == 6) {
+				Optional<Equipo> equipoOptional = equipoRepository.findById(bonus.getEquipo());
 				Equipo equipo = equipoOptional.get();
 				equipos.add(equipo);
 				return true;
 			}
-
 			return false;
 		});
-	
-		
-		
+
 		Iterator<Bonus> it = bonuses.iterator();
 		while (it.hasNext()) {
 			Bonus bonus = it.next();
@@ -99,41 +95,20 @@ public class EquipoServicesImpl implements EquipoServices {
 			}
 		}
 
-		removeCombosNotMatchAttributes(equipos, attributes);
+		removeCombosNotMatchAttributes(equipos, (ArrayList<Atributo>) attributes);
 
-
-		
 		return equipos;
 	}
 
-	private void CreateComboType2F1(ArrayList<Bonus> bonuses, List<Equipo> equipos, Bonus bonus) {
-		// TODO Auto-generated method stub
-		Bonus aux=bonuses.get(0);
-		bonuses.remove(aux);
-		
-		bonuses.forEach(x->{
-			Equipo auxEquipo= new Equipo();
-			auxEquipo.setBonuses(new ArrayList<>());
-			auxEquipo.setNombre(bonus.getEquipo()+" "+aux.getEquipo()+" "+x.getEquipo());
-			auxEquipo.getBonuses().add(bonus);
-			auxEquipo.getBonuses().add(aux);
-			auxEquipo.getBonuses().add(x);
-			equipos.add(auxEquipo);
-		});
-		bonuses.add(aux);
-		
-	}
-
-	
 	@Override
 	public List<Equipo> mergeSetBonus(List<Equipo> equipos) {
 
-		equipos.stream().forEach(x -> {
+		equipos.stream().forEach(equipo -> {
 			Map<String, Long> mapa = new HashMap<String, Long>();
 			Bonus bonus = new Bonus();
-			bonus.setEquipo(x.getNombre());
+			bonus.setEquipo(equipo.getNombre());
 			bonus.setListaBonus(new ArrayList<>());
-			for (Bonus b1 : x.getBonuses()) {
+			for (Bonus b1 : equipo.getBonuses()) {
 				for (BonusAtributo b : b1.getListaBonus()) {
 					if (!mapa.containsKey(b.getNombreAtributo())) {
 						mapa.put(b.getNombreAtributo(), 0L);
@@ -153,7 +128,7 @@ public class EquipoServicesImpl implements EquipoServices {
 				miBonusAtributo.setValor(entry.getValue());
 				bonus.getListaBonus().add(miBonusAtributo);
 			}
-			x.getBonuses().clear();
+			equipo.getBonuses().clear();
 			bonus.setNombre("total bonus combo");
 			if (bonus.getEquipo().contains("22")) {
 				bonus.setEquipo(bonus.getEquipo().replace(" 22", ""));
@@ -166,8 +141,8 @@ public class EquipoServicesImpl implements EquipoServices {
 				bonus.setId(42L);
 			}
 
-			x.getBonuses().add(bonus);
-			x.setNombre(x.getNombre().replace(" 42", "").replace(" 24", "").replace(" 22", ""));
+			equipo.getBonuses().add(bonus);
+			equipo.setNombre(equipo.getNombre().replace(" 42", "").replace(" 24", "").replace(" 22", ""));
 		});
 
 		return equipos;
@@ -194,154 +169,85 @@ public class EquipoServicesImpl implements EquipoServices {
 
 	@Override
 	public void addPartes(List<Equipo> equipos) {
-		List<Equipo> equiposAux= this.getAll();
-		HashMap<String,Equipo> mapa= new HashMap<>();
-		equiposAux.forEach(x->mapa.put(x.getNombre(), x));
-		
-		equipos.forEach(x ->{
-			Collections.sort(x.getBonuses(), new SortBonusBySetStat(mapa).reversed());
+		List<Equipo> equiposAux = this.getAll();
+		HashMap<String, Equipo> mapa = new HashMap<>();
+		equiposAux.forEach(equipo -> mapa.put(equipo.getNombre(), equipo));
+
+		equipos.forEach(equipo -> {
+			Collections.sort(equipo.getBonuses(), new SortBonusBySetStat(mapa).reversed());
 		});
-		HashMap<String,Parte> mapaPartes= new HashMap<>();
-		
-		equiposAux.forEach(x ->{
-			x.getPartes().forEach(y->{
-						mapaPartes.put(y.getNombre(), y);
+		HashMap<String, Parte> mapaPartes = new HashMap<>();
+
+		equiposAux.forEach(equipo -> {
+			equipo.getPartes().forEach(y -> {
+				mapaPartes.put(y.getNombre(), y);
 			});
 		});
-		
-		//equipos.removeIf(x->x.getBonuses().get(2).getId()==6L? true:false);
-		List <Equipo> equip= new ArrayList<>();
-		
-		equipos.removeIf(x->{
-			if(x.getBonuses().get(2).getId()==6L) {
-				equip.add(x);
+
+		List<Equipo> equip = new ArrayList<>();
+
+		equipos.removeIf(equipo -> {
+			if (equipo.getBonuses().get(2).getId() == 6L) {
+				equip.add(equipo);
 				return true;
 			}
 			return false;
-			});
-		
+		});
+
 		System.out.println("-----------------------------------------------------");
-		equip.forEach(x->System.out.println(x.toString()));
-		
+		equip.forEach(x -> System.out.println(x.toString()));
+
 		System.out.println("-----------------------------------------------------");
-		equipos.forEach(x->{
-					
-					ArrayList<Parte> partes2 = new ArrayList<>();
-					
-					
-					for(int i=0;i<3;i++) {
-						String set=x.getBonuses().get(i).getEquipo().replace(" set", "");
-						switch(i) {
-							case 0:
-									String p1=set+" kunai";
-									String p2=set+" boots";
-									partes2.add(mapaPartes.get(p1));
-									partes2.add(mapaPartes.get(p2));
-							break;
-							
-							case 1:
-									String p3=set+" belt";
-									String p4=set+" coat";
-									partes2.add(mapaPartes.get(p3));
-									partes2.add(mapaPartes.get(p4));
-							break;
-							
-							case 2:
-									String p5=set+" armor";
-									String p6=set+" headband";
-									partes2.add(mapaPartes.get(p5));
-									partes2.add(mapaPartes.get(p6));
-							break;
-						}
-					}
-					x.setPartes(partes2);
+		equipos.forEach(equipo -> {
+
+			ArrayList<Parte> partes2 = new ArrayList<>();
+
+			for (int i = 0; i < 3; i++) {
+				String set = equipo.getBonuses().get(i).getEquipo().replace(" set", "");
+				switch (i) {
+				case 0:
+					String p1 = set + " kunai";
+					String p2 = set + " boots";
+					partes2.add(mapaPartes.get(p1));
+					partes2.add(mapaPartes.get(p2));
+					break;
+
+				case 1:
+					String p3 = set + " belt";
+					String p4 = set + " coat";
+					partes2.add(mapaPartes.get(p3));
+					partes2.add(mapaPartes.get(p4));
+					break;
+
+				case 2:
+					String p5 = set + " armor";
+					String p6 = set + " headband";
+					partes2.add(mapaPartes.get(p5));
+					partes2.add(mapaPartes.get(p6));
+					break;
+				}
+			}
+			equipo.setPartes(partes2);
 		});
 		equipos.addAll(equip);
 
 	}
-	
+
 	@Override
 	public Equipo getByNombre(String nombre) {
 		Optional<Equipo> miEquipo = equipoRepository.findById(nombre);
-		return miEquipo.isPresent()? miEquipo.get() : null;
+		return miEquipo.isPresent() ? miEquipo.get() : null;
 	}
 
 	// ===============================================================================
 	// PRIVATE METHODS
 	// ============================================================================
 
-	private void setPartsSet3(Equipo x, String[] fragments) {
-		Parte part1 = parteService.getPartesByNombre(fragments[0] + " kunai");
-		Parte part2 = parteService.getPartesByNombre(fragments[1] + " kunai");
-		Parte part3 = parteService.getPartesByNombre(fragments[2] + " kunai");
-		List<Parte> partes = new ArrayList<>();
-		partes.add(part1);
-		partes.add(part2);
-		partes.add(part3);
-		Collections.sort(partes, new SortPartes().reversed());
-		x.setPartes(new ArrayList<>());
-		String first = partes.get(0).getNombre().replace(" kunai", "");
-		String second = partes.get(1).getNombre().replace(" kunai", "");
-		String third = partes.get(2).getNombre().replace(" kunai", "");
-		x.getPartes().add(partes.get(0));
-		x.getPartes().add(parteService.getPartesByNombre(first + " boots"));
-		x.getPartes().add(parteService.getPartesByNombre(second + " belt"));
-		x.getPartes().add(parteService.getPartesByNombre(second + " armor"));
-		x.getPartes().add(parteService.getPartesByNombre(third + " coat"));
-		x.getPartes().add(parteService.getPartesByNombre(third + " headband"));
+	private void removeCombosNotMatchAttributes(List<Equipo> equipos, ArrayList<Atributo> attributes) {
 
-	}
-
-	private void setPartsSet2(Equipo x, String[] fragments) {
-		Parte part1 = parteService.getPartesByNombre(fragments[0] + " kunai");
-		Parte part2 = parteService.getPartesByNombre(fragments[1] + " kunai");
-		x.setPartes(new ArrayList<>());
-		if (parteService.hasBetterStats(part1, part2) && x.getBonuses().get(0).getId() == 42) {
-			x.getPartes().add(part1);
-			x.getPartes().add(parteService.getPartesByNombre(fragments[0] + " boots"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[0] + " belt"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[0] + " armor"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[1] + " coat"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[1] + " headband"));
-
-		} else if (parteService.hasBetterStats(part1, part2) && x.getBonuses().get(0).getId() == 24) {
-			x.getPartes().add(part1);
-			x.getPartes().add(parteService.getPartesByNombre(fragments[0] + " boots"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[1] + " belt"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[1] + " armor"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[1] + " coat"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[1] + " headband"));
-
-		} else if (parteService.hasBetterStats(part2, part1) && x.getBonuses().get(0).getId() == 42) {
-			x.getPartes().add(part2);
-			x.getPartes().add(parteService.getPartesByNombre(fragments[1] + " boots"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[1] + " belt"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[1] + " armor"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[0] + " coat"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[0] + " headband"));
-
-		} else {
-			x.getPartes().add(part2);
-			x.getPartes().add(parteService.getPartesByNombre(fragments[1] + " boots"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[0] + " belt"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[0] + " armor"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[0] + " coat"));
-			x.getPartes().add(parteService.getPartesByNombre(fragments[0] + " headband"));
-
-		}
-
-	}
-
-	private void removeCombosNotMatchAttributes(List<Equipo> equipos, List<Atributo> attributes) {
-		Iterator<Equipo> it = equipos.iterator();
-		while (it.hasNext()) {
-			if (isValid(it.next(), (List<Atributo>) ((ArrayList<Atributo>) attributes).clone())) {
-				continue;
-			} else {
-				it.remove();
-			}
-
-		}
+		equipos.removeIf(equipo -> {
+			return !isValid(equipo, (ArrayList<Atributo>) attributes.clone());
+		});
 	}
 
 	private void CreateComboType4(List<Bonus> bonuses, List<Equipo> equipos, Bonus bonus) {
@@ -408,32 +314,19 @@ public class EquipoServicesImpl implements EquipoServices {
 
 	}
 
-	private boolean isValid(Equipo equipo, List<Atributo> attributes) {
-		Iterator<Atributo> it = attributes.iterator();
-		while (it.hasNext()) {
-			Atributo a = it.next();
-			List<Bonus> bonuses = equipo.getBonuses();
-			for (Bonus b : bonuses) {
-				List<BonusAtributo> bonusAtributos = b.getListaBonus();
-				boolean flag = false;
-				for (BonusAtributo bonusAtributo : bonusAtributos) {
-					if (bonusAtributo.getNombreAtributo().equals(a.getNombre())) {
-						it.remove();
-						flag = true;
-						break;
-					}
-				}
-				if (flag) {
-					break;
-				}
-			}
-		}
+	private boolean isValid(Equipo equipo, ArrayList<Atributo> attributes) {
 
-		if (attributes.size() == 0) {
-			return true;
-		} else {
-			return false;
-		}
+		List<BonusAtributo> bonuses = new ArrayList<>();
+		Set<String> atributosEquipo = new HashSet<>();
+
+		equipo.getBonuses().forEach(bonus -> bonuses.addAll(bonus.getListaBonus()));
+		bonuses.forEach(bonus -> atributosEquipo.add(bonus.getNombreAtributo()));
+
+		attributes.removeIf(attribute -> {
+			return atributosEquipo.contains(attribute.getNombre());
+		});
+
+		return attributes.size() == 0 ? true : false;
 
 	}
 

@@ -68,12 +68,6 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		nombre+=" amulet";
 		ParteAccesorio p =parteAccesorioService.getById(nombre);
 		System.out.println("Hemos dicho de buscar "+nombre);
-		/*if(aux!=null) {
-		p = getAmulet(aux);
-		}else {
-			p=null;
-		}*/
-		
 		if(p!=null) {
 			System.out.println("Por valor");
 			bonuses = bonusService.getBonusByParteBonus(p.getValor());
@@ -171,7 +165,6 @@ public class AccesorioServicesImpl implements AccesorioServices {
 			set.setPartes(new ArrayList<>());
 			set.getBonuses().parallelStream().forEach(bonus -> {
 				List<ParteAccesorio> aux= new ArrayList<>();
-				//set.getPartes().addAll(parteAccesorioService.getParteAccesorioByBonus(bonus));
 				aux=partes.parallelStream().filter(parte ->filtrarPartes(parte,bonus)).collect(Collectors.toList());
 				set.getPartes().addAll(aux);
 			});
