@@ -1,3 +1,15 @@
+create database naruto;
+use naruto;
+
+drop table partes;
+drop table bonus_atributo;
+drop table bonuses;
+drop table equipos;
+drop table partes_accesorios;
+drop table bonusaccesorios_atributo;
+drop table bonusaccesorios;
+drop table set_accesorios;
+drop table atributos;
 
 
 
