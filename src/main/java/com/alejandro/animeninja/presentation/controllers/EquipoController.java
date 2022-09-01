@@ -36,7 +36,7 @@ public class EquipoController {
 	private EquipoServices equipoServices;
 
 	@GetMapping
-	public List<Equipo> getAll() {
+	public List<Equipo> getAll() { 
 		
 		List <Equipo> equipos = equipoServices.getAll();
 		Collections.sort(equipos, new SortEquiposByStats().reversed());
