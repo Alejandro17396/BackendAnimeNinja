@@ -234,7 +234,39 @@ insert into atributos(nombre) values('make unable to gain buffs');
 insert into atributos(nombre) values('upwind state for 2 rounds');
 insert into atributos(nombre) values('disperse debuffs');
 
-
+insert into atributos(nombre) values('acupuncture');
+insert into atributos(nombre) values('curse');
+insert into atributos(nombre) values('remove debuffs');
+insert into atributos(nombre) values('remove buffs');
+insert into atributos(nombre) values('poisonous wind state');
+insert into atributos(nombre) values('weakened state');
+insert into atributos(nombre) values('ignore enemy defense');
+insert into atributos(nombre) values('crit chance(can break upper limit)');
+insert into atributos(nombre) values('bond state');
+insert into atributos(nombre) values('chaos');
+insert into atributos(nombre) values('charm');
+insert into atributos(nombre) values('death seed');
+insert into atributos(nombre) values('breaking wind status');
+insert into atributos(nombre) values('"DOT (Poison,Ignite,Power Loss,Orochi,Poison,Vein,Damage,Bleed,Split,Unification,Safeguard,Burst,Scorching Flame,Incinerate) damage by');
+insert into atributos(nombre) values('Void state');
+insert into atributos(nombre) values('Wind Bound state');
+insert into atributos(nombre) values('heal state %');
+insert into atributos(nombre) values('Forbid Fury state');
+insert into atributos(nombre) values('shatter storm state');
+insert into atributos(nombre) values('inmune control state');
+insert into atributos(nombre) values('Imprison State');
+insert into atributos(nombre) values('Poison with 120% growth rate');
+insert into atributos(nombre) values('fury shield');
+insert into atributos(nombre) values('health');
+insert into atributos(nombre) values('seal state');
+insert into atributos(nombre) values('upwind state');
+insert into atributos(nombre) values('wind bond state');
+insert into atributos(nombre) values('incinerate state with 120% rate');
+insert into atributos(nombre) values('freeze state');
+insert into atributos(nombre) values('weak state');
+insert into atributos(nombre) values('bind state');
+insert into atributos(nombre) values('super dodge state');
+insert into atributos(nombre) values('unable gain buffs state');
 /*Equipo pain seal*/
 
 insert into  equipos(nombre) values('pain set');
@@ -977,14 +1009,6 @@ select *from bonus_atributo where nombre_equipo='kumogakure set' and id_bonus = 
 select distinct * from equipos join bonuses on equipos.nombre=bonuses.nombre_equipo
 join bonus_atributo on bonus_atributo.id_bonus=bonuses.id and bonus_atributo.nombre_equipo=bonuses.nombre_equipo 
 where bonus_atributo.nombre_atributo='avoid injury rate' or  bonus_atributo.nombre_atributo='damage rate';*/
-
-
-drop table partes_accesorios;
-drop table bonusaccesorios_atributo;
-drop table bonusaccesorios;
-drop table set_accesorios;
-
-
 
 
 /*Indora*/
@@ -2384,33 +2408,27 @@ insert into bonusaccesorios(tipo,nombre_set_accesorios) values('full set bonus',
 insert into bonusaccesorios_Atributo(tipo_bonus,nombre_set_accesorios,nombre_atributo,valor) 
 values('force','amenonuhoko accessories','cc resistance',32);
 insert into bonusaccesorios_Atributo(tipo_bonus,nombre_set_accesorios,nombre_atributo,valor) 
-values('force','amenonuhoko accessories',
-'after released a skill, make all enemies enter Burst state (50% rate) for 2 round',1);
+values('force','amenonuhoko accessories','after released a skill, make all enemies enter Burst state (50% rate) for 2 round',1);
 
 insert into bonusaccesorios_Atributo(tipo_bonus,nombre_set_accesorios,nombre_atributo,valor) 
 values('chakra','amenonuhoko accessories','attack',30);
 insert into bonusaccesorios_Atributo(tipo_bonus,nombre_set_accesorios,nombre_atributo,valor) 
-values('chakra','amenonuhoko accessories',
-'after released skill, make all enemies enter Scorching Flame state (50% rate) for 2 round',1);
+values('chakra','amenonuhoko accessories','after released skill, make all enemies enter Scorching Flame state (50% rate) for 2 round',1);
 
 insert into bonusaccesorios_Atributo(tipo_bonus,nombre_set_accesorios,nombre_atributo,valor) 
 values('agility','amenonuhoko accessories','cc resistance',32);
 insert into bonusaccesorios_Atributo(tipo_bonus,nombre_set_accesorios,nombre_atributo,valor) 
-values('agility','amenonuhoko accessories',
-'after released skill, make all enemies enter Safeguard state (50% rate) for 2 round',1);
+values('agility','amenonuhoko accessories','after released skill, make all enemies enter Safeguard state (50% rate) for 2 round',1);
 
 insert into bonusaccesorios_Atributo(tipo_bonus,nombre_set_accesorios,nombre_atributo,valor) 
 values('power','amenonuhoko accessories','weaken enemy attack',25);
 insert into bonusaccesorios_Atributo(tipo_bonus,nombre_set_accesorios,nombre_atributo,valor) 
-values('power','amenonuhoko accessories',
-'after released skill, make all enemies enter Unification state (50% rate) for 2 round',1);
+values('power','amenonuhoko accessories','after released skill, make all enemies enter Unification state (50% rate) for 2 round',1);
 
 insert into bonusaccesorios_Atributo(tipo_bonus,nombre_set_accesorios,nombre_atributo,valor) 
 values('full set bonus','amenonuhoko accessories','attack',30);
 insert into bonusaccesorios_Atributo(tipo_bonus,nombre_set_accesorios,nombre_atributo,valor) 
-values('full set bonus','amenonuhoko accessories',
-'after released a skill, has 100% chance to make random enemy enter Poisonous Wind state for 2 round',1);
-
+values('full set bonus','amenonuhoko accessories','after released a skill, has 100% chance to make random enemy enter Poisonous Wind state for 2 round',1);
 
 insert into ninjas(nombre,chakra_nature,tipo,formacion) 
 values("Urashiki Otsutsuki","WATER","TAIJUTSU","ASSAULTER");
@@ -2433,103 +2451,101 @@ values("Urashiki Otsutsuki","120","chakra growth rate",40000);
 insert into stat_atributo(ninja,nivel,nombre_atributo,valor) 
 values("Urashiki Otsutsuki","120","power growth rate",270000);
 
-/*update stat_atributo set valor=40 where ninja="Urashiki Otsutsuki" and nombre_atributo="chakra growth rate";*/
 insert into ninja_skills(nombre,ninja,tipo,texto) 
 values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","Increases massive agility, chakra, and force by percentage, increases speed by 86%, damage rate by 70%, and avoid-injury rate by 60%. When this ninja is in battle, increase all allies speed by 112% and damage rate by 30%, increase allies health by 30%/30%/20% (Vanguard/Assaulter/Support), decrease enemies defence by 50%/40%/30% (Vanguard/Assaulter/Support), decrease all enemies avoid-injury rate by 30%, decrease enemies who have unactivated chakra nature and earth chakra natures speed by 5%, naturally ignores enemies attack by 10%, control rate by 55%, and reflective damage by 150%. Ignores super flash, immune to chaos, charm, and poisonous wind");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase","self","massive agility, chakra, and force by percentage",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase","self","speed %",86);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase","self","damage rate",70);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase","self","avoid injury rate",60);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "all allies", "speed %",112);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "all allies", "damage rate",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "allie Vanguard", "HP",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "allie Assaulters", "HP",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "allie Supports", "HP",20);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "enemie Vanguard", "defense",50);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "enemie Assaulters", "defense",40);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "enemie Supports", "defense",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "all enemies", "avoid injury rate",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "all enemies who have unactivated chakra nature", "speed %",5);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "enemies earth chakra nature", "speed %",5);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "self", "ignores enemy attack", 10);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "self","cc resistance",55);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "self", "reduce reflect damage",150);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","obtain","self","ignore super flash",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","obtain","self","immune to chaos",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","obtain","self","immune to charm",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","obtain","self","immune to poisonous wind",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase","self","ninja is alive","battle ends","massive agility, chakra, and force by percentage",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase","self","ninja is alive","battle ends","speed %",86);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase","self","ninja is alive","battle ends","damage rate",70);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase","self","ninja is alive","battle ends","avoid injury rate",60);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "all allies","ninja is alive","battle ends","speed %",112);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "all allies","ninja is alive","battle ends","damage rate",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "allie Vanguard","ninja is alive","battle ends","HP",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "allie Assaulters","ninja is alive","battle ends","HP",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "allie Supports","ninja is alive","battle ends","HP",20);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "enemie Vanguard","ninja is alive","battle ends","defense",50);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "enemie Assaulters","ninja is alive","battle ends","defense",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "enemie Supports","ninja is alive","battle ends","defense",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "all enemies","ninja is alive","battle ends","avoid injury rate",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "all enemies who have unactivated chakra nature","ninja is alive","battle ends","speed %",5);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","decrease", "enemies earth chakra nature","ninja is alive","battle ends","speed %",5);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "self","ninja is alive","battle ends","ignores enemy attack",10);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "self","ninja is alive","battle ends","cc resistance",55);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","increase", "self","ninja is alive","battle ends","reduce reflect damage",150);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","obtain","self","ninja is alive","battle ends","ignore super flash",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","obtain","self","ninja is alive","battle ends","immune to chaos",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","obtain","self","ninja is alive","battle ends","immune to charm",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","TALENT","obtain","self","ninja is alive","battle ends","immune to poisonous wind",1);
 
 
 insert into ninja_skills(nombre,ninja,tipo,texto) 
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","Attack all enemies with 300% growth rate, 100% chance to make enemies enter curse and acupuncture for 3 rounds, increase all allies crit rate by 40% for 3 rounds, decrease all enemies defence by 30% for 3 rounds, decrease enemy fire, earth, and water chakra nature ninjas speed by 40% and attack by 40% for 3 rounds. ");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","attack","all enemies","growth rate",300);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","apply","all enemies","100% chance to make enemies enter curse and acupuncture for 3 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","increase","all allies","crit rate",40);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","all enemies","defense",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies fire chakra nature","speed %",40);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies fire chakra nature","attack",40);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies earth chakra nature","speed %",40);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies earth chakra nature","attack",40);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies water chakra nature","speed %",40);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies water chakra nature","attack",40);
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","Attack all enemies with 300% growth rate, 100% chance to make enemies enter curse and acupuncture for 3 rounds, increase all allies crit rate by 40% for 3 rounds,decrease all enemies defence by 30% for 3 rounds, decrease enemy fire, earth, and water chakra nature ninjas speed by 40% and attack by 40% for 3 rounds.");
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","attack","all enemies","ninja attack","battle ends","growth rate",300);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","apply","all enemies","ninja attack","for 3 rounds","acupuncture",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","apply","all enemies","ninja attack","for 3 rounds","curse",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","increase","all allies","ninja attack","for 3 rounds","crit rate",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","all enemies","ninja attack","for 3 rounds","defense",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies fire chakra nature","ninja attack","for 3 rounds","speed %",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies fire chakra nature","ninja attack","for 3 rounds","attack",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies earth chakra nature","ninja attack","for 3 rounds","speed %",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies earth chakra nature","ninja attack","for 3 rounds","attack",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies water chakra nature","ninja attack","for 3 rounds","speed %",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Amenosubaruboshinomikoto","Urashiki Otsutsuki","SKILL","decrease","enemies water chakra nature","ninja attack","for 3 rounds","attack",40);
 
 
 insert into ninja_skills(nombre,ninja,tipo,texto) 
 values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","Attack all enemies with 350% growth rate, deals additional strategy attack with 200% growth rate as second hit, randomly removes debuffs of 2 allies and removes buffs of 2 enemies, 95% chance to make 1 random enemy enter poisonous wind state for 2 rounds, 80% chance to make enemy supports enter weakened state for 2 rounds, increase all allies attack by 30% for 2 rounds.");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","attack","all enemies","growth rate",350);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","attack","all enemies","deals additional strategy attack with growth rate",200);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","apply","all enemies","randomly removes debuffs of 2 allies",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","apply","all enemies","randomly  removes buffs of 2 enemies",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","apply","all enemies","95% chance to make 1 random enemy enter poisonous wind state for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor) 
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","apply","enemies Supports","80% chance to make enemy supports enter weakened state for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","increase","all allies","attack",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","attack","all enemies","ninja attack","battle","growth rate",350);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","attack","all enemies","ninja attack","battle","deals additional strategy attack with growth rate",200);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","apply","2 random allies","ninja attack","battle ends","remove debuffs",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","apply","2 random enemies","ninja attack","battle ends","remove buffs",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","apply","all enemies","ninja attack","for 2 round","poisonous wind state",95);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor) 
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","apply","enemies Supports","ninja attack","for 2 round","weakened state",80);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Yomotsu Hirasaka","Urashiki Otsutsuki","NORMAL_ATTACK","increase","all allies","ninja attack","for 2 round","attack",30);
 
- 
 insert into ninja_awakening(nombre,ninja,nivel,activo,tipo,texto)
 values("Temporal Rewind","Urashiki Otsutsuki","1ri",true,"TALENT","Naturally has 30% block rate (can break upper limit), immune to disable");
-insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo)
-values("Temporal Rewind","Urashiki Otsutsuki","1ri","increase","self","block(can surpass limit)",30,"TALENT");
-
-
+insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo,condicion,tiempo)
+values("Temporal Rewind","Urashiki Otsutsuki","1ri","increase","self","block(can surpass limit)",30,"TALENT","ninja is alive","battle ends");
 
 
 insert into ninjas(nombre,chakra_nature,tipo,formacion) 
@@ -2556,80 +2572,82 @@ values("Warlord Sakura","120","power growth rate",40);
 /*update stat_atributo set valor=40 where ninja="Warlord Sakura" and nombre_atributo="chakra growth rate";*/
 insert into ninja_skills(nombre,ninja,tipo,texto) 
 values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","Increases massive agility, health, and force by percentage, naturally has 86% speed, 65% damage rate, and 65% avoid-injury rate. When this ninja is alive on the field, increases all allies speed by 112%, damage reduction by 30%, damage dealt by 30%, increases all allies health (vanguard/assaulter/support) by 30%/50%/50%, decreases all enemy ninjas attack and damage rate by 30%. Every 10% loss in health makes all allies ignore 10% of enemy defense and increases crit chance by 5% (can break upper limit). When attacked, has 40% chance to remove all enemy ninjas buffs and 30% chance to make self and vanguard enter bond state for 2 rounds. Naturally ignores 55% of enemies control chances and 150% of reflective damage. Immune to chaos, charm, and death seed. ");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase","self","massive agility, health, and force by percentage",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase","self","speed %",86);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase","self","damage rate",65);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase","self","avoid injury rate",65);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "all allies", "speed %",112);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "all allies", "damage reduction",30);  
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "all allies", "damage dealt",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "allie Vanguard", "HP",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "allie Assaulters", "HP",50);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "allie Supports", "HP",50);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","decrease", "all enemies", "attack",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","decrease", "all enemies", "damage rate",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "all enemies", "Every 10% loss in health makes all allies ignore 10% of enemy defense",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "all enemies", "Every 10% loss in health makes all allies increases crit chance by 5% (can break upper limit)",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","apply", "all enemies", "When attacked, has 40% chance to remove all enemy ninjas buffs for 2 rounds.",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","apply", "all allies", "When attacked, has 30% chance to make self and vanguard enter bond state for 2 rounds.",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "self", "cc resistance",55);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "self", "reduce reflect damage",150);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","obtain","self","immune to chaos",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","obtain","self","immune to charm",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","obtain","self","immune to death seed",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase","self","ninja is alive","battle ends","massive agility, health, and force by percentage",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase","self","ninja is alive","battle ends","speed %",86);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase","self","ninja is alive","battle ends","damage rate",65);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase","self","ninja is alive","battle ends","avoid injury rate",65);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "all allies","ninja is alive","battle ends","speed %",112);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "all allies","ninja is alive","battle ends","damage reduction",30);  
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "all allies","ninja is alive","battle ends","damage dealt",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "allie Vanguard","ninja is alive","battle ends","HP",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "allie Assaulters","ninja is alive","battle ends","HP",50);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "allie Supports","ninja is alive","battle ends","HP",50);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","decrease", "all enemies","ninja is alive","battle ends","attack",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","decrease", "all enemies","ninja is alive","battle ends","damage rate",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "all allies","Every 10% loss in health","health is still losed","ignore enemy defense",10);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "all allies","Every 10% loss in health","health is still losed","crit chance(can break upper limit)",5);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","apply", "all enemies", "When attacked","for 2 round", "remove buffs",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","apply", "self", "When attacked","for 2 round","bond state",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","apply", "ally vanguard", "When attacked","for 2 round","bond state",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "self","ninja is alive","battle ends", "cc resistance",55);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","increase", "self","ninja is alive","battle ends", "reduce reflect damage",150);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","obtain","self","ninja is alive","battle ends","immune to chaos",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","obtain","self","ninja is alive","battle ends","immune to charm",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Burst","Warlord Sakura","TALENT","obtain","self","ninja is alive","battle ends","immune to death seed",1);
 
 
 insert into ninja_skills(nombre,ninja,tipo,texto) 
 values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","Attack all enemies with 320% growth rate, 90% chance to make enemies enter chaos for 2 rounds, has 100% chance to make enemy assaulter enter charm for 2 rounds, makes self and ally vanguard enter breaking wind status for 2 rounds, removes all allies debuffs, decreases all enemies attack and damage rate by 30% for 2 rounds. Recovers 68 fury for self, 30 fury for allies. (Charm: Increases 120% of damage dealt and damage rate, chaos effect, cannot be dispelled)");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","attack","all enemies","growth rate",320);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","apply","all enemies","90% chance to make enemies enter chaos for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","apply","all enemies","100% chance to make enemy assaulter enter charm for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","apply","self","makes self and ally vanguard enter breaking wind status for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)	
-values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","apply","all allies","removes all allies debuffs",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","decrease", "all enemies", "damage rate",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","decrease", "all enemies", "attack",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","increase","all allies","fury",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","increase","self","fury",68);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","attack","all enemies","ninja attack","meanwhile attack","growth rate",320);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","apply","all enemies","ninja attack","for 2 rounds","chaos",90);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","apply","enemy assaulters","ninja attack","for 2 rounds","charm",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","apply","self","ninja attack","for 2 rounds","breaking wind status",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","apply","ally vanguard","ninja attack","for 2 rounds","breaking wind status",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)	
+values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","apply","all allies","ninja attack","battle ends","remove debuffs",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","decrease", "all enemies","ninja attack","for 2 rounds", "damage rate",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","decrease", "all enemies","ninja attack","for 2 rounds", "attack",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","increase","all allies","ninja attack","for 2 rounds","fury",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Sakura Ilusion - Slash","Warlord Sakura","SKILL","increase","self","ninja attack","for 2 rounds","fury",68);
 
 
- 
 insert into ninja_awakening(nombre,ninja,nivel,activo,tipo,texto)
 values("Warlord Sakura Awakening Talent","Warlord Sakura","1ri",true,"TALENT","Increase ally vanguard speed by 8% and attack by 30%");
-insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo)
-values("Warlord Sakura Awakening Talent","Warlord Sakura","1ri","increase","allie Vangaurd","speed %",8,"TALENT");
-insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo)
-values("Warlord Sakura Awakening Talent","Warlord Sakura","1ri","increase","allie Vangaurd","attack",30,"TALENT");
-
+insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo,condicion,tiempo)
+values("Warlord Sakura Awakening Talent","Warlord Sakura","1ri","increase","ally Vangaurd","speed %",8,"TALENT","ninja is alive","battle ends");
+insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo,condicion,tiempo)
+values("Warlord Sakura Awakening Talent","Warlord Sakura","1ri","increase","ally Vangaurd","attack",30,"TALENT","ninja is alive","battle ends");
 
 
 /*Hyakki Sasori*/
@@ -2657,94 +2675,92 @@ values("Hyakki Sasori","120","power growth rate",42);
 /*update stat_atributo set valor=40 where ninja="Hyakki Sasori" and nombre_atributo="chakra growth rate";*/
 insert into ninja_skills(nombre,ninja,tipo,texto) 
 values("Red Secret Technique","Hyakki Sasori","TALENT","Increase massive agility,chakra, and health by percentage, naturally has 92% speed 70% Damage rate, and 60% avoid injury rate. When this ninja is alive on the field,increases all allies speed by 116%,health by 30%,damage rate by 30%,increase all lightning chakra nature attack by 30%,punch rate by 20%. Decrease enemy unactivated chakra nature immunity to cc by 20% decrease enemy earth chakra nature avoid injury rate by 30%, decrease enemy fire nature Ninjas DOT damage by 30% (Poison,Ignite,Power Loss,Orochi,Poison,Vein,Damage,Bleed,Split,Unification,Safeguard,Burst,Scorching Flame,Incinerate each by 30% growth rate.Naturally Ignores enemies attack by 10%, Reflective Damage by 150%, Ignores Super Flash. Immune to Disable,Void,Poison Wind.");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase","self","massive agility,chakra, and health by percentage",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase","self","speed %",92);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase","self","damage rate",70);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)							
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase","self","avoid injury rate",60);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "all allies", "speed %",116);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "all allies", "HP",30); 
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "all allies", "damage rate",30);  
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "all lightning chakra nature allies", "attack",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "all lightning chakra nature allies", "punch rate",20);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","decrease", "enemies unactivated chakra nature", "cc resistance",20);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","decrease", "enemies earth chakra nature", "avoid injury rate",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","decrease", "enemies fire chakra nature", "DOT (Poison,Ignite,Power Loss,Orochi,Poison,Vein,Damage,Bleed,Split,Unification,Safeguard,Burst,Scorching Flame,Incinerate) damage by",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "self", "ignores enemy attack",10);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "self", "reduce reflect damage",150);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","obtain","self","ignore super flash",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","obtain","self","immune to Disable",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","obtain","self","immune to Void",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Red Secret Technique","Hyakki Sasori","TALENT","obtain","self","immune to Poison Wind",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase","self","ninja is alive","battle ends","massive agility,chakra, and health by percentage",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase","self","ninja is alive","battle ends","speed %",92);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase","self","ninja is alive","battle ends","damage rate",70);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)							
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase","self","ninja is alive","battle ends","avoid injury rate",60);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "all allies","ninja is alive","battle ends", "speed %",116);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "all allies","ninja is alive","battle ends", "HP",30); 
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "all allies","ninja is alive","battle ends", "damage rate",30);  
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "ally lightning chakra nature","ninja is alive","battle ends", "attack",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "ally lightning chakra nature","ninja is alive","battle ends", "punch rate",20);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","decrease", "enemy unactivated chakra nature","ninja is alive","battle ends", "cc resistance",20);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","decrease", "enemy earth chakra nature","ninja is alive","battle ends", "avoid injury rate",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","decrease", "enemy fire chakra nature","ninja is alive","battle ends", "DOT (Poison,Ignite,Power Loss,Orochi,Poison,Vein,Damage,Bleed,Split,Unification,Safeguard,Burst,Scorching Flame,Incinerate) damage by",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "self", "ninja is alive","battle ends","ignores enemy attack",10);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","increase", "self","ninja is alive","battle ends", "reduce reflect damage",150);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","obtain","self","ninja is alive","battle ends","ignore super flash",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","obtain","self","ninja is alive","battle ends","immune to Disable",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","obtain","self","ninja is alive","battle ends","immune to Void",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Red Secret Technique","Hyakki Sasori","TALENT","obtain","self","ninja is alive","battle ends","immune to Poison Wind",1);
 
 insert into ninja_skills(nombre,ninja,tipo,texto) 
 values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","Attack all enemies with 330% growth rate,90% chance to make enemies enter Void state for 2 turns (Void: Avoid receiving skill damage but not normal attack damage. Cannot be Dispelled). 90% Chance to enter Wind Bound for 2 rounds, makes all Ninjas enter Forbid Fury (Forbid Fury:Disable to recover Fury in a round. Cannot be dispelled.) Dispel 3 random Enemies Buffs, gives ally Lightning Chakra nature ninjas heal state of 90% Growth rate Gives Ally Assaulter/Vanguard Shatter Storm for 2 turns.Makes ally Assaulter enter inmune control state for 2 round.");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","attack","all enemies","growth rate",330);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","all enemies","90% chance to make enemies enter Void state for 2 turns (Void: Avoid receiving skill damage but not normal attack damage. Cannot be Dispelled)",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","all enemies","90% Chance to enter Wind Bound for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","all enemies","enter Forbid Fury (Forbid Fury: Disable to recover fury in a round, cannot be Cleansed)",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","all enemies","dispel 3 random Enemies Buffs",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor) 
-values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","all lightning chakra nature allies","heal state % for 2 rounds",90);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","allie Vanguard","shatter storm state for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","allie Assaulters","shatter storm state for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","allie Assaulters","inmune control state for 2 rounds",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","attack","all enemies","ninja attack","battle ends","growth rate",330);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","all enemies","ninja attack","for 2 rounds","Void state",90);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","all enemies","ninja attack","for 2 rounds","Wind Bound state",90);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","all enemies","ninja attack","for 2 rounds","Forbid Fury state",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","3 random enemies","ninja attack","battle ends","remove buffs",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor) 
+values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","ally lightning chakra nature","ninja attack","for 2 rounds","heal state %",90);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","allie Vanguard","ninja attack","for 2 rounds","shatter storm state",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","allie Assaulters","ninja attack","for 2 rounds","shatter storm state",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Water and Fire","Hyakki Sasori","NORMAL_ATTACK","apply","allie Assaulters","ninja attack","for 2 rounds","inmune control state",1);
 
 
 insert into ninja_skills(nombre,ninja,tipo,texto) 
 values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","Attack all enemies with 300% Growth rate, 90% chance to Imprison State for 2 rounds and Poison with 120% growth rate for 3 rounds. Dispel all allies debuff's, gives ally Vanguard/Assaulter Fury Shield for 3 rounds. Decrease all enemy's counter rate by 40% and Heal rate by 50% for 3 rounds");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","attack","all enemies","growth rate",300);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","apply","all enemies","90% chance to Imprison State for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","apply","all enemies","90% chance to Poison with 120% growth rate for 3 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","apply","all allies","removes all allies debuffs",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","apply","allie Vanguard","fury shield for 3 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","apply","allie Assaulters","fury shield for 3 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","decrease","all enemies","counter rate",40);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","decrease","all enemies","heal rate",50);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","attack","all enemies","ninja attack","attack ends","growth rate",300);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","apply","all enemies","ninja attack","for 2 rounds","Imprison State",90);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","apply","all enemies","ninja attack","for 3 rounds","Poison with 120% growth rate",90);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","apply","all allies","ninja attack","attack ends","remove debuffs",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","apply","allie Vanguard","ninja attack","for 3 rounds","fury shield",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","apply","allie Assaulters","ninja attack","for 3 rounds","fury shield",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","decrease","all enemies","ninja attack","for 3 rounds","counter rate",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Puppets: Hyakki No Sen","Hyakki Sasori","SKILL","decrease","all enemies","ninja attack","for 3 rounds","heal rate",50);
 
 
  
 insert into ninja_awakening(nombre,ninja,nivel,activo,tipo,texto)
 values("Awaken Puppet control","Hyakki Sasori","1ri",true,"TALENT","Increase Block rate by 30%(Can break upper limit), Immune to charm");
-insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo)
-values("Awaken Puppet control","Hyakki Sasori","1ri","increase","self","block(can surpass limit)",30,"TALENT");
-insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo)
-values("Awaken Puppet control","Hyakki Sasori","1ri","obtain","self","immune to charm",1,"TALENT");
-
-
+insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo,condicion,tiempo)
+values("Awaken Puppet control","Hyakki Sasori","1ri","increase","self","block(can surpass limit)",30,"TALENT","ninja is alive","battle ends");
+insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo,condicion,tiempo)
+values("Awaken Puppet control","Hyakki Sasori","1ri","obtain","self","immune to charm",1,"TALENT","ninja is alive","battle ends");
 
 
 /*Animal path*/
@@ -2774,148 +2790,159 @@ values("Animal Path","120","power growth rate",42);
 /*update stat_atributo set valor=40 where ninja="Animal Path" and nombre_atributo="chakra growth rate";*/
 insert into ninja_skills(nombre,ninja,tipo,texto) 
 values("Summoning Rinnegan","Animal Path","TALENT","Increases massive chakra, power,and health by percentage.Percentage increase 86% speed,65% damage rate and 65% immune damage rate.When this ninja in the formation,,increase all allies speed by 112% ,health by 30% and attack by 30%.Increase ally ray chakra ninja'swreck rate by 40%(Can be break),control rate by 30%,and finnal damage increase rate by 30%.Increase ally water chakra ninja's defense by 60%,finnal damage decrease rate by 25% and immune damage reate by 40%.Decrease all enemies attack by 30%.Natural ignore enemies 10% attack,55% control rate and 150% reflect damage rate,immune chaos,charm and death seed.");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase","self","massive chakra, power,and health by percentage",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase","self","speed %",86);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase","self","damage rate",65);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)							
-values("Summoning Rinnegan","Animal Path","TALENT","increase","self","avoid injury rate",65);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "all allies", "speed %",112);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "all allies", "HP",30); 
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "all allies", "attack",30);  
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","reduce", "all enemies", "attack",30);  
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "all lightning chakra nature allies", "s.attack(can break the limit)",40);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "all lightning chakra nature allies", "cc succes rate",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "all lightning chakra nature allies", "final damage increase rate",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "all water chakra nature allies", "defense",60);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "all water chakra nature allies", "final damage decrease rate",25);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "all water chakra nature allies", "avoid injury rate",40);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "self", "ignores enemy attack",10);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "self", "reduce reflect damage",150);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","increase", "self", "cc resistance",55);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","obtain", "self", "immune to chaos",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","obtain", "self", "immune to charm",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Summoning Rinnegan","Animal Path","TALENT","obtain", "self", "immune to death seed",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase","self","ninja is alive","battle ends","massive chakra, power,and health by percentage",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase","self","ninja is alive","battle ends","speed %",86);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase","self","ninja is alive","battle ends","damage rate",65);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)							
+values("Summoning Rinnegan","Animal Path","TALENT","increase","self","ninja is alive","battle ends","avoid injury rate",65);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "all allies", "ninja is alive","battle ends","speed %",112);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "all allies","ninja is alive","battle ends", "HP",30); 
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "all allies", "ninja is alive","battle ends","attack",30);  
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","reduce", "all enemies", "ninja is alive","battle ends","attack",30);  
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "ally lightning chakra nature", "ninja is alive","battle ends","s.attack(can break the limit)",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "ally lightning chakra nature","ninja is alive","battle ends", "cc succes rate",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "ally lightning chakra nature","ninja is alive","battle ends", "final damage increase rate",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "ally water chakra nature","ninja is alive","battle ends", "defense",60);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "ally water chakra nature", "ninja is alive","battle ends","final damage decrease rate",25);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "ally water chakra nature","ninja is alive","battle ends", "avoid injury rate",40);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "self", "ninja is alive","battle ends","ignores enemy attack",10);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "self", "ninja is alive","battle ends","reduce reflect damage",150);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","increase", "self","ninja is alive","battle ends", "cc resistance",55);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","obtain", "self", "ninja is alive","battle ends","immune to chaos",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","obtain", "self","ninja is alive","battle ends", "immune to charm",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Summoning Rinnegan","Animal Path","TALENT","obtain", "self","ninja is alive","battle ends", "immune to death seed",1);
 
+/*ALTER TABLE ninja_skills MODIFY  COLUMN texto varchar(2000);*/
 
 insert into ninja_skills(nombre,ninja,tipo,texto) 
 values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","Attack all enemis with 150% growth rate,recover all allies health rate by 120%,and triggers the following effects:1.Triggers following effects to enemy soil chakra ninja:Double attack with 400% rate(Physical attacks),100% chance to makes him enter seal state and upwind state for 2 round,disperse his other buff;2.Triggers following effects to enemy fire chakre ninja:Make physical penetrating damage with 100% rate,100% chance to makes him enter wind bond state and incinerate state with 120% rate for 2 round,decrease immune control rate by 30% for 2 round;3.Triggers following effects to enemy wind chakra ninja:Make strategy penetrating damage with 100% rate,100% chance to makes him enter freeze state and weak state for 2 round,decrease control rate by 30% for 2 round;4.Triggers following effects to enemy ray chakra ninja,water chakre ninja and no chakra ninja:Double attack with 400% rate(Strategy attacks),100% chance to makes him enter bind state for 2 round,decrease attack and denfense by 30% for 2 round;5.Triggers following effects to ally ray chakre ninja:Add upwind state for 2 round, increase crit rate by 30%(can be break), disperse debuff;6.Triggers following effects to ally water chakre ninja:Add bond state for 2 round,enter wind shield state for 2 round (10% rate).Increase 200% defense for 2 round;");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","all enemies","growth rate",150);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","all enemies","recover health",120);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","all enemies","ninja attack","attack ends","growth rate",150);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","recover","all enemies","ninja attack","attack ends","health",120);
 
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemies earth chakra nature","growth rate",400);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemies earth chakra nature","100% chance to makes him enter seal state for 2 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemies earth chakra nature","100% chance to makes him enter upwind state for 2 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemies earth chakra nature","disperse his buffs",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemy earth chakra nature","ninja attack","attack ends","growth rate",400);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemy earth chakra nature","ninja attack","for 2 rounds","seal state",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemy earth chakra nature","ninja attack","for 2 rounds","upwind state",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemy earth chakra nature","ninja attack","attack ends","remove buffs",1);
 
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemies fire chakra nature","physical penetrating damage with",100);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemies fire chakra nature","100% chance to makes him enter wind bond state for 2 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemies fire chakra nature","100% chance to makes him incinerate state with 120% rate for 2 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemies fire chakra nature","cc resistance",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemy fire chakra nature","ninja attack","attack ends","physical penetrating damage with",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemy fire chakra nature","ninja attack","for 2 rounds","wind bond state",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemys fire chakra nature","ninja attack","for 2 rounds","incinerate state with 120% rate",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemy fire chakra nature","ninja attack","for 2 rounds","cc resistance",30);
 
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemies wind chakra nature","strategy penetrating damage with",100);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemies wind chakra nature","100% chance to makes him enter freeze state for 2 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemies wind chakra nature","100% chance to makes him enter weak state for 2 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemies wind chakra nature","cc succes rate",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemy wind chakra nature","ninja attack","attack ends","strategy penetrating damage with",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemy wind chakra nature","ninja attack","for 2 rounds","freeze state",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemy wind chakra nature","ninja attack","for 2 rounds","weak state",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemy wind chakra nature","ninja attack","for 2 rounds","cc succes rate",30);
 
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor) 
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemies lightning chakra nature","growth rate",400);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemies lightning chakra nature","100% chance to makes him enter bind state for 2 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)     
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemies lightning chakra nature","attack",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)     
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemies lightning chakra nature","defense",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor) 
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemies water chakra nature","growth rate",400);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemies water chakra nature","100% chance to makes him enter bind state for 2 round",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor) 
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemy lightning chakra nature","ninja attack","attack ends","growth rate",400);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemy lightning chakra nature","ninja attack","for 2 rounds","bind state",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)     
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemy lightning chakra nature","ninja attack","for 2 rounds","attack",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)     
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemy lightning chakra nature","ninja attack","for 2 rounds","defense",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor) 
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemy water chakra nature","ninja attack","attack ends","growth rate",400);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemy water chakra nature","ninja attack","for 2 rounds","bind state",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)     
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemy water chakra nature","ninja attack","for 2 rounds","attack",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)     
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemy water chakra nature","ninja attack","for 2 rounds","defense",30);
 
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)     
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemies water chakra nature","attack",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)     
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemies water chakra nature","defense",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor) 
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","all enemies who have unactivated chakra nature","growth rate",400);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","all enemies who have unactivated chakra nature","100% chance to makes him enter bind state for 2 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)     
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","all enemies who have unactivated chakra nature","attack",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)     
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","all enemies who have unactivated chakra nature","defense",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor) 
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","attack","enemy unactivated chakra nature","ninja attack","attack ends","growth rate",400);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","enemy unactivated chakra nature","ninja attack","for 2 rounds","bind state",100);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)     
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemy unactivated chakra nature","ninja attack","for 2 rounds","attack",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)     
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","decrease","enemy unactivated chakra nature","ninja attack","for 2 rounds","defense",30);
 
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor) 
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","allies lightning chakra nature","upwind state for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","increase","allies lightning chakra nature","critical chance(can surpass limit)",30);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)     
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","allies lightning chakra nature","disperse debuffs",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor) 
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","ally lightning chakra nature","ninja attack","for 2 rounds","upwind state",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","increase","ally lightning chakra nature","ninja attack","for 2 rounds","critical chance(can surpass limit)",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)     
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","ally lightning chakra nature","ninja attack","attack ends","remove debuffs",1);
 
 
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)     
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","allies water chakra nature","bond state for 2 rounds",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)     
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","allies water chakra nature","fury shield state(10%prob) for 2 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)     
-values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","increase","allies water chakra nature","defense",200);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)     
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","ally water chakra nature","ninja attack","for 2 rounds","bond state",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)     
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","apply","ally water chakra nature","ninja attack","for 2 rounds","fury shield",10);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)     
+values("Psychic: Chameleon","Animal Path","NORMAL_ATTACK","increase","ally water chakra nature","ninja attack","for 2 rounds","defense",200);
 
 
 insert into ninja_skills(nombre,ninja,tipo,texto) 
 values("PsychicHellhound","Animal Path","SKILL","Attack all enemis with 330% growth rate,30% chance to make self enter super dodge state for 2 round,50% chance to make ally support enter super dodge for 3 round.Increase all allies damage by 50%,and increase all allies immune damage rate for 3 round.Decrease all enemies damage rate by 50%,and immune damage rate for 3 round.Disperse all enemies buff and make them can be added any buff state for 3 round.");
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("PsychicHellhound","Animal Path","SKILL","attack","all enemies","growth rate",330);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("PsychicHellhound","Animal Path","SKILL","apply","self","30% chance to make self enter super dodge state for 2 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("PsychicHellhound","Animal Path","SKILL","apply","allie Supports","50% chance to make ally support enter super dodge for 3 round",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("PsychicHellhound","Animal Path","SKILL","increase","all allies","damage rate",50);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("PsychicHellhound","Animal Path","SKILL","increase","all allies","avoid injury rate",50);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("PsychicHellhound","Animal Path","SKILL","decrease","all enemies","damage rate",50);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("PsychicHellhound","Animal Path","SKILL","decrease","all enemies","avoid injury rate",50);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("PsychicHellhound","Animal Path","SKILL","apply","all enemies","disperse his buffs",1);
-insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,nombre_atributo,valor)
-values("PsychicHellhound","Animal Path","SKILL","apply","all enemies","make unable to gain buffs",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("PsychicHellhound","Animal Path","SKILL","attack","all enemies","ninja attack","attack ends","growth rate",330);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("PsychicHellhound","Animal Path","SKILL","apply","self","ninja attack","for 2 rounds","super dodge state",30);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("PsychicHellhound","Animal Path","SKILL","apply","allie Supports","ninja attack","for 3 rounds","super dodge state",50);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("PsychicHellhound","Animal Path","SKILL","increase","all allies","ninja attack","for 3 rounds","damage rate",50);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("PsychicHellhound","Animal Path","SKILL","increase","all allies","ninja attack","for 3 rounds","avoid injury rate",50);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("PsychicHellhound","Animal Path","SKILL","decrease","all enemies","ninja attack","for 3 rounds","damage rate",50);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("PsychicHellhound","Animal Path","SKILL","decrease","all enemies","ninja attack","for 3 rounds","avoid injury rate",50);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("PsychicHellhound","Animal Path","SKILL","apply","all enemies","ninja attack","battle ends","remove buffs",1);
+insert into skill_atributo(nombre_skill,nombre_ninja,tipo,accion,afecta,condicion,tiempo,nombre_atributo,valor)
+values("PsychicHellhound","Animal Path","SKILL","apply","all enemies","ninja attack","for 3 rounds","unable gain buffs state",1);
 
 
- 
 insert into ninja_awakening(nombre,ninja,nivel,activo,tipo,texto)
 values("PsychicPanda","Animal Path","1ri",true,"TALENT","Increase Block rate by 30%(Can break upper limit)");
-insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo)
-values("PsychicPanda","Animal Path","1ri","increase","self","block(can surpass limit)",30,"TALENT");
+insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo,condicion,tiempo)
+values("PsychicPanda","Animal Path","1ri","increase","self","block(can surpass limit)",30,"TALENT","ninja is alive","battle ends");
+
+
+
+
+
+
+
+
+
+
+

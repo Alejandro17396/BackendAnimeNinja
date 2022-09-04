@@ -54,12 +54,43 @@ public class NinjaAwakeningStat implements Serializable{
 	@Column(name="valor")
 	private Long value;
 	
+	@Column(name="condicion")
+	private String condition;
+	
+	@Column(name="tiempo")
+	private String time;
+	
+	
 	public NinjaAwakeningStat() {
 		
 	}
 
 	
 	
+	public String getCondition() {
+		return condition;
+	}
+
+
+
+	public void setCondition(String condition) {
+		this.condition = condition;
+	}
+
+
+
+	public String getTime() {
+		return time;
+	}
+
+
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+
+
 	public String getAction() {
 		return action;
 	}
