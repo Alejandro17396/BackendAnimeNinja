@@ -37,11 +37,9 @@ public class NinjaAwakening implements Serializable{
 	private String level;
 	
 	@Column(name="activo")
-	@JsonIgnore
 	private boolean active;
 	
 	@Column(name="ninja",insertable=false, updatable=false)
-	@JsonIgnore
 	private String ninja;
 	
 	@Column(name="texto")

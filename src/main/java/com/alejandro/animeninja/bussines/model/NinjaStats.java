@@ -23,7 +23,6 @@ public class NinjaStats implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@JsonIgnore
 	@Column(name="ninja" ,insertable=false, updatable=false)
 	private String name;
 	

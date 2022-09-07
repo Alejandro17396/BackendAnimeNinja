@@ -21,17 +21,14 @@ public class NinjaAwakeningStat implements Serializable{
 	
 	@Id
 	@Column(name="nombre",insertable=false, updatable=false)
-	@JsonIgnore
 	private String name;
 	
 	@Id
 	@Column(name="ninja")
-	@JsonIgnore
 	private String ninja;
 	
 	@Id
 	@Column(name="nivel",insertable=false, updatable=false)
-	@JsonIgnore
 	private String level;
 	
 	@Id

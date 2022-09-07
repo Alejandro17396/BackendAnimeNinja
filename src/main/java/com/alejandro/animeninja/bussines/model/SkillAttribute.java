@@ -22,18 +22,15 @@ public class SkillAttribute implements Serializable{
 
 	@Id
 	@Column(name="nombre_skill",insertable=false, updatable=false)
-	@JsonIgnore
 	private String skillName;
 	
 	@Id
 	@Column(name="nombre_ninja",insertable=false, updatable=false)
-	@JsonIgnore
 	private String ninjaName;
 	
 	@Id
 	@Column(name="tipo",insertable=false, updatable=false)
 	@Enumerated(EnumType.STRING)
-	@JsonIgnore
 	private SkillType type;
 	
 	@Id

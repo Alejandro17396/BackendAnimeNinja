@@ -9,6 +9,13 @@ drop table partes_accesorios;
 drop table bonusaccesorios_atributo;
 drop table bonusaccesorios;
 drop table set_accesorios;
+drop table stat_atributo;
+drop table ninja_stats;
+drop table skill_atributo;
+drop table ninja_skills;
+drop table ninja_awakening_atributo;
+drop table ninja_awakening;
+drop table ninjas;
 drop table atributos;
 
 
@@ -145,7 +152,7 @@ create table  ninja_skills(
 	nombre					varchar(200)							,
     ninja					varchar(200)							,
     tipo					varchar(40)								,
-    texto					varchar(1000)							,
+    texto					varchar(2000)							,
 	
     primary key(nombre,tipo,ninja)									,
     foreign key(ninja)				references ninjas(nombre)		
@@ -160,6 +167,8 @@ create table  skill_atributo(
 	valor							bigint									,
     accion							varchar(50)								,
     afecta							varchar(50)								,
+    condicion						varchar(50)								,
+    tiempo							varchar(50)								,
     
     primary key(nombre_ninja,nombre_atributo,nombre_skill,tipo,accion,afecta)				,
     foreign key(nombre_ninja)								references ninjas(nombre)					,
@@ -167,7 +176,6 @@ create table  skill_atributo(
     foreign key(nombre_atributo)							references atributos(nombre)
     
 );
-
 
 create table  ninja_awakening(
 
@@ -193,8 +201,10 @@ create table  ninja_awakening_atributo(
 	tipo							varchar(40)								,
 	accion							varchar(50)								,
     afecta							varchar(50)								,
+	condicion						varchar(50)								,
+    tiempo							varchar(50)								,
     
-	primary key(nivel,ninja,tipo,nombre_atributo,nombre,accion,afecta)										,
+	primary key(nivel,ninja,tipo,nombre_atributo,nombre,accion,afecta)						,
     foreign key(ninja)								references ninjas(nombre)								,
     foreign key(nombre_atributo)					references atributos(nombre)							,
 	foreign key(nombre,tipo,nivel) 					references ninja_awakening(nombre,tipo,nivel)					

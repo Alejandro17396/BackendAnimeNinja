@@ -19,12 +19,10 @@ public class AttributeStat implements Serializable{
 
 	@Id
 	@Column(name="ninja")
-	@JsonIgnore
 	private String ninja;
 	
 	@Id 
 	@Column(name="nivel")
-	@JsonIgnore
 	private String level;
 	
 	@Id

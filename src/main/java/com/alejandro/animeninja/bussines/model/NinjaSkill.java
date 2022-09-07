@@ -29,7 +29,6 @@ public class NinjaSkill implements Serializable{
 	
 	@Id
 	@Column(name="ninja",insertable=false, updatable=false)
-	@JsonIgnore
 	private String ninja;
 	
 	@Id
@@ -75,12 +74,12 @@ public class NinjaSkill implements Serializable{
 		this.type = type;
 	}
 
-	public String getTexto() {
+	public String getSkillText() {
 		return skillText;
 	}
 
-	public void setTexto(String texto) {
-		this.skillText = texto;
+	public void setSkillText(String skillText) {
+		this.skillText = skillText;
 	}
 
 	public List<SkillAttribute> getAttributes() {
