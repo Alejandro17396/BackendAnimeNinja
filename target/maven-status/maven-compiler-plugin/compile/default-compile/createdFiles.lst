@@ -16,6 +16,7 @@ com\alejandro\animeninja\bussines\model\NinjaStats_.class
 com\alejandro\animeninja\integration\specifications\BonusAccesorioSpecification.class
 com\alejandro\animeninja\bussines\model\dto\NinjaSkillDTO.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortEquiposByAttributes.class
+com\alejandro\animeninja\integration\specifications\NinjaSpecification.class
 com\alejandro\animeninja\bussines\model\NinjaAwakeningStat_.class
 com\alejandro\animeninja\bussines\model\dto\NinjaAwakeningDTO.class
 com\alejandro\animeninja\bussines\model\BonusAccesorioAtributo_.class
@@ -36,6 +37,7 @@ com\alejandro\animeninja\bussines\sort\services\impl\SortBonusAtributo.class
 com\alejandro\animeninja\bussines\model\NinjaAwakening_.class
 com\alejandro\animeninja\integration\repositories\BonusRepository.class
 com\alejandro\animeninja\bussines\model\BonusAccesorioAtributo.class
+com\alejandro\animeninja\bussines\model\dto\NinjaFilterDTO.class
 com\alejandro\animeninja\bussines\mappers\NinjaMapperImpl.class
 com\alejandro\animeninja\presentation\controllers\AtributosController.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortSetAccesoriosByAttributes.class

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.alejandro.animeninja.bussines.model.ClaveNinja;
@@ -19,15 +20,18 @@ public class NinjaServiceImpl implements NinjaService {
 	
 	@Override
 	public List<Ninja> getAll() {
-		// TODO Auto-generated method stub
 		return ninjaRepository.findAll();
 	}
 
 	@Override
 	public Ninja getNinja(String name) {
-		// TODO Auto-generated method stub
 		Optional <Ninja> ninja = ninjaRepository.findById(name);
 		return ninja.isPresent()? ninja.get() : null;
+	}
+
+	@Override
+	public List<Ninja> getBySpecification(Specification <Ninja> specification) {
+		return ninjaRepository.findAll(specification);
 	}
 
 }
