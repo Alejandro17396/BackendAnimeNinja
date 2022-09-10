@@ -1,0 +1,38 @@
+package com.alejandro.animeninja.bussines.model.dto;
+
+import java.io.Serializable;
+import java.util.List;
+
+public class CreateComboNinjaDTO implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	List<NinjaFilterDTO> filters;
+	List<NinjaFilterDTO> order;
+
+	public CreateComboNinjaDTO() {
+		super();
+	}
+
+	public CreateComboNinjaDTO(List<NinjaFilterDTO> filters, List<NinjaFilterDTO> order) {
+		super();
+		this.filters = filters;
+		this.order = order;
+	}
+
+	public List<NinjaFilterDTO> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(List<NinjaFilterDTO> filters) {
+		this.filters = filters;
+	}
+
+	public List<NinjaFilterDTO> getOrder() {
+		return order;
+	}
+
+	public void setOrder(List<NinjaFilterDTO> order) {
+		this.order = order;
+	}
+
+}
