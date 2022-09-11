@@ -177,6 +177,37 @@ public class SkillAttribute implements Serializable{
 				&& Objects.equals(skillName, other.skillName) && type == other.type;
 	}
 	
+	public boolean canBeMerged(SkillAttribute other) {
+		if (this == other)
+			return false;
+		if (other == null)
+			return false;
+		if (getClass() != other.getClass())
+			return false;
+		if(this.attributeName.equals(other.attributeName) && this.type == other.type 
+				&& this.impact.equals(other.impact) && this.action.equals(other.action) 
+				&& this.condition.equals(other.condition)) {
+			return true;
+		}
+		
+		
+		return false;
+	}
 	
+	public SkillAttribute clone() {
+		
+		SkillAttribute other = new SkillAttribute();
+		
+		other.action=this.action;
+		other.attributeName=this.attributeName;
+		other.condition=this.condition;
+		other.impact=this.impact;
+		other.type=this.type;
+		other.time=this.time;
+		other.value=this.value;
+		
+		
+		return other;
+	}
 
 }

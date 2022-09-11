@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import com.alejandro.animeninja.bussines.model.FormationNinja;
 import com.alejandro.animeninja.bussines.model.Ninja;
 
 import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
@@ -16,7 +17,7 @@ public interface NinjaService {
 	
 	Ninja getNinja(String clave);
 	
-	List <NinjasDTO> createNinjaFormation(Specification <Ninja> specification);
+	List <FormationNinja> createNinjaFormation(Specification <Ninja> specification);
 	
 	
 }
