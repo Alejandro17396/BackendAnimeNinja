@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-09-11T03:19:33+0200",
+    date = "2022-09-12T00:20:40+0200",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
@@ -39,6 +39,7 @@ public class FormationNinjaMapperImpl implements FormationNinjaMapper {
 
         FormationNinjaDTO formationNinjaDTO = new FormationNinjaDTO();
 
+        formationNinjaDTO.setFormationNinjas( formation.getFormationNinjas() );
         formationNinjaDTO.setMergedAtributes( skillAttributeListToSkillAttributeDTOList( formation.getMergedAtributes() ) );
         formationNinjaDTO.setSupports( ninjaSetToNinjaDTOSet( formation.getSupports() ) );
         formationNinjaDTO.setAssaulters( ninjaSetToNinjaDTOSet( formation.getAssaulters() ) );
@@ -56,6 +57,7 @@ public class FormationNinjaMapperImpl implements FormationNinjaMapper {
         FormationNinja formationNinja = new FormationNinja();
 
         formationNinja.setMergedAtributes( skillAttributeDTOListToSkillAttributeList( formation.getMergedAtributes() ) );
+        formationNinja.setFormationNinjas( formation.getFormationNinjas() );
         formationNinja.setSupports( ninjaDTOSetToNinjaSet( formation.getSupports() ) );
         formationNinja.setAssaulters( ninjaDTOSetToNinjaSet( formation.getAssaulters() ) );
         formationNinja.setVanguards( ninjaDTOSetToNinjaSet( formation.getVanguards() ) );

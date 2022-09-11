@@ -2,6 +2,8 @@ package com.alejandro.animeninja.bussines.services.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.alejandro.animeninja.bussines.mappers.FormationNinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.model.Formation;
 import com.alejandro.animeninja.bussines.model.FormationNinja;
@@ -17,9 +20,18 @@ import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.SkillType;
+import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.NinjaFilterDTO;
 import com.alejandro.animeninja.bussines.services.NinjaService;
+import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
+import com.alejandro.animeninja.bussines.sort.services.impl.SortFormationsByMergedAttributes;
+import com.alejandro.animeninja.bussines.utils.FormationFilterUtils;
 import com.alejandro.animeninja.integration.repositories.NinjaRepository;
+import com.alejandro.animeninja.integration.specifications.NinjaSpecification;
 
+@SuppressWarnings({ "unchecked" })
 @Service
 public class NinjaServiceImpl implements NinjaService {
 
@@ -27,7 +39,10 @@ public class NinjaServiceImpl implements NinjaService {
 	private NinjaRepository ninjaRepository;
 
 	@Autowired
-	private NinjaMapper mapper;
+	private NinjaMapper ninjaMapper;
+
+	@Autowired
+	private FormationNinjaMapper formationMapper;
 
 	@Override
 	public List<Ninja> getAll() {
@@ -41,34 +56,181 @@ public class NinjaServiceImpl implements NinjaService {
 	}
 
 	@Override
-	public List<Ninja> getBySpecification(Specification<Ninja> specification) {
+	public List<Ninja> getNinjasBySpecification(Specification<Ninja> specification) {
 		List<Ninja> ninjas = ninjaRepository.findAll(specification);
 		return ninjas;
 	}
 
 	@Override
-	public List<FormationNinja> createNinjaFormation(Specification<Ninja> specification) {
-		List<Ninja> ninjas = ninjaRepository.findAll(specification);
-		List<FormationNinja> formations = generateNinjaFormations(ninjas);
+	public List<NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred) {
+		Specification<Ninja> specification = createAndSpecification(attributes);
+		List<Ninja> ninjas = getNinjasBySpecification(specification);
 
-		mergeAttributesFormation(formations);
-		
-		return formations;
+		if (filtred) {
+
+		}
+
+		if (sorted) {
+
+		}
+
+		return ninjaMapper.toDtoList(ninjas);
 	}
 
-	public void mergeAttributesFormation(List<FormationNinja> formations) {
+	@Override
+	public List<NinjaDTO> getNinjaFiltroOr(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred) {
+		Specification<Ninja> specification = createOrSpecification(attributes);
+		List<Ninja> ninjas = getNinjasBySpecification(specification);
+
+		if (sorted) {
+
+		}
+
+		if (filtred) {
+
+		}
+
+		return ninjaMapper.toDtoList(ninjas);
+	}
+
+	@Override
+	public List<FormationNinjaDTO> getNinjaComboFormations(CreateComboNinjaDTO attributes, boolean merge,
+			boolean sorted, boolean filtred, boolean or) {
+		Specification<Ninja> specification = null;
+
+		if (or) {
+			specification = createOrSpecification(attributes);
+		} else {
+			specification = createAndSpecification(attributes);
+		}
+		List<Ninja> ninjas = getNinjasBySpecification(specification);
+		List<FormationNinja> formations = generateNinjaFormations(ninjas);
+		createNameFormations(formations);
+		if (merge) {
+			mergeAttributesFormation(formations);
+		}
+
+		if (filtred) {
+			filterFormationsByAttributes(attributes.getAttributeFilters(), formations);
+		}
+
+		if (sorted) {
+			attributes.getOrder().forEach(order -> {
+				Collections.sort(formations, new SortFormationsByMergedAttributes(order).reversed());
+			});
+		}
+
+		return formationMapper.toDTOList(formations);
+	}
+
+	// Private Methods
+
+	private void createNameFormations(List<FormationNinja> formations) {
+		
+		formations.forEach(formation -> {
+			String name = "";
+			List<Ninja> ninjas = formation.toList();
+			for(Ninja n : ninjas) {
+				name = name + " "+n.getName()+",";
+			}
+			formation.setFormationNinjas(name);
+		});
+		
+	}
+
+	private void filterFormationsByAttributes(List<NinjaFilterDTO> filters, List<FormationNinja> formations) {
+
+		Iterator<FormationNinja> it = formations.iterator();
+
+		while (it.hasNext()) {
+			FormationNinja formation = it.next();
+			if (!passFilter(filters, formation)) {
+				it.remove();
+			}
+		}
+
+	}
+
+	private boolean passFilter(List<NinjaFilterDTO> filters, FormationNinja formation) {
+
+		for (NinjaFilterDTO filter : filters) {
+			for (SkillAttribute attribute : formation.getMergedAtributes()) {
+				if (FormationFilterUtils.canBeCompared(attribute, filter)
+						&& attribute.getValue() >= filter.getValue()) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+
+	}
+
+	private void mergeAttributesFormation(List<FormationNinja> formations) {
 
 		for (FormationNinja formation : formations) {
 			List<Ninja> ninjas = formation.toList();
 			List<SkillAttribute> mergedAttributes = mergeAttributes(ninjas);
-			for(SkillAttribute att: mergedAttributes) {
+			for (SkillAttribute att : mergedAttributes) {
 				att.setNinjaName("Formation");
 				att.setSkillName("Total talent");
 				att.setType(SkillType.TALENT);
 			}
 			formation.setMergedAtributes(mergedAttributes);
+			recalculateMergedAttributes((ArrayList<SkillAttribute>) formation.getMergedAtributes());
 		}
 
+	}
+
+	private void recalculateMergedAttributes(ArrayList<SkillAttribute> mergedAtributes) {
+
+		ArrayList<SkillAttribute> mergedAtributes2 = (ArrayList<SkillAttribute>) mergedAtributes.clone();
+
+		for (SkillAttribute attribute : mergedAtributes2) {
+			if (attribute.getImpact().equals("all allies")) {
+				for (SkillAttribute attribute2 : mergedAtributes) {
+					if (attribute2.getImpact().contains("ally") && attribute2.canBeIncreasedBy(attribute)) {
+						attribute2.setValue(attribute2.getValue() + attribute.getValue());
+					}
+				}
+			} else if (attribute.getImpact().equals("all enemies")) {
+
+			}
+		}
+
+	}
+
+	private Specification<Ninja> createAndSpecification(CreateComboNinjaDTO attributes) {
+		List<NinjaFilterDTO> filterList = attributes.getFilters();
+		Specification<Ninja> specification = Specification.where(null);
+
+		for (NinjaFilterDTO filter : filterList) {
+			if (filter.getImpact().equals("all allies")) {
+				specification = specification.and(NinjaSpecification.createAlliesEspecialPredicate(filter));
+
+			} else if (filter.getImpact().equals("all enemies")) {
+				specification = specification.and(NinjaSpecification.createEnemiesEspecialPredicate(filter));
+			} else {
+				specification = specification.and(NinjaSpecification.skillPredicate(filter));
+			}
+		}
+		return specification;
+	}
+
+	private Specification<Ninja> createOrSpecification(CreateComboNinjaDTO attributes) {
+		List<NinjaFilterDTO> filterList = attributes.getFilters();
+		Specification<Ninja> specification = Specification.where(null);
+
+		for (NinjaFilterDTO filter : filterList) {
+			if (filter.getImpact().equals("all allies")) {
+				specification = specification.or(NinjaSpecification.createAlliesEspecialPredicate(filter));
+			} else if (filter.getImpact().equals("all enemies")) {
+				specification = specification.or(NinjaSpecification.createEnemiesEspecialPredicate(filter));
+			} else {
+				specification = specification.or(NinjaSpecification.skillPredicate(filter));
+			}
+		}
+		return specification;
 	}
 
 	private List<SkillAttribute> mergeAttributes(List<Ninja> ninjas) {
@@ -77,25 +239,25 @@ public class NinjaServiceImpl implements NinjaService {
 		aux.setSkills(new ArrayList<>());
 		aux.setAwakenings(new ArrayList<>());
 		aux.setStats(new ArrayList<>());
-		
+
 		for (Ninja n : ninjas) {
 			for (NinjaSkill skill : n.getSkills()) {
 				if (skill.getType() == SkillType.TALENT) {
-					ArrayList<SkillAttribute> aux1= new ArrayList<>();
+					ArrayList<SkillAttribute> aux1 = new ArrayList<>();
 					aux1.addAll(skill.getAttributes());
-					mergeSkill(list,(ArrayList<SkillAttribute>) aux1.clone());
+					mergeSkill(list, (ArrayList<SkillAttribute>) aux1.clone());
 				}
 			}
 		}
 		return list;
-		
+
 	}
 
-	private void mergeSkill(List<SkillAttribute> actual,ArrayList<SkillAttribute> nueva) {
+	private void mergeSkill(List<SkillAttribute> actual, ArrayList<SkillAttribute> nueva) {
 
 		if (actual.isEmpty()) {
-			for(SkillAttribute attribute : nueva) {
-				if(!attribute.getImpact().equals("self")) {
+			for (SkillAttribute attribute : nueva) {
+				if (!attribute.getImpact().equals("self")) {
 					actual.add(attribute.clone());
 				}
 			}
@@ -105,12 +267,18 @@ public class NinjaServiceImpl implements NinjaService {
 				for (SkillAttribute newAttribute : nueva) {
 					if (newAttribute.getImpact().equals("self")) {
 						remove.add(newAttribute);
-					}else if (attribute.canBeMerged(newAttribute)) {
+					} else if (attribute.canBeMerged(newAttribute)) {
 						remove.add(newAttribute);
 						attribute.setValue(attribute.getValue() + newAttribute.getValue());
+
 					}
 				}
-				actual.removeAll(remove);
+				nueva.removeAll(remove);
+			}
+			for (SkillAttribute newAttribute : nueva) {
+				if (!newAttribute.getImpact().equals("self")) {
+					actual.add(newAttribute.clone());
+				}
 			}
 		}
 
@@ -133,9 +301,6 @@ public class NinjaServiceImpl implements NinjaService {
 		ArrayList<Ninja> vanguards = (ArrayList<Ninja>) ninjas.stream()
 				.filter(ninja -> (ninja.getFormation() == Formation.VANGUARD) ? true : false)
 				.collect(Collectors.toList());
-		for (Ninja n : assaulters) {
-			System.out.println(n.getName());
-		}
 
 		List<FormationNinja> formations = new ArrayList<>();
 

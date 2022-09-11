@@ -11,6 +11,7 @@ import java.util.Set;
 
 public class FormationNinjaDTO {
 
+	private String formationNinjas;
 	private Set<NinjaDTO> supports;
 	private Set<NinjaDTO> assaulters;
 	private Set<NinjaDTO> vanguards;
@@ -32,7 +33,15 @@ public class FormationNinjaDTO {
 		vanguards = new HashSet<NinjaDTO>(); 
 		mergedAtributes = new ArrayList<SkillAttributeDTO>();
 	}
-	
+
+	public String getFormationNinjas() {
+		return formationNinjas;
+	}
+
+	public void setFormationNinjas(String formationNinjas) {
+		this.formationNinjas = formationNinjas;
+	}
+
 	public List<SkillAttributeDTO> getMergedAtributes() {
 		return mergedAtributes;
 	}

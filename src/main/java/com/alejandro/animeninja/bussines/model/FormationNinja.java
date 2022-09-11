@@ -7,6 +7,7 @@ import java.util.Set;
 
 public class FormationNinja {
 	
+	private String formationNinjas;
 	private Set <Ninja> supports;
 	private Set <Ninja> assaulters;
 	private Set <Ninja> vanguards;
@@ -19,6 +20,16 @@ public class FormationNinja {
 
 	public void setMergedAtributes(List<SkillAttribute> mergedAtributes) {
 		this.mergedAtributes = mergedAtributes;
+	}
+
+
+	public String getFormationNinjas() {
+		return formationNinjas;
+	}
+
+
+	public void setFormationNinjas(String formationNinjas) {
+		this.formationNinjas = formationNinjas;
 	}
 
 

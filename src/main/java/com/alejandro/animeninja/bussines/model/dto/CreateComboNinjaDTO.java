@@ -6,8 +6,9 @@ import java.util.List;
 public class CreateComboNinjaDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	List<NinjaFilterDTO> filters;
-	List<NinjaFilterDTO> order;
+	private List<NinjaFilterDTO> filters;
+	private List<NinjaFilterDTO> attributeFilters;
+	private List<NinjaFilterDTO> order;
 
 	public CreateComboNinjaDTO() {
 		super();
@@ -35,4 +36,12 @@ public class CreateComboNinjaDTO implements Serializable {
 		this.order = order;
 	}
 
+	public List<NinjaFilterDTO> getAttributeFilters() {
+		return attributeFilters;
+	}
+
+	public void setAttributeFilters(List<NinjaFilterDTO> attributeFilters) {
+		this.attributeFilters = attributeFilters;
+	}
+	
 }

@@ -158,10 +158,13 @@ public class SkillAttribute implements Serializable{
 	}
 
 
+	
+	
 	@Override
 	public int hashCode() {
-		return Objects.hash(attributeName, ninjaName, skillName, type);
+		return Objects.hash(action, attributeName, impact, ninjaName, skillName, type);
 	}
+
 
 
 	@Override
@@ -173,10 +176,13 @@ public class SkillAttribute implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		SkillAttribute other = (SkillAttribute) obj;
-		return Objects.equals(attributeName, other.attributeName) && Objects.equals(ninjaName, other.ninjaName)
+		return Objects.equals(action, other.action) && Objects.equals(attributeName, other.attributeName)
+				&& Objects.equals(impact, other.impact) && Objects.equals(ninjaName, other.ninjaName)
 				&& Objects.equals(skillName, other.skillName) && type == other.type;
 	}
-	
+
+
+
 	public boolean canBeMerged(SkillAttribute other) {
 		if (this == other)
 			return false;
@@ -210,4 +216,18 @@ public class SkillAttribute implements Serializable{
 		return other;
 	}
 
+	
+	public boolean canBeIncreasedBy(SkillAttribute attribute) {
+		if(attribute == null) {
+			return false;
+		}
+		if(this == attribute) {
+			return false;
+		}
+		
+		return this.getAttributeName().equals(attribute.getAttributeName()) 
+				&& this.getAction().equals(attribute.getAction())
+				&& this.getCondition().equals(attribute.getCondition());
+		
+	}
 }

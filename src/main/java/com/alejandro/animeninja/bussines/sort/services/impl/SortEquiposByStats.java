@@ -8,7 +8,7 @@ public class SortEquiposByStats implements Comparator<Equipo> {
 
 	@Override
 	public int compare(Equipo e1, Equipo e2) {
-		// TODO Auto-generated method stub
+		
 		if(e1.getPartes().get(0).getValor()<e2.getPartes().get(0).getValor()) {
 		
 			return -1;
@@ -16,7 +16,6 @@ public class SortEquiposByStats implements Comparator<Equipo> {
 		
 			return 0;
 		}
-	
 		return 1;
 	}
 

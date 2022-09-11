@@ -1,5 +1,7 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
+import java.util.Objects;
+
 import com.alejandro.animeninja.bussines.model.SkillType;
 
 public class NinjaFilterDTO {
@@ -102,6 +104,25 @@ public class NinjaFilterDTO {
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(action, attributeName, impact, type);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NinjaFilterDTO other = (NinjaFilterDTO) obj;
+		return Objects.equals(action, other.action) && Objects.equals(attributeName, other.attributeName)
+				&& Objects.equals(impact, other.impact) && type == other.type;
+	}
+	
 	
 	
 }
