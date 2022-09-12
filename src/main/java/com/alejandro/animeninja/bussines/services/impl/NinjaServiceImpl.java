@@ -31,6 +31,8 @@ import com.alejandro.animeninja.bussines.utils.FormationFilterUtils;
 import com.alejandro.animeninja.integration.repositories.NinjaRepository;
 import com.alejandro.animeninja.integration.specifications.NinjaSpecification;
 
+import aj.org.objectweb.asm.Attribute;
+
 @SuppressWarnings({ "unchecked" })
 @Service
 public class NinjaServiceImpl implements NinjaService {
@@ -108,6 +110,7 @@ public class NinjaServiceImpl implements NinjaService {
 		createNameFormations(formations);
 		if (merge) {
 			mergeAttributesFormation(formations);
+			addSpecialCases(formations);
 		}
 
 		if (filtred) {
@@ -124,6 +127,30 @@ public class NinjaServiceImpl implements NinjaService {
 	}
 
 	// Private Methods
+
+	private void addSpecialCases(List<FormationNinja> formations) {
+		// TODO Auto-generated method stub
+		/*formations.forEach(formation -> {
+			List <SkillAttribute> vanguards = formation.getMergedAtributes().stream().filter(attribute->{
+				return attribute.getImpact().equals("ally Vanguards");
+			}).collect(Collectors.toList());
+			List <SkillAttribute> assaulters = formation.getMergedAtributes().stream().filter(attribute->{
+				return attribute.getImpact().equals("ally Assaulters");
+			}).collect(Collectors.toList());
+			List <SkillAttribute> supports = formation.getMergedAtributes().stream().filter(attribute->{
+				return attribute.getImpact().equals("ally Supports");
+			}).collect(Collectors.toList());
+			
+			vanguards.forEach(att ->{
+				SkillAttribute aux = att.clone();
+				aux.setImpact("all allies")
+				if(formation.getMergedAtributes().contains(aux)) {
+					
+				}
+			});
+			
+		});*/
+	}
 
 	private void createNameFormations(List<FormationNinja> formations) {
 		
@@ -320,6 +347,7 @@ public class NinjaServiceImpl implements NinjaService {
 			assaulters.remove(assaulter1);
 			ass1Combo(formations, assaulter1, assaulters, vanguards);
 		}
+		
 		return formations;
 	}
 
