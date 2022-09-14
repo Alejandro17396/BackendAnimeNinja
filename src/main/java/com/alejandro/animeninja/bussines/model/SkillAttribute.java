@@ -230,4 +230,17 @@ public class SkillAttribute implements Serializable{
 				&& this.getCondition().equals(attribute.getCondition());
 		
 	}
+	public boolean canBeCompared(SkillAttribute attribute) {
+		if(attribute == null) {
+			return false;
+		}
+		if(this == attribute) {
+			return false;
+		}
+		
+		return this.getAttributeName().equals(attribute.getAttributeName()) 
+				&& this.getAction().equals(attribute.getAction())
+				&& this.getImpact().equals(attribute.getImpact());
+		
+	}
 }
