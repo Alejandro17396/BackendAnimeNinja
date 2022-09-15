@@ -135,38 +135,34 @@ public class NinjaServiceImpl implements NinjaService {
 		for(NinjaFilterDTO filter : attributeFilters) {
 			if (filter.getImpact().equals("all allies") || filter.getImpact().equals("all enemies")) {
 				for(FormationNinja formation : formations) {
-					if (!containsAllAllies(formation.getMergedAtributes(), filter)) {
-						if (filter.getImpact().equals("all allies")) {
-							SkillAttribute aux = new SkillAttribute();
-							aux.setAction(filter.getAction());
-							aux.setAttributeName(filter.getAttributeName());
-							aux.setCondition(filter.getCondition());
-							aux.setType(filter.getType());
-							aux.setValue(filter.getValue());
-							if (!impactAllFormation(formation.getMergedAtributes(), filter, aux,"ally")) {
-								impactAllNatures(formation.getMergedAtributes(), filter, aux, "ally");
-							}
-							
-						} else {
-							SkillAttribute aux = new SkillAttribute();
-							aux.setAction(filter.getAction());
-							aux.setAttributeName(filter.getAttributeName());
-							aux.setCondition(filter.getCondition());
-							aux.setType(filter.getType());
-							aux.setValue(filter.getValue());
-							if (impactAllFormation(formation.getMergedAtributes(), filter, aux, "enemy")) {
-
-							}
+					if (filter.getImpact().equals("all allies") && !containsAllAllies(formation.getMergedAtributes(), filter)) {
+						SkillAttribute aux = new SkillAttribute();
+						aux.setAction(filter.getAction());
+						aux.setAttributeName(filter.getAttributeName());
+						aux.setCondition(filter.getCondition());
+						aux.setType(filter.getType());
+						aux.setValue(filter.getValue());
+						if (!impactAllFormation(formation.getMergedAtributes(), filter, aux,"ally")) {
+							impactAllNatures(formation.getMergedAtributes(), filter, aux, "ally");
+						}	
+						
+					}else if (filter.getImpact().equals("all enemies") && !containsAllAllies(formation.getMergedAtributes(), filter)){
+						SkillAttribute aux = new SkillAttribute();
+						aux.setAction(filter.getAction());
+						aux.setAttributeName(filter.getAttributeName());
+						aux.setCondition(filter.getCondition());
+						aux.setType(filter.getType());
+						aux.setValue(filter.getValue());
+						if (!impactAllFormation(formation.getMergedAtributes(), filter, aux, "enemy")) {
 							impactAllNatures(formation.getMergedAtributes(), filter, aux, "enemy");
 						}
 					}
-				}//	});
+				}
 			}
-		}//});
-
+		}
 	}
 
-	private boolean impactAllNatures(List<SkillAttribute> mergedAtributes, NinjaFilterDTO filter, SkillAttribute aux,
+	private boolean impactAllNatures(List<SkillAttribute> mergedAttributes, NinjaFilterDTO filter, SkillAttribute aux,
 			String impact2) {
 		List<String> positions = new ArrayList<>();
 		positions.add(impact2 + " lightning chakra nature");
@@ -181,7 +177,7 @@ public class NinjaServiceImpl implements NinjaService {
 		toAdd.setValue(999999L);
 		for (String impact : positions) {
 			aux.setImpact(impact);
-			for (SkillAttribute attribute : mergedAtributes) {
+			for (SkillAttribute attribute : mergedAttributes) {
 				if (attribute.canBeCompared(aux)) {
 					if (attribute.getValue() >= aux.getValue()) {
 						if (toAdd.getValue() > attribute.getValue()) {
@@ -197,8 +193,13 @@ public class NinjaServiceImpl implements NinjaService {
 			}
 
 			if (cont == 6) {
-				toAdd.setImpact("all allies");
-				mergedAtributes.add(toAdd);
+				if(impact2.equals("ally")) {
+					toAdd.setImpact("all allies");
+					mergedAttributes.add(toAdd);
+				}else if (impact2.equals("enemy")) {
+					toAdd.setImpact("all enemies");
+					mergedAttributes.add(toAdd);
+				}
 				return true;
 			}
 		}
@@ -244,8 +245,13 @@ public class NinjaServiceImpl implements NinjaService {
 			}
 
 			if (cont == 3) {
-				toAdd.setImpact("all allies");
-				mergedAttributes.add(toAdd);
+				if(impact2.equals("ally")) {
+					toAdd.setImpact("all allies");
+					mergedAttributes.add(toAdd);
+				}else if (impact2.equals("enemy")) {
+					toAdd.setImpact("all enemies");
+					mergedAttributes.add(toAdd);
+				}
 				return true;
 			}
 		}
