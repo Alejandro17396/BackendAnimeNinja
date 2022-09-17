@@ -90,7 +90,15 @@ public class NinjaSkill implements Serializable{
 		this.attributes = attributes;
 	}
 	
-	
+	public NinjaSkillKey getKey() {
+		
+		NinjaSkillKey key = new NinjaSkillKey();
+		key.setNinja(ninja);
+		key.setNombre(nombre);
+		key.setType(type);
+		
+		return key;
+	}
 	
 
 }

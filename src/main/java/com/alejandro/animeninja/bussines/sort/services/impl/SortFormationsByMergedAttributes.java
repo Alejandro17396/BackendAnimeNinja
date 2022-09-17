@@ -20,8 +20,8 @@ public class SortFormationsByMergedAttributes implements Comparator<FormationNin
 
 	@Override
 	public int compare(FormationNinja formation1 , FormationNinja formation2) {
-		List<SkillAttribute> mergedAtributes1 = formation1.getMergedAtributes();
-		List<SkillAttribute> mergedAtributes2 = formation2.getMergedAtributes();
+		List<SkillAttribute> mergedAtributes1 = formation1.getMergedTalentAttributes();
+		List<SkillAttribute> mergedAtributes2 = formation2.getMergedTalentAttributes();
 		SkillAttribute skill1 = null;
 		SkillAttribute skill2 = null;
 		

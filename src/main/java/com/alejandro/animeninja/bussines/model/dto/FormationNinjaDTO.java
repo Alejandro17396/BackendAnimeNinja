@@ -15,7 +15,8 @@ public class FormationNinjaDTO {
 	private Set<NinjaDTO> supports;
 	private Set<NinjaDTO> assaulters;
 	private Set<NinjaDTO> vanguards;
-	private List<SkillAttributeDTO> mergedAtributes;
+	private List<SkillAttributeDTO> mergedTalentAttributes;
+	private List<SkillAttributeDTO> finalSkillAttributes;
 	
 	public FormationNinjaDTO(Set<NinjaDTO> supports, Set<NinjaDTO> assaulters, Set<NinjaDTO> vanguards,
 			List<SkillAttributeDTO> mergedAtributes) {
@@ -23,7 +24,7 @@ public class FormationNinjaDTO {
 		this.supports = supports;
 		this.assaulters = assaulters;
 		this.vanguards = vanguards;
-		this.mergedAtributes = mergedAtributes;
+		this.mergedTalentAttributes = mergedAtributes;
 	}
 
 	public FormationNinjaDTO() {
@@ -31,7 +32,23 @@ public class FormationNinjaDTO {
 		supports = new HashSet<NinjaDTO>();
 		assaulters = new HashSet<NinjaDTO>();
 		vanguards = new HashSet<NinjaDTO>(); 
-		mergedAtributes = new ArrayList<SkillAttributeDTO>();
+		mergedTalentAttributes = new ArrayList<SkillAttributeDTO>();
+	}
+
+	public List<SkillAttributeDTO> getMergedTalentAttributes() {
+		return mergedTalentAttributes;
+	}
+
+	public void setMergedTalentAttributes(List<SkillAttributeDTO> mergedTalentAttributes) {
+		this.mergedTalentAttributes = mergedTalentAttributes;
+	}
+
+	public List<SkillAttributeDTO> getFinalSkillAttributes() {
+		return finalSkillAttributes;
+	}
+
+	public void setFinalSkillAttributes(List<SkillAttributeDTO> finalSkillAttributes) {
+		this.finalSkillAttributes = finalSkillAttributes;
 	}
 
 	public String getFormationNinjas() {
@@ -40,14 +57,6 @@ public class FormationNinjaDTO {
 
 	public void setFormationNinjas(String formationNinjas) {
 		this.formationNinjas = formationNinjas;
-	}
-
-	public List<SkillAttributeDTO> getMergedAtributes() {
-		return mergedAtributes;
-	}
-
-	public void setMergedAtributes(List<SkillAttributeDTO> mergedAtributes) {
-		this.mergedAtributes = mergedAtributes;
 	}
 
 	public Set<NinjaDTO> getSupports() {

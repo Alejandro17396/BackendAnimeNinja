@@ -20,6 +20,17 @@ public class SkillAttribute implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
+	
+	public SkillAtributeKey getKey() {
+		SkillAtributeKey key = new SkillAtributeKey();
+		key.setImpact(impact);
+		key.setAction(action);
+		key.setAttributeName(attributeName);
+		key.setType(type);
+		key.setNinjaName("");
+		key.setSkillName("");
+		return key;
+	}
 	@Id
 	@Column(name="nombre_skill",insertable=false, updatable=false)
 	private String skillName;

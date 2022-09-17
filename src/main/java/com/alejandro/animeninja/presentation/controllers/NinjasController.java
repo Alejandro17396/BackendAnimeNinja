@@ -85,6 +85,18 @@ public class NinjasController {
 		return response;
 	}
 	
+	/*@GetMapping("/createCombo")
+	public FormationsNinjaDTO getNinjaFormationSkillFinalAttributes(@RequestBody(required = false) CreateNinjaSkillDTO attributes,
+			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
+			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
+			@RequestParam(value = "or", required = false, defaultValue = "true") boolean or) {
+
+		FormationsNinjaDTO response = new FormationsNinjaDTO();
+		//response.setFormations(ninjaServices.getNinjaFormationSkillFinalAttributes(attributes, merge, sorted, filtred, or));
+		//response.setNumFormations(response.getFormations().size());
+		return response;
+	}*/
+	
 	/*List <List <SkillAttributeDTO>> response2 = new ArrayList<>();
 	
 	for(FormationNinjaDTO element : response.getFormations()) {

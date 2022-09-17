@@ -11,15 +11,26 @@ public class FormationNinja {
 	private Set <Ninja> supports;
 	private Set <Ninja> assaulters;
 	private Set <Ninja> vanguards;
-	private List<SkillAttribute> mergedAtributes;
+	private List<SkillAttribute> mergedTalentAttributes;
+	private List<FinalSkillsAttributes> finalSkillsAttributes;
 	
-	public List<SkillAttribute> getMergedAtributes() {
-		return mergedAtributes;
+	public List<SkillAttribute> getMergedTalentAttributes() {
+		return mergedTalentAttributes;
 	}
 
 
-	public void setMergedAtributes(List<SkillAttribute> mergedAtributes) {
-		this.mergedAtributes = mergedAtributes;
+	public void setMergedTalentAttributes(List<SkillAttribute> mergedTalentAttributes) {
+		this.mergedTalentAttributes = mergedTalentAttributes;
+	}
+
+
+	public List<FinalSkillsAttributes> getFinalSkillsAttributes() {
+		return finalSkillsAttributes;
+	}
+
+
+	public void setFinalSkillsAttributes(List<FinalSkillsAttributes> finalSkillsAttributes) {
+		this.finalSkillsAttributes = finalSkillsAttributes;
 	}
 
 
@@ -67,7 +78,8 @@ public class FormationNinja {
 		supports = new HashSet<Ninja>();
 		assaulters = new HashSet<Ninja>();
 		vanguards = new HashSet<Ninja>(); 
-		mergedAtributes = new ArrayList<SkillAttribute>();
+		mergedTalentAttributes = new ArrayList<SkillAttribute>();
+		finalSkillsAttributes = new ArrayList<>();
 	}
 
 	
