@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.bussines.mappers;
 
 import com.alejandro.animeninja.bussines.model.AttributeStat;
+import com.alejandro.animeninja.bussines.model.FinalSkillsAttributes;
 import com.alejandro.animeninja.bussines.model.FormationNinja;
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaAwakening;
@@ -9,6 +10,7 @@ import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.NinjaStats;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.dto.AttributeStatDTO;
+import com.alejandro.animeninja.bussines.model.dto.FinalSkillsAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaAwakeningDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaAwakeningStatDTO;
@@ -17,6 +19,7 @@ import com.alejandro.animeninja.bussines.model.dto.NinjaSkillDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaStatsDTO;
 import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-09-14T00:04:54+0200",
+    date = "2022-09-18T04:44:13+0200",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
@@ -39,8 +42,9 @@ public class FormationNinjaMapperImpl implements FormationNinjaMapper {
 
         FormationNinjaDTO formationNinjaDTO = new FormationNinjaDTO();
 
+        formationNinjaDTO.setMergedTalentAttributes( skillAttributeListToSkillAttributeDTOList( formation.getMergedTalentAttributes() ) );
+        formationNinjaDTO.setFinalSkillsAttributes( finalSkillsAttributesListToFinalSkillsAttributesDTOList( formation.getFinalSkillsAttributes() ) );
         formationNinjaDTO.setFormationNinjas( formation.getFormationNinjas() );
-        formationNinjaDTO.setMergedAtributes( skillAttributeListToSkillAttributeDTOList( formation.getMergedAtributes() ) );
         formationNinjaDTO.setSupports( ninjaSetToNinjaDTOSet( formation.getSupports() ) );
         formationNinjaDTO.setAssaulters( ninjaSetToNinjaDTOSet( formation.getAssaulters() ) );
         formationNinjaDTO.setVanguards( ninjaSetToNinjaDTOSet( formation.getVanguards() ) );
@@ -56,7 +60,8 @@ public class FormationNinjaMapperImpl implements FormationNinjaMapper {
 
         FormationNinja formationNinja = new FormationNinja();
 
-        formationNinja.setMergedAtributes( skillAttributeDTOListToSkillAttributeList( formation.getMergedAtributes() ) );
+        formationNinja.setMergedTalentAttributes( skillAttributeDTOListToSkillAttributeList( formation.getMergedTalentAttributes() ) );
+        formationNinja.setFinalSkillsAttributes( finalSkillsAttributesDTOListToFinalSkillsAttributesList( formation.getFinalSkillsAttributes() ) );
         formationNinja.setFormationNinjas( formation.getFormationNinjas() );
         formationNinja.setSupports( ninjaDTOSetToNinjaSet( formation.getSupports() ) );
         formationNinja.setAssaulters( ninjaDTOSetToNinjaSet( formation.getAssaulters() ) );
@@ -90,6 +95,36 @@ public class FormationNinjaMapperImpl implements FormationNinjaMapper {
         List<SkillAttributeDTO> list1 = new ArrayList<SkillAttributeDTO>( list.size() );
         for ( SkillAttribute skillAttribute : list ) {
             list1.add( skillAttributeToSkillAttributeDTO( skillAttribute ) );
+        }
+
+        return list1;
+    }
+
+    protected FinalSkillsAttributesDTO finalSkillsAttributesToFinalSkillsAttributesDTO(FinalSkillsAttributes finalSkillsAttributes) {
+        if ( finalSkillsAttributes == null ) {
+            return null;
+        }
+
+        FinalSkillsAttributesDTO finalSkillsAttributesDTO = new FinalSkillsAttributesDTO();
+
+        finalSkillsAttributesDTO.setNinjaFormation( finalSkillsAttributes.getNinjaFormation() );
+        String[] ninjasAttackOrder = finalSkillsAttributes.getNinjasAttackOrder();
+        if ( ninjasAttackOrder != null ) {
+            finalSkillsAttributesDTO.setNinjasAttackOrder( Arrays.copyOf( ninjasAttackOrder, ninjasAttackOrder.length ) );
+        }
+        finalSkillsAttributesDTO.setAttributes( skillAttributeListToSkillAttributeDTOList( finalSkillsAttributes.getAttributes() ) );
+
+        return finalSkillsAttributesDTO;
+    }
+
+    protected List<FinalSkillsAttributesDTO> finalSkillsAttributesListToFinalSkillsAttributesDTOList(List<FinalSkillsAttributes> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<FinalSkillsAttributesDTO> list1 = new ArrayList<FinalSkillsAttributesDTO>( list.size() );
+        for ( FinalSkillsAttributes finalSkillsAttributes : list ) {
+            list1.add( finalSkillsAttributesToFinalSkillsAttributesDTO( finalSkillsAttributes ) );
         }
 
         return list1;
@@ -294,6 +329,36 @@ public class FormationNinjaMapperImpl implements FormationNinjaMapper {
         List<SkillAttribute> list1 = new ArrayList<SkillAttribute>( list.size() );
         for ( SkillAttributeDTO skillAttributeDTO : list ) {
             list1.add( skillAttributeDTOToSkillAttribute( skillAttributeDTO ) );
+        }
+
+        return list1;
+    }
+
+    protected FinalSkillsAttributes finalSkillsAttributesDTOToFinalSkillsAttributes(FinalSkillsAttributesDTO finalSkillsAttributesDTO) {
+        if ( finalSkillsAttributesDTO == null ) {
+            return null;
+        }
+
+        FinalSkillsAttributes finalSkillsAttributes = new FinalSkillsAttributes();
+
+        finalSkillsAttributes.setNinjaFormation( finalSkillsAttributesDTO.getNinjaFormation() );
+        String[] ninjasAttackOrder = finalSkillsAttributesDTO.getNinjasAttackOrder();
+        if ( ninjasAttackOrder != null ) {
+            finalSkillsAttributes.setNinjasAttackOrder( Arrays.copyOf( ninjasAttackOrder, ninjasAttackOrder.length ) );
+        }
+        finalSkillsAttributes.setAttributes( skillAttributeDTOListToSkillAttributeList( finalSkillsAttributesDTO.getAttributes() ) );
+
+        return finalSkillsAttributes;
+    }
+
+    protected List<FinalSkillsAttributes> finalSkillsAttributesDTOListToFinalSkillsAttributesList(List<FinalSkillsAttributesDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<FinalSkillsAttributes> list1 = new ArrayList<FinalSkillsAttributes>( list.size() );
+        for ( FinalSkillsAttributesDTO finalSkillsAttributesDTO : list ) {
+            list1.add( finalSkillsAttributesDTOToFinalSkillsAttributes( finalSkillsAttributesDTO ) );
         }
 
         return list1;

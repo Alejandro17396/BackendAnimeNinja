@@ -2,7 +2,6 @@ package com.alejandro.animeninja.bussines.model.dto;
 
 import java.util.List;
 
-import com.alejandro.animeninja.bussines.model.NinjaAwakeningStat;
 import com.alejandro.animeninja.bussines.model.SkillType;
 
 public class NinjaAwakeningDTO {

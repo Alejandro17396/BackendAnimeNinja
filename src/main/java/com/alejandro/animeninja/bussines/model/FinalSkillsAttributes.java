@@ -5,7 +5,7 @@ import java.util.List;
 public class FinalSkillsAttributes {
 
 	private String ninjaFormation;
-	private String [] ninjasName;
+	private String [] ninjasAttackOrder;
 	private List <SkillAttribute> attributes;
 	
 	
@@ -17,7 +17,7 @@ public class FinalSkillsAttributes {
 	public FinalSkillsAttributes(String ninjaFormation, String[] ninjasName, List<SkillAttribute> attributes) {
 		super();
 		this.ninjaFormation = ninjaFormation;
-		this.ninjasName = ninjasName;
+		this.ninjasAttackOrder = ninjasName;
 		this.attributes = attributes;
 	}
 
@@ -29,12 +29,12 @@ public class FinalSkillsAttributes {
 		this.ninjaFormation = ninjaFormation;
 	}
 
-	public String[] getNinjasName() {
-		return ninjasName;
+	public String[] getNinjasAttackOrder() {
+		return ninjasAttackOrder;
 	}
 
-	public void setNinjasName(String[] ninjasName) {
-		this.ninjasName = ninjasName;
+	public void setNinjasAttackOrder(String[] ninjasName) {
+		this.ninjasAttackOrder = ninjasName;
 	}
 
 	public List<SkillAttribute> getAttributes() {

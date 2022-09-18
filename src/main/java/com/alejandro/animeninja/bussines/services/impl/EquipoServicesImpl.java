@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,11 +25,7 @@ import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.services.ParteServices;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusById;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusBySetStat;
-import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
-import com.alejandro.animeninja.bussines.sort.services.impl.SortPartes;
-import com.alejandro.animeninja.integration.repositories.BonusRepository;
 import com.alejandro.animeninja.integration.repositories.EquipoRepository;
-import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 
 @Service
 public class EquipoServicesImpl implements EquipoServices {

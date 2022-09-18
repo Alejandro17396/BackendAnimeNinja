@@ -16,7 +16,7 @@ public class FormationNinjaDTO {
 	private Set<NinjaDTO> assaulters;
 	private Set<NinjaDTO> vanguards;
 	private List<SkillAttributeDTO> mergedTalentAttributes;
-	private List<SkillAttributeDTO> finalSkillAttributes;
+	private List<FinalSkillsAttributesDTO> finalSkillsAttributes;
 	
 	public FormationNinjaDTO(Set<NinjaDTO> supports, Set<NinjaDTO> assaulters, Set<NinjaDTO> vanguards,
 			List<SkillAttributeDTO> mergedAtributes) {
@@ -33,6 +33,7 @@ public class FormationNinjaDTO {
 		assaulters = new HashSet<NinjaDTO>();
 		vanguards = new HashSet<NinjaDTO>(); 
 		mergedTalentAttributes = new ArrayList<SkillAttributeDTO>();
+		finalSkillsAttributes = new ArrayList<FinalSkillsAttributesDTO>();
 	}
 
 	public List<SkillAttributeDTO> getMergedTalentAttributes() {
@@ -43,12 +44,12 @@ public class FormationNinjaDTO {
 		this.mergedTalentAttributes = mergedTalentAttributes;
 	}
 
-	public List<SkillAttributeDTO> getFinalSkillAttributes() {
-		return finalSkillAttributes;
+	public List<FinalSkillsAttributesDTO> getFinalSkillsAttributes() {
+		return finalSkillsAttributes;
 	}
 
-	public void setFinalSkillAttributes(List<SkillAttributeDTO> finalSkillAttributes) {
-		this.finalSkillAttributes = finalSkillAttributes;
+	public void setFinalSkillsAttributes(List<FinalSkillsAttributesDTO> finalSkillsAttributes) {
+		this.finalSkillsAttributes = finalSkillsAttributes;
 	}
 
 	public String getFormationNinjas() {

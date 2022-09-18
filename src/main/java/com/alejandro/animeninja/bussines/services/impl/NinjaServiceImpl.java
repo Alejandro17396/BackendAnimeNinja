@@ -2,7 +2,7 @@ package com.alejandro.animeninja.bussines.services.impl;
 
 
 import java.util.ArrayList;
-
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +31,7 @@ import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaFilterDTO;
 import com.alejandro.animeninja.bussines.services.NinjaService;
+import com.alejandro.animeninja.bussines.sort.services.impl.SortFinalSkillAttribute;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortFormationsByMergedAttributes;
 import com.alejandro.animeninja.bussines.utils.FormationFilterUtils;
 import com.alejandro.animeninja.integration.repositories.NinjaRepository;
@@ -114,17 +115,33 @@ public class NinjaServiceImpl implements NinjaService {
 		createNameFormations(formations);
 		if (merge) {
 			mergeTalentAttributesFormation(formations);
-			setFinalSkillsAttributesFormation(formations,null);
+			setFinalSkillsAttributesFormation(formations);
 		}
 
 		if (filtred) {
 			addSpecialCases(attributes.getAttributeFilters(), formations);
-			filterFormationsByAttributes(attributes.getAttributeFilters(), formations);
+			List <NinjaFilterDTO> talentAttributesFilter = attributes.getAttributeFilters().stream().
+					filter(attribute -> attribute.getType() == SkillType.TALENT).collect(Collectors.toList());
+			filterFormationsByTalentAttributes(talentAttributesFilter, formations);
+			List <NinjaFilterDTO> skillAttributesFilter = attributes.getAttributeFilters().stream().
+					filter(attribute -> attribute.getType() == SkillType.SKILL).collect(Collectors.toList());
+			filterFormationsSkillsByAttributes(skillAttributesFilter, formations);
 		}
 
 		if (sorted) {
-			attributes.getOrder().forEach(order -> {
+			List <NinjaFilterDTO> talentAttributesFilter = attributes.getOrder().stream().
+					filter(attribute -> attribute.getType() == SkillType.TALENT).collect(Collectors.toList());
+			List <NinjaFilterDTO> skillAttributesFilter = attributes.getOrder().stream().
+					filter(attribute -> attribute.getType() == SkillType.SKILL).collect(Collectors.toList());
+			
+			talentAttributesFilter.forEach(order -> {
 				Collections.sort(formations, new SortFormationsByMergedAttributes(order).reversed());
+			});
+			
+			formations.forEach(formation -> {
+				skillAttributesFilter.forEach(order -> {
+					Collections.sort(formation.getFinalSkillsAttributes(), new SortFinalSkillAttribute(order).reversed());
+				});
 			});
 		}
 
@@ -133,27 +150,58 @@ public class NinjaServiceImpl implements NinjaService {
 
 	// Private Methods
 
-	private void setFinalSkillsAttributesFormation(List<FormationNinja> formations, Object object) {
-
-		formations.forEach(formation -> {
-			createSkillsOrder(formation); 
+	private void filterFormationsSkillsByAttributes(List<NinjaFilterDTO> skillAttributesFilter,
+			List<FormationNinja> formations) {
+		
+		formations.forEach(formation ->{
+			Iterator <FinalSkillsAttributes> it = formation.getFinalSkillsAttributes().iterator();
+			while(it.hasNext()) {
+				FinalSkillsAttributes aux = it.next();
+				if(!passFilter(aux,skillAttributesFilter)) {
+					it.remove();
+				}
+			}
 		});
 		
-	}
-
-	private void createSkillsOrder(FormationNinja formation) {
-		
-		
-		
-	}
-
-	private void createFinalSkillAttribute(FormationNinja formations,String ninjasName []) {
-		
-		if(formations.getFormationNinjas() == null) {
-			return ;
+		Iterator <FormationNinja> it = formations.iterator();
+		while(it.hasNext()) {
+			FormationNinja aux = it.next();
+			if(aux.getFinalSkillsAttributes().isEmpty()) {
+				it.remove();
+			}
 		}
+		
+		
+	}
 
-		ninjasName = formations.getFormationNinjas().split(",");
+	private boolean passFilter(FinalSkillsAttributes aux, List<NinjaFilterDTO> filters) {
+		
+		for (NinjaFilterDTO filter : filters) {
+			for (SkillAttribute attribute : aux.getAttributes()) {
+				if (FormationFilterUtils.canBeCompared(attribute, filter)
+						&& attribute.getValue() >= filter.getValue()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private void setFinalSkillsAttributesFormation(List<FormationNinja> formations) {
+
+		formations.forEach(formation -> {
+			List <String> combinations = createSkillsOrderCombinations(formation); 
+			combinations.forEach(combination -> {
+				createFinalSkillAttribute(formation,combination.split(","),combination);
+			});
+		});
+	}
+	
+	private FinalSkillsAttributes createFinalSkillAttribute(FormationNinja formation,String ninjasName [],String FormationOrder) {
+		
+		if(formation.getFormationNinjas() == null) {
+			return null;
+		}
 		
 		List <Ninja> ninjas = new ArrayList<>();
 		
@@ -175,16 +223,57 @@ public class NinjaServiceImpl implements NinjaService {
 		}
 		
 		FinalSkillsAttributes finalSkillsAttributes = new FinalSkillsAttributes();
-		finalSkillsAttributes.setNinjaFormation(formations.getFormationNinjas());
-		finalSkillsAttributes.setNinjasName(ninjasName);
+		finalSkillsAttributes.setNinjaFormation(FormationOrder);
+		finalSkillsAttributes.setNinjasAttackOrder(ninjasName);
 		finalSkillsAttributes.setAttributes((mapa.values().stream().collect(Collectors.toList())));
-		formations.getFinalSkillsAttributes().add(finalSkillsAttributes);
+		formation.getFinalSkillsAttributes().add(finalSkillsAttributes);
+
+		return finalSkillsAttributes;
 		
 	}
+	
+	
+	private List <String> createSkillsOrderCombinations(FormationNinja formation) {
+		
+		String ninjasName [] = formation.getFormationNinjas().split(",");
+		ArrayList <String> restos = new ArrayList<String>(Arrays.asList(ninjasName));
+		List <String> totalCombinations = new ArrayList<String>();
+		for(String name : ninjasName) {
+		totalCombinations.addAll(combinatoria(name,(ArrayList<String>) restos.clone()));
+		}
+		
+		return totalCombinations;
+	}
+	
+	private static List <String> combinatoria(String name, ArrayList <String> restos) {
+		ArrayList <String> results = new ArrayList<>();
+		restos.remove(name);
+		
+		if(restos.size() == 0) {
+			results.add(name + ",");
+			return results;
+		}
+		
+		if(restos.size() == 1) {
+			results.add(name + "," + restos.get(0));
+			return results;
+		}
+		
+		for(String n : restos) {
+			String result = name+","+n;
+			ArrayList <String> aux = (ArrayList<String>) restos.clone();
+			aux.remove(n);
+			results.addAll(combinatoria(result,aux));
+		}
+		
+		return results;
+	}
+
+	
 
 	private void addSpecialCases(List<NinjaFilterDTO> attributeFilters, List<FormationNinja> formations) {
 		
-		//attributeFilters.forEach(filter -> {
+		
 		for(NinjaFilterDTO filter : attributeFilters) {
 			if (filter.getImpact().equals("all allies") || filter.getImpact().equals("all enemies")) {
 				for(FormationNinja formation : formations) {
@@ -315,15 +404,19 @@ public class NinjaServiceImpl implements NinjaService {
 		formations.forEach(formation -> {
 			String name = "";
 			List<Ninja> ninjas = formation.toList();
-			for (Ninja n : ninjas) {
-				name = name + " " + n.getName() + ",";
+			
+			int i ;
+			for( i = 0 ; i < ninjas.size()-1 ; i++) {
+				name += ninjas.get(i).getName() + ",";
 			}
+			name += ninjas.get(i).getName();
+			
 			formation.setFormationNinjas(name);
 		});
 
 	}
 
-	private void filterFormationsByAttributes(List<NinjaFilterDTO> filters, List<FormationNinja> formations) {
+	private void filterFormationsByTalentAttributes(List<NinjaFilterDTO> filters, List<FormationNinja> formations) {
 
 		Iterator<FormationNinja> it = formations.iterator();
 

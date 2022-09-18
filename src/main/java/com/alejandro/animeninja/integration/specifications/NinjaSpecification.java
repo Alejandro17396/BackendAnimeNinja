@@ -7,20 +7,15 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Component;
 
-import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.Ninja_;
-import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.SkillAttribute_;
-import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.model.dto.NinjaFilterDTO;
-
-import org.apache.commons.lang3.StringUtils;
 
 @Component
 public class NinjaSpecification {

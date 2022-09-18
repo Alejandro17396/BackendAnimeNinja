@@ -1,7 +1,6 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +44,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		return accesorioRepository.findAll(specification);
 	}
 
-	private ParteAccesorio getAmulet(SetAccesorio  a) {
+	/*private ParteAccesorio getAmulet(SetAccesorio  a) {
 		
 		for(ParteAccesorio p:a.getPartes()) {
 			if(p.getNombre().contains("amulet")) {
@@ -53,7 +52,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 			}
 		}
 		return null;
-	}
+	}*/
 	
 	@Override 
 	public List<SetAccesorio> getComboAccesoriosBySpecification(Specification<BonusAccesorio> specification,

@@ -3,9 +3,6 @@ package com.alejandro.animeninja.bussines.sort.services.impl;
 import java.util.Comparator;
 import java.util.List;
 
-import com.alejandro.animeninja.bussines.model.Bonus;
-import com.alejandro.animeninja.bussines.model.BonusAtributo;
-import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.FormationNinja;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.dto.NinjaFilterDTO;

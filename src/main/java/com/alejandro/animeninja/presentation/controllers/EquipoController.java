@@ -1,8 +1,6 @@
 package com.alejandro.animeninja.presentation.controllers;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +18,7 @@ import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
 import com.alejandro.animeninja.bussines.model.Equipo;
-import com.alejandro.animeninja.bussines.model.Parte;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
-import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusBySetStat;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByStats;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;

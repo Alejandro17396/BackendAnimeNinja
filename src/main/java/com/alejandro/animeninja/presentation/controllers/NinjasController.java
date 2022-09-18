@@ -1,12 +1,9 @@
 package com.alejandro.animeninja.presentation.controllers;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,19 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alejandro.animeninja.bussines.mappers.FormationNinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
-import com.alejandro.animeninja.bussines.model.FormationNinja;
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
-import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationsNinjaDTO;
-import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
-import com.alejandro.animeninja.bussines.model.dto.NinjaFilterDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
-import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
 import com.alejandro.animeninja.bussines.services.NinjaService;
-import com.alejandro.animeninja.integration.specifications.NinjaSpecification;
 
 @RestController
 @CrossOrigin
@@ -78,24 +68,14 @@ public class NinjasController {
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
 			@RequestParam(value = "or", required = false, defaultValue = "true") boolean or) {
-
+ 
 		FormationsNinjaDTO response = new FormationsNinjaDTO();
 		response.setFormations(ninjaServices.getNinjaComboFormations(attributes, merge, sorted, filtred, or));
 		response.setNumFormations(response.getFormations().size());
 		return response;
 	}
 	
-	/*@GetMapping("/createCombo")
-	public FormationsNinjaDTO getNinjaFormationSkillFinalAttributes(@RequestBody(required = false) CreateNinjaSkillDTO attributes,
-			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
-			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
-			@RequestParam(value = "or", required = false, defaultValue = "true") boolean or) {
-
-		FormationsNinjaDTO response = new FormationsNinjaDTO();
-		//response.setFormations(ninjaServices.getNinjaFormationSkillFinalAttributes(attributes, merge, sorted, filtred, or));
-		//response.setNumFormations(response.getFormations().size());
-		return response;
-	}*/
+	
 	
 	/*List <List <SkillAttributeDTO>> response2 = new ArrayList<>();
 	

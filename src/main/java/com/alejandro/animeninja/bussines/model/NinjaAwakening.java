@@ -14,8 +14,6 @@ import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name="NINJA_AWAKENING")
 @IdClass(NinjaAwakeningKey.class)
