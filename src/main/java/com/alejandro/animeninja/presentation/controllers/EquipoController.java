@@ -4,6 +4,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alejandro.animeninja.bussines.mappers.DummyMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
 import com.alejandro.animeninja.bussines.model.Equipo;
+import com.alejandro.animeninja.bussines.model.dto.EquipoDummyDTO;
+import com.alejandro.animeninja.bussines.model.dto.NinjaSkillDTO;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByStats;
@@ -31,12 +38,39 @@ public class EquipoController {
 	@Autowired
 	private EquipoServices equipoServices;
 
+	@Autowired
+	private DummyMapper dummyMapper;
+	
+	
 	@GetMapping
 	public List<Equipo> getAll() { 
 		
 		List <Equipo> equipos = equipoServices.getAll();
 		Collections.sort(equipos, new SortEquiposByStats().reversed());
 		return equipos;
+	}
+	
+	@GetMapping("/paginado")
+	public PagedListHolder <EquipoDummyDTO> getAll2() { 
+		
+		List <Equipo> equipos = equipoServices.getAll();
+		Collections.sort(equipos, new SortEquiposByStats().reversed());
+		PagedListHolder <EquipoDummyDTO> page = new PagedListHolder(dummyMapper.toDtoList(equipos));
+		page.setPageSize(10); // number of items per page
+		page.setPage(0);
+		//Page<EquipoDummyDTO> p = new PageImpl<EquipoDummyDTO>(dummyMapper.toDtoList(equipos) , PageRequest.of(0, 5),10L);
+		/*PagedListHolder page = new PagedListHolder(list);
+		  page.setPageSize(10); // number of items per page
+			page.setPage(0);*/
+		return page;
+	}
+	
+	@GetMapping("/paginado2")
+	public List<EquipoDummyDTO> getAll3() { 
+		
+		List <Equipo> equipos = equipoServices.getAll();
+		Collections.sort(equipos, new SortEquiposByStats().reversed());
+		return dummyMapper.toDtoList(equipos);
 	}
 
 	@GetMapping("/filterSetsByAttributes")

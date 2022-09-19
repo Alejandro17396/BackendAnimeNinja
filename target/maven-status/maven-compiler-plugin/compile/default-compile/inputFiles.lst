@@ -12,6 +12,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alej
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\repositories\BonusCustomRepository.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\repositories\ParteRepository.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\FormationNinja.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\EquipoDummyDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\repositories\NinjaStatsRepository.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\AnimeninjaApplication.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\NinjaSkillKeyDTO.java
@@ -79,6 +80,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alej
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\sort\services\impl\SortBonusBySetStat.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\impl\AtributoServicesImpl.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\ChakraNature.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\mappers\DummyMapper.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\Ninja.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\CreateComboSet.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\Parte.java
