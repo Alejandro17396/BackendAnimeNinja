@@ -111,7 +111,17 @@ public class NinjaServiceImpl implements NinjaService {
 			specification = createAndSpecification(attributes);
 		}
 		List<Ninja> ninjas = getNinjasBySpecification(specification);
+		
+		if(ninjas == null || ninjas.size() == 0) {
+			return new ArrayList<FormationNinjaDTO>();
+		}
+		
 		List<FormationNinja> formations = generateNinjaFormations(ninjas);
+		
+		if(formations == null || formations.size() == 0) {
+			return new ArrayList<FormationNinjaDTO>();
+		}
+		
 		createNameFormations(formations);
 		if (merge) {
 			mergeTalentAttributesFormation(formations);
@@ -476,6 +486,7 @@ public class NinjaServiceImpl implements NinjaService {
 	}
 
 	private Specification<Ninja> createAndSpecification(CreateComboNinjaDTO attributes) {
+		
 		List<NinjaFilterDTO> filterList = attributes.getFilters();
 		Specification<Ninja> specification = Specification.where(null);
 
@@ -493,6 +504,7 @@ public class NinjaServiceImpl implements NinjaService {
 	}
 
 	private Specification<Ninja> createOrSpecification(CreateComboNinjaDTO attributes) {
+		
 		List<NinjaFilterDTO> filterList = attributes.getFilters();
 		Specification<Ninja> specification = Specification.where(null);
 

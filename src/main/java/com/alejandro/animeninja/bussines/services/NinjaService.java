@@ -23,6 +23,8 @@ public interface NinjaService {
 
 	List<NinjaDTO> getNinjaFiltroOr(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred);
 	
+	
+	
 	//List <SkillAttribute> createSkill(List<NinjaSkillKey> skillsKeys);
 
 }

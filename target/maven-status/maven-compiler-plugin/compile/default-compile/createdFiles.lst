@@ -1,8 +1,10 @@
+com\alejandro\animeninja\bussines\model\dto\ErrorDTO.class
 com\alejandro\animeninja\bussines\services\ParteAccesorioService.class
 com\alejandro\animeninja\integration\repositories\BonusCustomRepository.class
 com\alejandro\animeninja\bussines\model\BonusAccesorio.class
 com\alejandro\animeninja\presentation\controllers\NinjaSkillsController.class
 com\alejandro\animeninja\bussines\model\NinjaStatsKey.class
+com\alejandro\animeninja\bussines\model\dto\BonusDTO.class
 com\alejandro\animeninja\bussines\model\FormationNinja.class
 com\alejandro\animeninja\bussines\services\EquipoServices.class
 com\alejandro\animeninja\bussines\services\impl\ParteServicesImpl.class
@@ -16,6 +18,7 @@ com\alejandro\animeninja\bussines\sort\services\impl\SortBonusById.class
 com\alejandro\animeninja\bussines\model\Atributo.class
 com\alejandro\animeninja\bussines\services\NinjaSkillService.class
 com\alejandro\animeninja\bussines\services\BonusAccesorioService.class
+com\alejandro\animeninja\bussines\mappers\EquipoMapperImpl.class
 com\alejandro\animeninja\bussines\model\dto\NinjasDTO.class
 com\alejandro\animeninja\bussines\model\NinjaStats_.class
 com\alejandro\animeninja\integration\specifications\BonusAccesorioSpecification.class
@@ -63,6 +66,7 @@ com\alejandro\animeninja\bussines\model\CreateComboSet.class
 com\alejandro\animeninja\integration\repositories\EquipoCustomRepository.class
 com\alejandro\animeninja\integration\repositories\ParteRepository.class
 com\alejandro\animeninja\bussines\model\NinjaType.class
+com\alejandro\animeninja\bussines\exceptions\NinjaFilterException.class
 com\alejandro\animeninja\bussines\model\AttributeStatKey.class
 com\alejandro\animeninja\bussines\mappers\NinjaSkillMapper.class
 com\alejandro\animeninja\bussines\model\ParteAccesorio_.class
@@ -80,17 +84,21 @@ com\alejandro\animeninja\bussines\model\dto\NinjaSkillKeyDTO.class
 com\alejandro\animeninja\bussines\model\SkillType.class
 com\alejandro\animeninja\bussines\model\ClaveBonusAccesorio.class
 com\alejandro\animeninja\bussines\model\ChakraNature.class
+com\alejandro\animeninja\bussines\model\dto\SkillResultDTO.class
 com\alejandro\animeninja\bussines\services\ParteServices.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortEquiposByStats.class
 com\alejandro\animeninja\integration\repositories\impl\BonusCustomRepositoryImpl.class
 com\alejandro\animeninja\bussines\model\Bonus_.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortFormationsByMergedAttributes.class
+com\alejandro\animeninja\bussines\exceptions\SetException.class
 com\alejandro\animeninja\bussines\model\dto\NinjaStatsDTO.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortSkillAttributeByValue.class
 com\alejandro\animeninja\bussines\model\Formation.class
 com\alejandro\animeninja\integration\repositories\NinjaSkillRepository.class
 com\alejandro\animeninja\integration\repositories\NinjaStatsRepository.class
+com\alejandro\animeninja\bussines\services\ValidatorService.class
 com\alejandro\animeninja\bussines\mappers\FormationNinjaMapper.class
+com\alejandro\animeninja\bussines\model\dto\BonusAtributoDTO.class
 com\alejandro\animeninja\bussines\model\Parte_.class
 com\alejandro\animeninja\integration\specifications\AccesorioSpecification.class
 com\alejandro\animeninja\bussines\model\SkillAttribute_.class
@@ -102,6 +110,7 @@ com\alejandro\animeninja\bussines\utils\FormationFilterUtils.class
 com\alejandro\animeninja\bussines\model\ClaveBonus.class
 com\alejandro\animeninja\bussines\model\CreateComboSetAccesorio.class
 com\alejandro\animeninja\bussines\services\impl\AtributoServicesImpl.class
+com\alejandro\animeninja\bussines\model\dto\EquipoDTO.class
 com\alejandro\animeninja\bussines\services\impl\EquipoServicesImpl.class
 com\alejandro\animeninja\bussines\services\impl\AccesorioServicesImpl.class
 com\alejandro\animeninja\bussines\model\ParteAccesorio.class
@@ -112,6 +121,7 @@ com\alejandro\animeninja\bussines\model\SetAccesorio_.class
 com\alejandro\animeninja\bussines\model\NinjaSkill.class
 com\alejandro\animeninja\bussines\services\AtributoServices.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortBonusBySetStat.class
+com\alejandro\animeninja\bussines\services\impl\ValidatorServiceImpl.class
 com\alejandro\animeninja\bussines\services\impl\ParteAccesorioServiceImpl.class
 com\alejandro\animeninja\bussines\model\NinjaAwakeningKey.class
 com\alejandro\animeninja\integration\repositories\ParteAccesorioRepository.class
@@ -124,7 +134,9 @@ com\alejandro\animeninja\bussines\services\impl\BonusAccesorioServiceImpl.class
 com\alejandro\animeninja\bussines\mappers\NinjaMapper.class
 com\alejandro\animeninja\bussines\model\SetAccesorioUtils.class
 com\alejandro\animeninja\AnimeninjaApplication.class
+com\alejandro\animeninja\bussines\mappers\EquipoMapper.class
 com\alejandro\animeninja\bussines\model\NinjaAwakeningStat.class
+com\alejandro\animeninja\bussines\model\dto\ParteDTO.class
 com\alejandro\animeninja\bussines\model\SkillAttribute.class
 com\alejandro\animeninja\bussines\model\Ninja.class
 com\alejandro\animeninja\presentation\controllers\ParteController.class
@@ -132,6 +144,8 @@ com\alejandro\animeninja\bussines\model\NinjaSkillKey.class
 com\alejandro\animeninja\bussines\services\AccesorioServices.class
 com\alejandro\animeninja\presentation\controllers\BonusController.class
 com\alejandro\animeninja\bussines\mappers\NinjaAwakeningStatMapperImpl.class
+com\alejandro\animeninja\bussines\exceptions\NinjaSkillException.class
 com\alejandro\animeninja\bussines\model\AttributeStat_.class
 com\alejandro\animeninja\bussines\model\Ninja_.class
 com\alejandro\animeninja\integration\repositories\NinjaRepository.class
+com\alejandro\animeninja\presentation\controllers\ControllerAdvice.class

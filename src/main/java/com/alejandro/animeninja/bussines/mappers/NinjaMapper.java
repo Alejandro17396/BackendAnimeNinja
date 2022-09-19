@@ -26,4 +26,11 @@ public interface NinjaMapper {
 		}
 		return ninjaList.stream().map(this::toDTO).collect(Collectors.toList());
 	}
+	
+	default List<Ninja> toEntityList(List<NinjaDTO> ninjaList){
+		if(ninjaList == null) {
+			return new ArrayList<>();
+		}
+		return ninjaList.stream().map(this::toEntity).collect(Collectors.toList());
+	}
 }

@@ -3,6 +3,8 @@ package com.alejandro.animeninja.presentation.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +19,9 @@ import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.model.dto.AttackSkillDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaSkillDTO;
 import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
+import com.alejandro.animeninja.bussines.model.dto.SkillResultDTO;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
+import com.alejandro.animeninja.bussines.services.ValidatorService;
 
 @RestController
 @CrossOrigin
@@ -36,15 +40,38 @@ public class NinjaSkillsController {
 	@Autowired
 	private NinjaSkillMapper ninjaSkillMapper;
 	
-	@GetMapping("/AttackResult")
-	public List <SkillAttributeDTO> getNinjaFormationSkillFinalAttributes(@RequestBody(required = false) AttackSkillDTO request) {
 
-		return skillMapper.toDTOList(ninjaSkillServices.createSkill(keysMapper.toEntityList(request.getKeys())));
+	@Autowired
+	private ValidatorService validator;
+	
+	@GetMapping("/AttackResult")
+	public ResponseEntity <SkillResultDTO> getNinjaFormationSkillFinalAttributes(@RequestBody(required = false) AttackSkillDTO request) {
+
+		validator.validateAttackSkillDTO(request);
+		List <SkillAttributeDTO> list =skillMapper.toDTOList(ninjaSkillServices.createSkill(keysMapper.toEntityList(request.getKeys())));
+		SkillResultDTO responseDTO = new SkillResultDTO();
+		responseDTO.setSkillFinalAttributes(list);
+		responseDTO.setAttributesNumber(responseDTO.getSkillFinalAttributes().size());
+		ResponseEntity <SkillResultDTO> response = null;
+		if(responseDTO.getAttributesNumber() > 0) {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity<>(responseDTO,HttpStatus.NO_CONTENT);
+		}
+		return response;
 	}
 	
 	@GetMapping("/{ninja}/{type}")
-	public NinjaSkillDTO getSkill(@PathVariable String ninja,@PathVariable SkillType type) {
-		return ninjaSkillMapper.toDTO(ninjaSkillServices.findByNinjaAndType("Hidan", SkillType.SKILL));
+	public ResponseEntity <NinjaSkillDTO> getSkill(@PathVariable String ninja,@PathVariable SkillType type) {
+		
+		NinjaSkillDTO responseDTO = ninjaSkillMapper.toDTO(ninjaSkillServices.findByNinjaAndType("Hidan", SkillType.SKILL));
+		ResponseEntity <NinjaSkillDTO> response = null;
+		if(responseDTO != null) {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity<>(responseDTO,HttpStatus.NO_CONTENT);
+		}
+		return response;
 	}
 
 }
