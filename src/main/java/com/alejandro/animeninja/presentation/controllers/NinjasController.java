@@ -4,6 +4,9 @@ package com.alejandro.animeninja.presentation.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,8 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.model.Ninja;
+import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationsNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
 import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.services.ValidatorService;
@@ -35,26 +41,34 @@ public class NinjasController {
 	@Autowired
 	private ValidatorService validator;
 
+	
+	
 	@GetMapping
-	public NinjasDTO getNinja() {
+	public NinjasDTO getNinjaPaged(Pageable pageable) {
 
-		List<Ninja> ninjas = ninjaServices.getAll();
 		NinjasDTO response = new NinjasDTO();
-		response.setNinjas(ninjaMapper.toDtoList(ninjas));
+		response.setNinjas(ninjaMapper.toDtoList(ninjaServices.getAllPaged(pageable).getContent()));
 		response.setNumber(response.getNinjas().size());
 		return response;
+		
 	}
 
-	@GetMapping("/filtro/and")
+	@GetMapping("/filter/and")
 	public ResponseEntity <NinjasDTO> getNinjaFiltroAnd(@RequestBody(required = false) CreateComboNinjaDTO attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
-			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred) {
+			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			Pageable pageable) {
 
 		validator.validateCreateComboNinjaDTO(attributes);
 		
+		/*Pagination <NinjaDTO> pagination =  new Pagination <NinjaDTO> 
+		(ninjaServices.getNinjaFiltroAnd(attributes, sorted, filtred,pageable),page,pageSize);*/
 		NinjasDTO responseDTO = new NinjasDTO();
-		responseDTO.setNinjas(ninjaServices.getNinjaFiltroAnd(attributes, sorted, filtred));
+		responseDTO.setNinjas(ninjaServices.getNinjaFiltroAnd(attributes, sorted, filtred,pageable));
 		responseDTO.setNumber(responseDTO.getNinjas().size());
+		
 		
 		ResponseEntity <NinjasDTO> response = null;
 		if(responseDTO.getNumber() > 0) {
@@ -65,16 +79,21 @@ public class NinjasController {
 		
 		return response;
 	}
-
-	@GetMapping("/filtro/or")
+	
+	@GetMapping("/filter/or")
 	public ResponseEntity <NinjasDTO> getNinjaFiltroOr(@RequestBody(required = false) CreateComboNinjaDTO attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
-			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred) {
+			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			Pageable pageable) {
 
 		validator.validateCreateComboNinjaDTO(attributes);
 		
+		/*Pagination <NinjaDTO> pagination =  new Pagination <NinjaDTO> 
+		(ninjaServices.getNinjaFiltroOr(attributes, sorted, filtred,pageable),page,pageSize);*/
 		NinjasDTO responseDTO = new NinjasDTO();
-		responseDTO.setNinjas(ninjaServices.getNinjaFiltroOr(attributes, sorted, filtred));
+		responseDTO.setNinjas(ninjaServices.getNinjaFiltroOr(attributes, sorted, filtred,pageable));
 		responseDTO.setNumber(responseDTO.getNinjas().size());
 		
 		ResponseEntity <NinjasDTO> response = null;
@@ -87,29 +106,43 @@ public class NinjasController {
 		return response;
 	}
 	
-	@GetMapping("/createCombo")
-	public ResponseEntity <FormationsNinjaDTO> getNinjaComboFormations(@RequestBody(required = false) CreateComboNinjaDTO attributes,
+	@GetMapping("/createformations")
+	public ResponseEntity <FormationsNinjaDTO> getNinjaComboFormations(
+			@RequestBody(required = false) CreateComboNinjaDTO externFilter,
 			@RequestParam(value = "merge", required = false, defaultValue = "true") boolean merge,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
-			@RequestParam(value = "or", required = false, defaultValue = "true") boolean or) {
+			@RequestParam(value = "or", required = false, defaultValue = "true") boolean or,
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize) {
  
-		validator.validateCreateComboNinjaDTO(attributes);
-		
-		FormationsNinjaDTO responseDTO = new FormationsNinjaDTO();
-		responseDTO.setFormations(ninjaServices.getNinjaComboFormations(attributes, merge, sorted, filtred, or));
-		responseDTO.setNumFormations(responseDTO.getFormations().size());
 		ResponseEntity <FormationsNinjaDTO> response = null;
+		FormationsNinjaDTO responseDTO = new FormationsNinjaDTO();
+		validator.validateCreateComboNinjaDTO(externFilter);
+		
+		Pagination <FormationNinjaDTO> pagination =  new Pagination <FormationNinjaDTO> 
+		(ninjaServices.getNinjaComboFormations(externFilter, merge, sorted, filtred, or),page,pageSize);
+		responseDTO.setFormations(pagination.getPagedList());
+		responseDTO.setNumFormations(responseDTO.getFormations().size());
+		
+		 
 		if(responseDTO.getNumFormations() > 0) {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
 		}else {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
 		}
-		
+
 		return response;
 	}
 	
-	
+	public void showHeapMemory() {
+		 int dataSize = 1024 * 1024;
+		 Runtime runtime = Runtime.getRuntime();
+		 System.out.println ("Memoria máxima: " + runtime.maxMemory() / dataSize + "MB");
+		 System.out.println ("Memoria total: " + runtime.totalMemory() / dataSize + "MB");
+		 System.out.println ("Memoria libre: " + runtime.freeMemory() / dataSize + "MB");
+		 System.out.println ("Memoria usada: " + (runtime.totalMemory() - runtime.freeMemory()) / dataSize + "MB");
+	}
 	
 	/*List <List <SkillAttributeDTO>> response2 = new ArrayList<>();
 	

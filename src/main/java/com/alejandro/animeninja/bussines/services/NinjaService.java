@@ -2,6 +2,8 @@ package com.alejandro.animeninja.bussines.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.alejandro.animeninja.bussines.model.Ninja;
@@ -13,15 +15,17 @@ public interface NinjaService {
 
 	List <Ninja> getAll();
 	
-	List <Ninja> getNinjasBySpecification(Specification <Ninja> specification);
+	List <Ninja> getNinjasBySpecification(Specification <Ninja> specification,Pageable pageable);
 	
 	Ninja getNinja(String clave);
 	
 	List<FormationNinjaDTO> getNinjaComboFormations(CreateComboNinjaDTO attributes,boolean merge,boolean sorted,boolean filtred,boolean or);
 	
-	List<NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred);
+	List<NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,Pageable pageable);
+	
+	Page <Ninja>  getAllPaged(Pageable pageable);
 
-	List<NinjaDTO> getNinjaFiltroOr(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred);
+	List<NinjaDTO> getNinjaFiltroOr(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,Pageable pageable);
 	
 	
 	

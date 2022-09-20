@@ -8,6 +8,7 @@ import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,21 +51,7 @@ public class EquipoController {
 		return equipos;
 	}
 	
-	@GetMapping("/paginado")
-	public PagedListHolder <EquipoDummyDTO> getAll2() { 
-		
-		List <Equipo> equipos = equipoServices.getAll();
-		Collections.sort(equipos, new SortEquiposByStats().reversed());
-		PagedListHolder <EquipoDummyDTO> page = new PagedListHolder(dummyMapper.toDtoList(equipos));
-		page.setPageSize(10); // number of items per page
-		page.setPage(0);
-		//Page<EquipoDummyDTO> p = new PageImpl<EquipoDummyDTO>(dummyMapper.toDtoList(equipos) , PageRequest.of(0, 5),10L);
-		/*PagedListHolder page = new PagedListHolder(list);
-		  page.setPageSize(10); // number of items per page
-			page.setPage(0);*/
-		return page;
-	}
-	
+
 	@GetMapping("/paginado2")
 	public List<EquipoDummyDTO> getAll3() { 
 		

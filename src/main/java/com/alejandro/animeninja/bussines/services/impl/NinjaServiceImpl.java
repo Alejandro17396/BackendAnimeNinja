@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +57,11 @@ public class NinjaServiceImpl implements NinjaService {
 	public List<Ninja> getAll() {
 		return ninjaRepository.findAll();
 	}
+	
+	@Override
+	public Page <Ninja> getAllPaged(Pageable pageable) {
+		return ninjaRepository.findAll(pageable);
+	}
 
 	@Override
 	public Ninja getNinja(String name) {
@@ -62,16 +69,23 @@ public class NinjaServiceImpl implements NinjaService {
 		return ninja.isPresent() ? ninja.get() : null;
 	}
 
+	public List<Ninja> getNinja2(Pageable pageable,Specification<Ninja> specification) {
+		Page <Ninja> page =ninjaRepository.findAll(specification,pageable);
+		//ninjaRepository.finA
+		return ninjaRepository.findAll();
+	}
+	
 	@Override
-	public List<Ninja> getNinjasBySpecification(Specification<Ninja> specification) {
-		List<Ninja> ninjas = ninjaRepository.findAll(specification);
-		return ninjas;
+	public List<Ninja> getNinjasBySpecification(Specification<Ninja> specification,Pageable pageable) {
+		Page <Ninja> ninjas =ninjaRepository.findAll(specification,pageable);
+		return ninjas.getContent();
 	}
 
 	@Override
-	public List<NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred) {
+	public List<NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
+			Pageable pageable) {
 		Specification<Ninja> specification = createAndSpecification(attributes);
-		List<Ninja> ninjas = getNinjasBySpecification(specification);
+		List<Ninja> ninjas = getNinjasBySpecification(specification,pageable);
 
 		if (filtred) {
 
@@ -85,9 +99,10 @@ public class NinjaServiceImpl implements NinjaService {
 	}
 
 	@Override
-	public List<NinjaDTO> getNinjaFiltroOr(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred) {
+	public List<NinjaDTO> getNinjaFiltroOr(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
+			Pageable pageable) {
 		Specification<Ninja> specification = createOrSpecification(attributes);
-		List<Ninja> ninjas = getNinjasBySpecification(specification);
+		List<Ninja> ninjas = getNinjasBySpecification(specification,pageable);
 
 		if (sorted) {
 
@@ -110,7 +125,7 @@ public class NinjaServiceImpl implements NinjaService {
 		} else {
 			specification = createAndSpecification(attributes);
 		}
-		List<Ninja> ninjas = getNinjasBySpecification(specification);
+		List<Ninja> ninjas = getNinjasBySpecification(specification,null);
 		
 		if(ninjas == null || ninjas.size() == 0) {
 			return new ArrayList<FormationNinjaDTO>();
@@ -186,6 +201,8 @@ public class NinjaServiceImpl implements NinjaService {
 
 	private boolean passFilter(FinalSkillsAttributes aux, List<NinjaFilterDTO> filters) {
 		
+		
+		
 		for (NinjaFilterDTO filter : filters) {
 			for (SkillAttribute attribute : aux.getAttributes()) {
 				if (FormationFilterUtils.canBeCompared(attribute, filter)
@@ -199,15 +216,18 @@ public class NinjaServiceImpl implements NinjaService {
 
 	private void setFinalSkillsAttributesFormation(List<FormationNinja> formations) {
 
+		Map <String,Ninja> ninjas = getAll().stream().collect(Collectors.toMap(Ninja::getName, ninja -> ninja));
 		formations.forEach(formation -> {
 			List <String> combinations = createSkillsOrderCombinations(formation); 
 			combinations.forEach(combination -> {
-				createFinalSkillAttribute(formation,combination.split(","),combination);
+				createFinalSkillAttribute(formation,combination.split(","),combination,ninjas);
 			});
+			int i = 109+99;
 		});
 	}
 	
-	private FinalSkillsAttributes createFinalSkillAttribute(FormationNinja formation,String ninjasName [],String FormationOrder) {
+	private FinalSkillsAttributes createFinalSkillAttribute(FormationNinja formation,String ninjasName [],
+			String FormationOrder,Map <String,Ninja> mapaNinjas) {
 		
 		if(formation.getFormationNinjas() == null) {
 			return null;
@@ -216,7 +236,7 @@ public class NinjaServiceImpl implements NinjaService {
 		List <Ninja> ninjas = new ArrayList<>();
 		
 		for(String name : ninjasName) {
-			Ninja ninja = getNinja(name);
+			Ninja ninja = mapaNinjas.get(name);
 			if(ninja != null) {
 				ninjas.add(ninja);
 			}
@@ -440,6 +460,10 @@ public class NinjaServiceImpl implements NinjaService {
 	}
 
 	private boolean passFilter(List<NinjaFilterDTO> filters, FormationNinja formation) {
+		
+		if(filters.size() == 0) {
+			return true;
+		}
 
 		for (NinjaFilterDTO filter : filters) {
 			for (SkillAttribute attribute : formation.getMergedTalentAttributes()) {
@@ -736,5 +760,7 @@ public class NinjaServiceImpl implements NinjaService {
 			formations.add(formation);
 		}
 	}
+
+	
 
 }

@@ -131,7 +131,18 @@ public class Ninja implements Serializable{
 	}
 
 	
-	
+	public Ninja clone() {
+		
+		Ninja n = new Ninja();
+		n.setName(name);
+		n.setChakraNature(chakraNature);
+		n.setType(type);
+		n.setFormation(Formation);
+		
+		
+		
+		return null;
+	}
 	
 	
 }
