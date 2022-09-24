@@ -3,6 +3,8 @@ package com.alejandro.animeninja.presentation.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alejandro.animeninja.bussines.annotation.PageableConstraint;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.Pagination;
@@ -25,7 +28,7 @@ import com.alejandro.animeninja.bussines.model.dto.FormationsNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
 import com.alejandro.animeninja.bussines.services.NinjaService;
-import com.alejandro.animeninja.bussines.services.ValidatorService;
+import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 
 @RestController
 @CrossOrigin
@@ -39,7 +42,7 @@ public class NinjasController {
 	private NinjaMapper ninjaMapper;
 	
 	@Autowired
-	private ValidatorService validator;
+	private ValidatorNinjaService validator;
 
 	
 	
@@ -63,8 +66,6 @@ public class NinjasController {
 
 		validator.validateCreateComboNinjaDTO(attributes);
 		
-		/*Pagination <NinjaDTO> pagination =  new Pagination <NinjaDTO> 
-		(ninjaServices.getNinjaFiltroAnd(attributes, sorted, filtred,pageable),page,pageSize);*/
 		NinjasDTO responseDTO = new NinjasDTO();
 		responseDTO.setNinjas(ninjaServices.getNinjaFiltroAnd(attributes, sorted, filtred,pageable));
 		responseDTO.setNumber(responseDTO.getNinjas().size());
@@ -86,12 +87,10 @@ public class NinjasController {
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
-			Pageable pageable) {
+			@Valid @PageableConstraint Pageable pageable) {
 
 		validator.validateCreateComboNinjaDTO(attributes);
 		
-		/*Pagination <NinjaDTO> pagination =  new Pagination <NinjaDTO> 
-		(ninjaServices.getNinjaFiltroOr(attributes, sorted, filtred,pageable),page,pageSize);*/
 		NinjasDTO responseDTO = new NinjasDTO();
 		responseDTO.setNinjas(ninjaServices.getNinjaFiltroOr(attributes, sorted, filtred,pageable));
 		responseDTO.setNumber(responseDTO.getNinjas().size());
@@ -144,11 +143,6 @@ public class NinjasController {
 		 System.out.println ("Memoria usada: " + (runtime.totalMemory() - runtime.freeMemory()) / dataSize + "MB");
 	}
 	
-	/*List <List <SkillAttributeDTO>> response2 = new ArrayList<>();
 	
-	for(FormationNinjaDTO element : response.getFormations()) {
-		response2.add(element.getMergedAtributes());
-	}
-	System.out.println(response2.size());*/
 
 }

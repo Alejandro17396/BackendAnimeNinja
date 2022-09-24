@@ -22,7 +22,7 @@ import com.alejandro.animeninja.bussines.model.dto.NinjaSkillDTO;
 import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
 import com.alejandro.animeninja.bussines.model.dto.SkillResultDTO;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
-import com.alejandro.animeninja.bussines.services.ValidatorService;
+import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 
 @RestController
 @CrossOrigin
@@ -41,9 +41,8 @@ public class NinjaSkillsController {
 	@Autowired
 	private NinjaSkillMapper ninjaSkillMapper;
 	
-
 	@Autowired
-	private ValidatorService validator;
+	private ValidatorNinjaService validator;
 	
 	@GetMapping("/AttackResult")
 	public ResponseEntity <SkillResultDTO> getNinjaFormationSkillFinalAttributes(@RequestBody(required = false) AttackSkillDTO request) {
@@ -65,7 +64,7 @@ public class NinjaSkillsController {
 	@GetMapping("/{ninja}/{type}")
 	public ResponseEntity <NinjaSkillDTO> getSkill(@PathVariable String ninja,@PathVariable SkillType type) {
 		
-		NinjaSkillDTO responseDTO = ninjaSkillMapper.toDTO(ninjaSkillServices.findByNinjaAndType("Hidan", SkillType.SKILL));
+		NinjaSkillDTO responseDTO = ninjaSkillMapper.toDTO(ninjaSkillServices.findByNinjaAndType(ninja,type));
 		ResponseEntity <NinjaSkillDTO> response = null;
 		if(responseDTO != null) {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);

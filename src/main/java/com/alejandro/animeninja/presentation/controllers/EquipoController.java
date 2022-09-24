@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,17 +28,19 @@ import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.dto.EquipoDummyDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaSkillDTO;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
+import com.alejandro.animeninja.bussines.services.EquipoServices2;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByStats;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/equipos")
+@RequestMapping("/equipos2")
 public class EquipoController {
 
 	@Autowired
-	private EquipoServices equipoServices;
+	@Qualifier("Viejo")
+	private EquipoServices2 equipoServices;
 
 	@Autowired
 	private DummyMapper dummyMapper;

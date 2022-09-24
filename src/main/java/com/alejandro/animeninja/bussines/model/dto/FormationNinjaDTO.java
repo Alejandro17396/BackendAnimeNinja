@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+
 
 
 
 public class FormationNinjaDTO {
 
+	
 	private String formationNinjas;
 	private Set<NinjaDTO> supports;
 	private Set<NinjaDTO> assaulters;

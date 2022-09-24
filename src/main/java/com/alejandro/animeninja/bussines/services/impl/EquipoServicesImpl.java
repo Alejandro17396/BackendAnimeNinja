@@ -27,7 +27,7 @@ import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusById;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusBySetStat;
 import com.alejandro.animeninja.integration.repositories.EquipoRepository;
 
-@Service
+@Service("Nuevo")
 public class EquipoServicesImpl implements EquipoServices {
 
 	@Autowired

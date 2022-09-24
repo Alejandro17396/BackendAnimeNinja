@@ -3,9 +3,12 @@ package com.alejandro.animeninja.bussines.model.dto;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 public class CreateComboNinjaDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	@NotNull
 	private List<NinjaFilterDTO> filters;
 	private List<NinjaFilterDTO> attributeFilters;
 	private List<NinjaFilterDTO> order;
