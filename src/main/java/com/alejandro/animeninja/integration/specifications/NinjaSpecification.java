@@ -80,7 +80,7 @@ public class NinjaSpecification {
 			addPredicate(predicates,timePredicate);
 			
 			if(filter.getValue() != null) {
-				valuePredicate = cb.equal(skillAtributo.get
+				valuePredicate = cb.greaterThanOrEqualTo(skillAtributo.get
 						(SkillAttribute_.VALUE),filter.getValue());
 			}
 			addPredicate(predicates,valuePredicate);

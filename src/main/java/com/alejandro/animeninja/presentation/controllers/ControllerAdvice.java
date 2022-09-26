@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import com.alejandro.animeninja.bussines.exceptions.AccesoriesException;
 import com.alejandro.animeninja.bussines.exceptions.NinjaFilterException;
 import com.alejandro.animeninja.bussines.exceptions.NinjaSkillException;
 import com.alejandro.animeninja.bussines.exceptions.SetException;
@@ -46,6 +47,14 @@ public class ControllerAdvice {
 	
 	@ExceptionHandler(value = SetException.class)
 	public ResponseEntity<ErrorDTO> setExceptionHandler(SetException exception){
+		ErrorDTO error = new ErrorDTO();
+		error.setCode(exception.getCode());
+		error.setMessage(exception.getMessage());
+		return new ResponseEntity<ErrorDTO>(error,exception.getStatus());
+	}
+	
+	@ExceptionHandler(value = AccesoriesException.class)
+	public ResponseEntity<ErrorDTO> setExceptionHandler(AccesoriesException exception){
 		ErrorDTO error = new ErrorDTO();
 		error.setCode(exception.getCode());
 		error.setMessage(exception.getMessage());

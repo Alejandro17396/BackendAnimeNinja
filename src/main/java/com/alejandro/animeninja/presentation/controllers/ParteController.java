@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alejandro.animeninja.bussines.model.Parte;
 import com.alejandro.animeninja.bussines.services.ParteServices;
 
-@RestController
-@CrossOrigin
+//@RestController
+//@CrossOrigin
 @RequestMapping("/partes")
 public class ParteController {
 

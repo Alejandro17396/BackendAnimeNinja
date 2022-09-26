@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -81,39 +82,29 @@ public class NinjaServiceImpl implements NinjaService {
 	}
 
 	@Override
-	public List<NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
+	public Page <NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
 			Pageable pageable) {
 		Specification<Ninja> specification = createAndSpecification(attributes);
-		List<Ninja> ninjas = getNinjasBySpecification(specification,pageable);
+		Page <Ninja> page = ninjaRepository.findAll(specification,pageable);
 
-		if (filtred) {
-
-		}
-
-		if (sorted) {
-
-		}
-
-		return ninjaMapper.toDtoList(ninjas);
+		return new PageImpl<NinjaDTO>(ninjaMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
 	}
 
 	@Override
-	public List<NinjaDTO> getNinjaFiltroOr(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
+	public Page <NinjaDTO> getNinjaFiltroOr(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
 			Pageable pageable) {
 		Specification<Ninja> specification = createOrSpecification(attributes);
-		List<Ninja> ninjas = getNinjasBySpecification(specification,pageable);
+		Page <Ninja> page = ninjaRepository.findAll(specification,pageable);
 
-		if (sorted) {
-
-		}
-
-		if (filtred) {
-
-		}
-
-		return ninjaMapper.toDtoList(ninjas);
+		return new PageImpl<NinjaDTO>(ninjaMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
 	}
 
+	
+	
+	private List<Ninja> getNinjasBySpecificationPrivate(Specification<Ninja> specification) {
+		return ninjaRepository.findAll(specification);
+	}
+	
 	@Override
 	public List<FormationNinjaDTO> getNinjaComboFormations(CreateComboNinjaDTO attributes, boolean merge,
 			boolean sorted, boolean filtred, boolean or) {
@@ -124,7 +115,7 @@ public class NinjaServiceImpl implements NinjaService {
 		} else {
 			specification = createAndSpecification(attributes);
 		}
-		List<Ninja> ninjas = getNinjasBySpecification(specification,null);
+		List<Ninja> ninjas = getNinjasBySpecificationPrivate(specification);
 		
 		if(ninjas == null || ninjas.size() == 0) {
 			return new ArrayList<FormationNinjaDTO>();

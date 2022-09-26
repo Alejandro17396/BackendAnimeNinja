@@ -15,8 +15,8 @@ import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 
-@RestController
-@CrossOrigin
+//@RestController
+//@CrossOrigin
 @RequestMapping("/bonuses")
 public class BonusController {
 
@@ -37,10 +37,6 @@ public class BonusController {
 	public List<Bonus> getSetsByAttributes() {
 		List<Atributo> attributes = new ArrayList<>();
 
-		// attributes.add(new Atributo("attack"));
-		// attributes.add(new Atributo("HP"));
-		/* attributes.add(new Atributo("avoid injury rate")); */
-		// attributes.add(new Atributo("damage rate"));
 		attributes.add(new Atributo("after using skill, recovers himself % HP by"));
 		attributes.add(new Atributo("HP"));
 
@@ -51,10 +47,6 @@ public class BonusController {
 	public List<Bonus> getSetsByAttributesSpecification() {
 		List<Atributo> attributes = new ArrayList<>();
 
-		// attributes.add(new Atributo("attack"));
-		// attributes.add(new Atributo("HP"));
-		/* attributes.add(new Atributo("avoid injury rate")); */
-		// attributes.add(new Atributo("damage rate"));
 		attributes.add(new Atributo("after using skill, recovers himself % HP by"));
 		attributes.add(new Atributo("HP"));
 
@@ -70,12 +62,6 @@ public class BonusController {
 	public List<Bonus> getSetsByAttributesSpecification2() {
 
 		List<Atributo> attributes = new ArrayList<>();
-
-		// attributes.add(new Atributo("attack"));
-		// attributes.add(new Atributo("HP"));
-		/* attributes.add(new Atributo("avoid injury rate")); */
-		// attributes.add(new Atributo("damage rate"));
-		// attributes.add(new Atributo("after using skill, recovers himself % HP by"));
 		attributes.add(new Atributo("HP"));
 
 		Specification<Bonus> specification = Specification.where(null);
@@ -93,31 +79,16 @@ public class BonusController {
 		List<Atributo>attributes = new ArrayList<>();
 		
 		attributes.add(new Atributo("attack"));
-		//attributes.add(new Atributo("HP"));
 		attributes.add(new Atributo("avoid injury rate"));
 		attributes.add(new Atributo("damage rate"));
-		//attributes.add(new Atributo("after using skill, recovers himself % HP by"));
 		attributes.add(new Atributo("HP"));
 		
 		Specification <Bonus> specification = Specification.where(null);
 		for(Atributo a : attributes) {
 			specification=specification.or(BonusSpecification.existBonusAtributoByAttribute(a));
 		}
-		//List <Equipo> equipos = equipoServices.generateCombinationSetsByBonus(specification,attributes);
-		//System.out.println(equipos.size());
-		/*List<Atributo> attributes = new ArrayList<>();
-
-		// attributes.add(new Atributo("attack"));
-		// attributes.add(new Atributo("HP"));
-		/* attributes.add(new Atributo("avoid injury rate")); */
-		// attributes.add(new Atributo("damage rate"));
-		// attributes.add(new Atributo("after using skill, recovers himself % HP by"));
-		/*attributes.add(new Atributo("HP"));
-
-		Specification<Bonus> specification = Specification.where(null);
-		for (Atributo a : attributes) {
-			specification = specification.and(BonusSpecification.existBonusAtributoByAttribute(a));
-		}*/
+		
+		
 
 		return bonusServices.getBonusCombination(specification);
 	}
