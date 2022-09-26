@@ -115,10 +115,11 @@ public class NinjasController {
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize) {
  
-		ResponseEntity <FormationsNinjaDTO> response = null;
-		FormationsNinjaDTO responseDTO = new FormationsNinjaDTO();
+		
 		validator.validateCreateComboNinjaDTO(externFilter);
 		
+		ResponseEntity <FormationsNinjaDTO> response = null;
+		FormationsNinjaDTO responseDTO = new FormationsNinjaDTO();
 		Pagination <FormationNinjaDTO> pagination =  new Pagination <FormationNinjaDTO> 
 		(ninjaServices.getNinjaComboFormations(externFilter, merge, sorted, filtred, or),page,pageSize);
 		responseDTO.setFormations(pagination.getPagedList());

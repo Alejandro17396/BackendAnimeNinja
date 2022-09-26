@@ -14,11 +14,11 @@ import com.alejandro.animeninja.bussines.model.dto.ErrorDTO;
 @RestControllerAdvice
 public class ControllerAdvice {
 
-	@ExceptionHandler(value = RuntimeException.class)
+	/*@ExceptionHandler(value = RuntimeException.class)
 	public ResponseEntity<ErrorDTO> runtimeExceptionHandler(RuntimeException exception){
 		ErrorDTO error = new ErrorDTO();
 		return new ResponseEntity<ErrorDTO>(error,HttpStatus.I_AM_A_TEAPOT);
-	}
+	}*/
 	
 	@ExceptionHandler(value = NinjaFilterException.class)
 	public ResponseEntity<ErrorDTO> NinjaFilterExceptionHandler(NinjaFilterException exception){

@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,8 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +23,20 @@ import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.ClaveBonus;
+import com.alejandro.animeninja.bussines.model.CreateComboSet;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Parte;
+import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.services.ParteServices;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusById;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusBySetStat;
+import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
 import com.alejandro.animeninja.integration.repositories.EquipoRepository;
+import com.alejandro.animeninja.integration.specifications.BonusSpecification;
+import com.alejandro.animeninja.integration.specifications.EquipoSpecification;
+import com.alejandro.animeninja.bussines.mappers.SetMapper;
 
 @Service("Nuevo")
 public class EquipoServicesImpl implements EquipoServices {
@@ -38,6 +49,9 @@ public class EquipoServicesImpl implements EquipoServices {
 
 	@Autowired
 	private ParteServices parteService;
+	
+	@Autowired
+	private SetMapper setMapper;
 
 	@Override
 	public List<Equipo> getAll() {
@@ -49,11 +63,103 @@ public class EquipoServicesImpl implements EquipoServices {
 		return equipoRepository.findByListOfAtributtes(attributes);
 	}
 
+	
+	@Override
+	public Page <SetDTO> getSetsByAttributes2(CreateComboSet attributes,boolean merge, boolean filter, boolean sorted,Pageable pageable){
+		
+		Specification<Equipo> specification = Specification.where(null);
+		for (Atributo a : attributes.getAttributes()) {
+			specification = specification.and(EquipoSpecification.existsBonusAtributo(a));
+		}
+		Page <Equipo> page = equipoRepository.findAll(specification,pageable);
+		
+		List <Equipo> sets = page.getContent().stream().collect(Collectors.toList());
+		if (merge) {
+			mergeSetBonus(sets);
+		}
+		
+		if (filter) {
+			filterSetByStats(sets, attributes.getAttributesFilter());
+		}
+		if (sorted) {
+			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
+				Collections.sort(sets,
+						new SortEquiposByAttributes(attributes.getAttributes().get(i).getNombre()).reversed());
+			}
+		}
+		
+		return new PageImpl <SetDTO>(setMapper.toDtoList(sets),pageable,page.getTotalElements());
+	}
+	
+	@Override
+	public List <SetDTO> generateCombinationSetsByBonus(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable){
+		
+		/*Specification<Bonus> specification = Specification.where(null);
+		for (Atributo a : attributes.getAttributes()) {
+			specification = specification.or(BonusSpecification.existBonusAtributoByAttribute(a));
+		}*/
+		
+		List<Bonus> bonuses;
+		String n = attributes.getSetName().replace(" set", "") + " kunai";
+		n = n.trim();
+		Parte miParte = parteService.getPartesByNombre(n);
+		if (miParte != null) {
+			bonuses = bonusService.getBonusBySetStats("", miParte.getValor());
+			Collections.sort(bonuses, new SortBonusById());
+		} else {
+			bonuses = bonusService.getAll();
+		}
+		final List<Equipo> equipos = new ArrayList<>();
+		bonuses.removeIf(bonus -> {
+			if (bonus.getId() == 6) {
+				Optional<Equipo> equipoOptional = equipoRepository.findById(bonus.getEquipo());
+				Equipo equipo = equipoOptional.get();
+				equipos.add(equipo);
+				return true;
+			}
+			return false;
+		});
+
+		Iterator<Bonus> it = bonuses.iterator();
+		while (it.hasNext()) {
+			Bonus bonus = it.next();
+			it.remove();
+			if (bonus.getId() == 2) {
+				CreateComboType2(bonuses, equipos, bonus);
+			} else {
+				CreateComboType4(bonuses, equipos, bonus);
+			}
+		}
+
+		removeCombosNotMatchAttributes(equipos, (ArrayList<Atributo>) attributes.getAttributes());
+		
+		addPartes(equipos);
+		mergeSetBonus(equipos);
+		
+		if (filtred) {
+			filterSetByStats(equipos, attributes.getAttributesFilter());
+		}
+		if (sorted) {
+			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
+				Collections.sort(equipos,
+						new SortEquiposByAttributes(attributes.getAttributes().get(i).getNombre()).reversed());
+			}
+		}
+		return setMapper.toDtoList(equipos);
+	}
+	
+	
 	@Override
 	public List<Equipo> getSetsBySpecification(Specification<Equipo> specification) {
 		return equipoRepository.findAll(specification);
 	}
 
+	public Page <SetDTO> getAllPage(Pageable pageable){
+		Page <Equipo> page = equipoRepository.findAll(pageable);
+		return new PageImpl<SetDTO>(setMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
+
+	}
+	
 	@Override
 	public List<Equipo> generateCombinationSetsByBonus(Specification<Bonus> specification, List<Atributo> attributes,
 			String setName) {

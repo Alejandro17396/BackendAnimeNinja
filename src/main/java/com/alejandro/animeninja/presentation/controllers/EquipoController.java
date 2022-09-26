@@ -1,141 +1,113 @@
 package com.alejandro.animeninja.presentation.controllers;
 
-import java.util.Collections;
-import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alejandro.animeninja.bussines.mappers.DummyMapper;
-import com.alejandro.animeninja.bussines.model.Atributo;
-import com.alejandro.animeninja.bussines.model.Bonus;
+import com.alejandro.animeninja.bussines.mappers.SetMapper;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
-import com.alejandro.animeninja.bussines.model.Equipo;
-import com.alejandro.animeninja.bussines.model.dto.EquipoDummyDTO;
-import com.alejandro.animeninja.bussines.model.dto.NinjaSkillDTO;
+import com.alejandro.animeninja.bussines.model.Pagination;
+import com.alejandro.animeninja.bussines.model.dto.SetDTO;
+import com.alejandro.animeninja.bussines.model.dto.SetsDTO;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
-import com.alejandro.animeninja.bussines.services.EquipoServices2;
-import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
-import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByStats;
-import com.alejandro.animeninja.integration.specifications.BonusSpecification;
+import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/equipos2")
+@RequestMapping("/equipos3")
 public class EquipoController {
 
 	@Autowired
-	@Qualifier("Viejo")
-	private EquipoServices2 equipoServices;
-
-	@Autowired
-	private DummyMapper dummyMapper;
+	private EquipoServices equipoServices;
 	
+	@Autowired
+	private SetMapper setMapper;
+	
+	@Autowired
+	private ValidatorNinjaService validator;
 	
 	@GetMapping
-	public List<Equipo> getAll() { 
+	public ResponseEntity <Page <SetDTO>> getAll(Pageable pageable) { 
 		
-		List <Equipo> equipos = equipoServices.getAll();
-		Collections.sort(equipos, new SortEquiposByStats().reversed());
-		return equipos;
+		Page <SetDTO> responseDTO = equipoServices.getAllPage(pageable);
+		ResponseEntity <Page <SetDTO>> response = null;
+		
+		if(responseDTO.getContent().size() > 0) {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
+		}
+		return response;
 	}
 	
-
-	@GetMapping("/paginado2")
-	public List<EquipoDummyDTO> getAll3() { 
-		
-		List <Equipo> equipos = equipoServices.getAll();
-		Collections.sort(equipos, new SortEquiposByStats().reversed());
-		return dummyMapper.toDtoList(equipos);
-	}
-
 	@GetMapping("/filterSetsByAttributes")
-	public List<Equipo> getSetsByAttributesSpecification(@RequestBody(required = false) CreateComboSet attributes,
+	public ResponseEntity <Page <SetDTO>> getSetsByAttributesSpecification(@RequestBody(required = false) CreateComboSet attributes,
 			@RequestParam(value = "merge", required = false, defaultValue = "true") boolean merge,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
-			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred) {
-		List<Equipo> sets;
-		if (attributes == null) {
-			sets = null;
-		}
-		sets = equipoServices.getSetsByAttributes(attributes.getAttributes());
-		if (merge) {
-			equipoServices.mergeSetBonus(sets);
-		}
-		if (filtred) {
-			equipoServices.filterSetByStats(sets, attributes.getAttributesFilter());
-		}
-		if (sorted) {
-			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
-				Collections.sort(sets,
-						new SortEquiposByAttributes(attributes.getAttributes().get(i).getNombre()).reversed());
-			}
-		}
+			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
+			Pageable pageable) {
 		
-		return sets;
+		validator.validateCreateComboSet(attributes);
+		
+		Page <SetDTO> responseDTO = equipoServices.getSetsByAttributes2(attributes,merge,filtred,sorted,pageable);
+		ResponseEntity <Page <SetDTO>> response = null;
+		
+		if(responseDTO.getContent().size() > 0) {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
+		}
+		return response;
+	}
+	
+	@GetMapping("/getSet/{nombre}")
+	public ResponseEntity <SetDTO> getSetById(@PathVariable String nombre) {
+		ResponseEntity <SetDTO> response = null;
+		SetDTO responseDTO = setMapper.toDTO(equipoServices.getByNombre(nombre));
+		
+		if(responseDTO != null) {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
+		}
+		return response;
 	}
 
 	
-	@PostMapping("/prueba")
-	public List<Equipo> getSetsByAttributesSpecification2(@RequestBody(required = false) CreateComboSet attributes
-			) {
-		System.out.println("llego algo "+attributes.getAttributes().get(0));
-
-		return equipoServices.getAll();
-	}
-	@GetMapping("/getSet/{nombre}")
-	public Equipo getSetById(@PathVariable String nombre) {
-		return equipoServices.getByNombre(nombre);
-	}
-
-	@PostMapping("/CombinacionesBonusTotal")
-	public List<Equipo> CombineSetsByAttributesTotal(@RequestBody(required = false) CreateComboSet attributes,
+	@GetMapping("/CombinacionesBonusTotal")
+	public ResponseEntity <SetsDTO> CombineSetsByAttributesTotal(@RequestBody(required = false) CreateComboSet attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
-			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred) {
+			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
+			Pageable pageable) {
 
-		if (attributes == null) {
-			return null;
-		}
-		//System.out.println("El nombre es "+attributes.getSetName());
-		Specification<Bonus> specification = Specification.where(null);
-		for (Atributo a : attributes.getAttributes()) {
-			specification = specification.or(BonusSpecification.existBonusAtributoByAttribute(a));
-		}
-
-		List<Equipo> equipos = equipoServices.generateCombinationSetsByBonus(specification, attributes.getAttributes(),attributes.getSetName());
-		System.out.println(equipos.size());
-		equipoServices.addPartes(equipos);
-		equipos = equipoServices.mergeSetBonus(equipos);
+		validator.validateCreateComboSet(attributes);
+		Pagination <SetDTO> pagination =  new Pagination <SetDTO> (equipoServices.generateCombinationSetsByBonus(attributes,
+				sorted, filtred, null, pageable),pageable.getPageNumber(),pageable.getPageSize());
+		SetsDTO responseDTO = new SetsDTO();
+		responseDTO.setSets(pagination.getPagedList());
+		responseDTO.setNumber(pagination.getPagedList().size());
+		ResponseEntity <SetsDTO> response = null;
 		
-		
-		if (filtred) {
-			equipoServices.filterSetByStats(equipos, attributes.getAttributesFilter());
+		if(responseDTO.getSets().size() > 0) {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
 		}
-		if (sorted) {
-			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
-				Collections.sort(equipos,
-						new SortEquiposByAttributes(attributes.getAttributes().get(i).getNombre()).reversed());
-			}
-		}
+		return response;
 		
-
-		System.out.println(equipos.size());
-		//System.out.println("El nombre es "+attributes.getSetName());
-		return equipos;
 	}
+	
+	
 
 }

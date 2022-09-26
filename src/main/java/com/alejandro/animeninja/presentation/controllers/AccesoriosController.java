@@ -1,96 +1,101 @@
 package com.alejandro.animeninja.presentation.controllers;
 
-import java.util.Collections;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
-import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
-import com.alejandro.animeninja.bussines.model.SetAccesorio;
+import com.alejandro.animeninja.bussines.model.Pagination;
+import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.SetsAccesorioDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
-import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosByAttributes;
-import com.alejandro.animeninja.integration.specifications.AccesorioSpecification;
-import com.alejandro.animeninja.integration.specifications.BonusAccesorioSpecification;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/accesorios")
+@RequestMapping("/accesorios2")
 public class AccesoriosController {
 
 	@Autowired
 	private AccesorioServices accesorioServices;
 
 	@GetMapping
-	public List<SetAccesorio> getAll() {
-		System.out.println(accesorioServices.getAll().size());
-		return accesorioServices.getAll();
+	public ResponseEntity <Page <SetAccesorioDTO>> getAll(Pageable pageable) {
+		Page <SetAccesorioDTO> responseDTO = accesorioServices.getAll(pageable);
+		ResponseEntity <Page <SetAccesorioDTO>> response = null;
+		
+		if(responseDTO.getContent().size() > 0) {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
+		}
+		return response;
 	}
 
 	@GetMapping("/filterAccesoriesSetByAttributes")
-	public List<SetAccesorio> getAll2(@RequestBody(required = false) List<Atributo> attributes) {
+	public ResponseEntity <Page <SetAccesorioDTO>> getAll2(@RequestBody(required = false) List<Atributo> attributes,
+			Pageable pageable) {
 
 		if (attributes == null) {
 			return null;
 		}
 
-		Specification<SetAccesorio> specification = Specification.where(null);
-		for (Atributo a : attributes) {
-			specification = specification.and(AccesorioSpecification.existsBonusAtributo(a));
+		Page <SetAccesorioDTO> responseDTO = accesorioServices.getBySpecification(attributes,pageable);
+		
+		ResponseEntity <Page <SetAccesorioDTO>> response = null;
+		
+		if(responseDTO.getContent().size() > 0) {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
 		}
-
-		return accesorioServices.getBySpecification(specification);
+		return response;
 	}
 
 	@GetMapping("/getSet/{nombre}")
-	public SetAccesorio getSetById(@PathVariable String nombre) {
+	public SetAccesorioDTO getSetById(@PathVariable String nombre) {
 		return accesorioServices.getByNombre(nombre);
 	}
 
-	@PostMapping("/CombinacionesBonusTotal")
-	public List<SetAccesorio> getAll3(@RequestBody(required = false) CreateComboSetAccesorio attributes,
+	@GetMapping("/CombinacionesBonusTotal")
+	public ResponseEntity <SetsAccesorioDTO> getAll4(@RequestBody(required = false) CreateComboSetAccesorio attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
-			@RequestParam(value = "hardSearch", required = false, defaultValue = "false") boolean hardSearch) {
+			@RequestParam(value = "hardSearch", required = false, defaultValue = "false") boolean hardSearch,
+			Pageable pageable) {
 
 		if (attributes == null) {
 			return null;
 		}
-		long num1= System.currentTimeMillis();
-		Specification<BonusAccesorio> specification = Specification.where(null);
-		for (Atributo a : attributes.getAttributes()) {
-			specification = specification.or(BonusAccesorioSpecification.existBonusAtributoByAttribute(a));
-		}
-
-		List<SetAccesorio> sets = accesorioServices.getComboAccesoriosBySpecification(specification,
-				attributes.getAttributes(), hardSearch,attributes.getSetFilter());
-		accesorioServices.addPartes(sets);
-
-		sets = accesorioServices.mergeSetBonus(sets);
 		
-		if (filtred) {
-			accesorioServices.filterSetByStats(sets, attributes.getAttributesFilter());
-		}
-		if (sorted) {
-			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
-				Collections.sort(sets,
-						new SortSetAccesoriosByAttributes(attributes.getAttributes().get(i).getNombre()).reversed());
-			}
+		Pagination <SetAccesorioDTO> pagination =  new Pagination <SetAccesorioDTO> 
+		(accesorioServices.getComboAccesoriosBySpecification(attributes,sorted,filtred, hardSearch,pageable),
+				pageable.getPageNumber(),pageable.getPageSize());
+		ResponseEntity <SetsAccesorioDTO> response = null;
+		SetsAccesorioDTO responseDTO = new SetsAccesorioDTO();
+		
+		responseDTO.setSets(pagination.getPagedList());
+		responseDTO.setNumber(pagination.getPagedList().size());
+		 
+		if(responseDTO.getNumber() > 0) {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
 		}
 
-		System.out.println("Final" + sets.size());
-		long num2= System.currentTimeMillis();
-		System.out.println("Tiempo: "+(num1-num2));
-		return sets;
+		return response;
 	}
+	
 }

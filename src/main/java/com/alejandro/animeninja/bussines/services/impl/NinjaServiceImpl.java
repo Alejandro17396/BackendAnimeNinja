@@ -71,7 +71,6 @@ public class NinjaServiceImpl implements NinjaService {
 
 	public List<Ninja> getNinja2(Pageable pageable,Specification<Ninja> specification) {
 		Page <Ninja> page =ninjaRepository.findAll(specification,pageable);
-		//ninjaRepository.finA
 		return ninjaRepository.findAll();
 	}
 	

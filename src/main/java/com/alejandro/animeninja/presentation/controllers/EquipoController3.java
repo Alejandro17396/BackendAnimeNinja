@@ -5,6 +5,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.support.PagedListHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,14 +21,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.mappers.DummyMapper;
-import com.alejandro.animeninja.bussines.mappers.SetMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.dto.EquipoDummyDTO;
-import com.alejandro.animeninja.bussines.model.dto.SetDTO;
+import com.alejandro.animeninja.bussines.model.dto.NinjaSkillDTO;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
+import com.alejandro.animeninja.bussines.services.EquipoServices2;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByStats;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
@@ -31,24 +36,22 @@ import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 @RestController
 @CrossOrigin
 @RequestMapping("/equipos")
-public class EquipoController2 {
+public class EquipoController3 {
 
 	@Autowired
-	@Qualifier("Nuevo")
-	private EquipoServices equipoServices;
+	@Qualifier("Viejo")
+	private EquipoServices2 equipoServices;
 
 	@Autowired
 	private DummyMapper dummyMapper;
 	
-	@Autowired
-	private SetMapper setMapper;
 	
 	@GetMapping
-	public List<SetDTO> getAll() { 
+	public List<Equipo> getAll() { 
 		
 		List <Equipo> equipos = equipoServices.getAll();
 		Collections.sort(equipos, new SortEquiposByStats().reversed());
-		return setMapper.toDtoList(equipos);
+		return equipos;
 	}
 	
 

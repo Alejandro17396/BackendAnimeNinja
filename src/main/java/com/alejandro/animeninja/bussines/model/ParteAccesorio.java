@@ -33,6 +33,7 @@ public class ParteAccesorio implements Serializable {
 	
 	@Column(name="tipo")
 	private String tipo;
+	
 	public ParteAccesorio() {
 	
 	}

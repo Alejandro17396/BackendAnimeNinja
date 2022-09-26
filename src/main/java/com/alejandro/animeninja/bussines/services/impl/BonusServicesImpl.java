@@ -53,7 +53,6 @@ public class BonusServicesImpl implements BonusServices {
 
 	@Override
 	public List<Bonus> getBonusBySetStats(String parte, Long valor) {
-		// TODO Auto-generated method stub
 		return bonusRepository.findBySets(valor);
 	}
 

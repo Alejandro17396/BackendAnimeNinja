@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,19 +9,28 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
+import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
 import com.alejandro.animeninja.bussines.model.ParteAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorioUtils;
+import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.BonusAccesorioService;
 import com.alejandro.animeninja.bussines.services.ParteAccesorioService;
+import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosByAttributes;
 import com.alejandro.animeninja.integration.repositories.AccesorioRepository;
+import com.alejandro.animeninja.integration.specifications.AccesorioSpecification;
+import com.alejandro.animeninja.integration.specifications.BonusAccesorioSpecification;
 
 @Service
 public class AccesorioServicesImpl implements AccesorioServices {
@@ -33,15 +43,24 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 	@Autowired
 	private ParteAccesorioService parteAccesorioService;
+	
+	@Autowired
+	private AccesorieMapper accesorieMapper;
 
 	@Override
-	public List<SetAccesorio> getAll() {
-		return accesorioRepository.findAll();
+	public Page <SetAccesorioDTO> getAll(Pageable pageable) {
+		Page <SetAccesorio> page = accesorioRepository.findAll(pageable);
+		return new PageImpl<SetAccesorioDTO>(accesorieMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
 	}
 
 	@Override
-	public List<SetAccesorio> getBySpecification(Specification<SetAccesorio> specification) {
-		return accesorioRepository.findAll(specification);
+	public Page <SetAccesorioDTO> getBySpecification(List<Atributo> attributes,Pageable pageable) {
+		Specification<SetAccesorio> specification = Specification.where(null);
+		for (Atributo a : attributes) {
+			specification = specification.and(AccesorioSpecification.existsBonusAtributo(a));
+		}
+		Page <SetAccesorio> page = accesorioRepository.findAll(specification,pageable);
+		return new PageImpl<SetAccesorioDTO>(accesorieMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
 	}
 
 	/*private ParteAccesorio getAmulet(SetAccesorio  a) {
@@ -55,7 +74,61 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	}*/
 	
 	@Override 
-	public List<SetAccesorio> getComboAccesoriosBySpecification(Specification<BonusAccesorio> specification,
+	public List<SetAccesorioDTO> getComboAccesoriosBySpecification(CreateComboSetAccesorio attributes,
+			boolean sorted,boolean filtred, boolean hardSearch,Pageable pageable){
+		
+		List<SetAccesorio> sets = accesorioRepository.findAll();
+		List<BonusAccesorio> bonuses;
+
+		Specification<BonusAccesorio> specification = Specification.where(null);
+		for (Atributo a : attributes.getAttributes()) {
+			specification = specification.or(BonusAccesorioSpecification.existBonusAtributoByAttribute(a));
+		}
+		String nombre =attributes.getSetFilter().replace("accessories", "");
+		nombre=nombre.trim();
+		nombre=nombre.trim();
+		nombre+=" amulet";
+		ParteAccesorio p =parteAccesorioService.getById(nombre);
+		if(p!=null) {
+			bonuses = bonusService.getBonusByParteBonus(p.getValor());
+		}else if (hardSearch) {
+			bonuses = bonusService.getAll();
+		} else {
+			bonuses = bonusService.getBonusBySpecification(specification);
+		}
+		
+
+		List<BonusAccesorio> bonusesForce = bonuses.stream().parallel().filter(x -> x.getTipo().equals("force"))
+				.collect(Collectors.toList());
+		bonuses.removeAll(bonusesForce);
+
+		bonusesForce.forEach(force -> {
+			createSetAccesorioCombo(force, bonuses, sets);
+		});
+
+		removeCombosFull(sets);
+		removeCombosNotMatchAttributes(sets, attributes.getAttributes());
+		
+		
+		addPartes(sets);
+
+		mergeSetBonus(sets);
+		
+		if (filtred) {
+			filterSetByStats(sets, attributes.getAttributesFilter());
+		}
+		if (sorted) {
+			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
+				Collections.sort(sets,
+						new SortSetAccesoriosByAttributes(attributes.getAttributes().get(i).getNombre()).reversed());
+			}
+		}
+		return accesorieMapper.toDtoList(sets);
+	}
+	
+	
+	@Override 
+	public List<SetAccesorio> getComboAccesoriosBySpecification2(Specification<BonusAccesorio> specification,
 			List<Atributo> attributes, boolean hardSearch,String setName) {
 		List<SetAccesorio> setAccesorios = accesorioRepository.findAll();
 		List<BonusAccesorio> bonuses;
@@ -176,9 +249,9 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		return (parte.getNombreSet().equals(bonus.getNombreAccesorioSet()) && parte.getTipo().equals(bonus.getTipo())) ? true:false;
 	}
 	@Override
-	public SetAccesorio getByNombre(String nombre) {
+	public SetAccesorioDTO getByNombre(String nombre) {
 		Optional <SetAccesorio> miSet= accesorioRepository.findById(nombre);
-		return miSet.isPresent() ? miSet.get() : null;
+		return miSet.isPresent() ? accesorieMapper.toDTO(miSet.get()) : null;
 	}
 
 	// ==================================================================
