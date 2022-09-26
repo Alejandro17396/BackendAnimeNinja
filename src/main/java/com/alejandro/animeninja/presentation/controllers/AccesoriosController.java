@@ -25,7 +25,7 @@ import com.alejandro.animeninja.bussines.services.AccesorioServices;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/accesorios2")
+@RequestMapping("/accesories")
 public class AccesoriosController {
 
 	@Autowired

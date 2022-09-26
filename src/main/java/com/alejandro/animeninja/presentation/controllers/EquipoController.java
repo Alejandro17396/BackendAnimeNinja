@@ -25,7 +25,7 @@ import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/equipos3")
+@RequestMapping("/sets")
 public class EquipoController {
 
 	@Autowired
