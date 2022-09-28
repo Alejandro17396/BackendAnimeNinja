@@ -105,6 +105,7 @@ public class NinjasController {
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
 			@RequestParam(value = "or", required = false, defaultValue = "true") boolean or,
+			@RequestParam(value = "or", required = false, defaultValue = "true") boolean awakenings,
 			Pageable pageable) {
  
 		
@@ -112,7 +113,7 @@ public class NinjasController {
 		
 		ResponseEntity <FormationsNinjaDTO> response = null;
 		FormationsNinjaDTO responseDTO = new FormationsNinjaDTO();
-		List <FormationNinjaDTO> list =ninjaServices.getNinjaComboFormations(externFilter, merge, sorted, filtred, or);
+		List <FormationNinjaDTO> list =ninjaServices.getNinjaComboFormations(externFilter, merge, sorted, filtred, or, awakenings);
 		Pagination <FormationNinjaDTO> pagination =  new Pagination <FormationNinjaDTO> 
 		(list,pageable.getPageNumber(),pageable.getPageSize());
 		responseDTO.setFormations(pagination.getPagedList());

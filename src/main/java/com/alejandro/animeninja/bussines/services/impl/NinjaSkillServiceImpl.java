@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.NinjaSkillKey;
-import com.alejandro.animeninja.bussines.model.SkillAtributeKey;
+import com.alejandro.animeninja.bussines.model.SkillAttributeKey;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
@@ -50,7 +50,7 @@ public class NinjaSkillServiceImpl implements NinjaSkillService {
 			}
 		}
 		
-		Map<SkillAtributeKey,SkillAttribute> mapa = new HashMap<>();
+		Map<SkillAttributeKey,SkillAttribute> mapa = new HashMap<>();
 		
 		for(NinjaSkill skill : skills) {
 			mapa.putAll(skill.getAttributes().stream().collect(Collectors.toMap(SkillAttribute::getKey, attr -> attr)));
@@ -75,7 +75,7 @@ public class NinjaSkillServiceImpl implements NinjaSkillService {
 			}
 		}
 		
-		Map<SkillAtributeKey,SkillAttribute> mapa = new HashMap<>();
+		Map<SkillAttributeKey,SkillAttribute> mapa = new HashMap<>();
 		
 		for(NinjaSkill skill : skills) {
 			mapa.putAll(skill.getAttributes().stream().collect(Collectors.toMap(SkillAttribute::getKey, attr -> attr)));

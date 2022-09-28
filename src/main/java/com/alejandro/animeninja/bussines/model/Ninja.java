@@ -139,9 +139,7 @@ public class Ninja implements Serializable{
 		n.setType(type);
 		n.setFormation(Formation);
 		
-		
-		
-		return null;
+		return n;
 	}
 	
 	

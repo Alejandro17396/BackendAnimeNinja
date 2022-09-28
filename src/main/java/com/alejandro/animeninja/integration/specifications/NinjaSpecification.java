@@ -12,6 +12,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import com.alejandro.animeninja.bussines.model.Ninja;
+import com.alejandro.animeninja.bussines.model.NinjaAwakeningStat;
+import com.alejandro.animeninja.bussines.model.NinjaAwakeningStat_;
 import com.alejandro.animeninja.bussines.model.Ninja_;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.SkillAttribute_;
@@ -20,7 +22,82 @@ import com.alejandro.animeninja.bussines.model.dto.NinjaFilterDTO;
 @Component
 public class NinjaSpecification {
 
-	public static Specification <Ninja> skillPredicate(NinjaFilterDTO filter){
+	
+	public static Specification <Ninja> awakeningAttributePredicate(NinjaFilterDTO filter){
+		return ((ninja,cq,cb) -> {
+			Subquery <NinjaAwakeningStat> subquery=  cq.subquery(NinjaAwakeningStat.class);
+			Root<NinjaAwakeningStat> awakeningAttribute = subquery.from(NinjaAwakeningStat.class);
+			Predicate joinPredicate= cb.equal(ninja.get(Ninja_.NAME), 
+					awakeningAttribute.get(NinjaAwakeningStat_.NINJA));
+			Predicate attributePredicate = null;
+			Predicate impactPredicate = null;
+			Predicate actionPredicate = null;
+			Predicate conditionPredicate = null;
+			Predicate typePredicate = null;
+			Predicate timePredicate = null;
+			Predicate valuePredicate = null;
+			List <Predicate>  predicates = new ArrayList<>();
+			
+			predicates.add(joinPredicate);
+			
+			if(StringUtils.isNotEmpty(filter.getAttributeName())) {
+				attributePredicate = cb.equal(awakeningAttribute.get
+						(NinjaAwakeningStat_.ATTRIBUTE_NAME),filter.getAttributeName());
+			}
+			addPredicate(predicates,attributePredicate);
+			
+			if(StringUtils.isNotEmpty(filter.getImpact())) {
+				impactPredicate = cb.equal(awakeningAttribute.get
+						(NinjaAwakeningStat_.IMPACT),filter.getImpact());
+			}
+			
+			
+			if(filter.isSelf()) {
+				addPredicate(predicates,impactPredicate);
+			}else {
+				addPredicate(predicates,impactPredicate.not());
+			}
+			
+			if(StringUtils.isNotEmpty(filter.getAction())) {
+				actionPredicate = cb.equal(awakeningAttribute.get
+						(NinjaAwakeningStat_.ACTION),filter.getAction());
+			}
+			addPredicate(predicates,actionPredicate);
+			
+			if(StringUtils.isNotEmpty(filter.getCondition())) {
+				conditionPredicate = cb.equal(awakeningAttribute.get
+						(NinjaAwakeningStat_.CONDITION),filter.getCondition());
+			}
+			addPredicate(predicates,conditionPredicate);
+			
+			if(filter.getType() != null) {
+				typePredicate = cb.equal(awakeningAttribute.get
+						(NinjaAwakeningStat_.TYPE),filter.getType());
+			}
+			addPredicate(predicates,typePredicate);
+			
+			if(StringUtils.isNotEmpty(filter.getTime())) {
+				timePredicate = cb.equal(awakeningAttribute.get
+						(NinjaAwakeningStat_.TIME),filter.getTime());
+			}
+			addPredicate(predicates,timePredicate);
+			
+			if(filter.getValue() != null) {
+				valuePredicate = cb.greaterThanOrEqualTo(awakeningAttribute.get
+						(NinjaAwakeningStat_.VALUE),filter.getValue());
+			}
+			addPredicate(predicates,valuePredicate);
+			
+			Predicate [] predicates2 = new Predicate[predicates.size()];
+			predicates.toArray(predicates2);
+		
+			
+			return cb.exists(subquery.select(awakeningAttribute).
+								where(predicates2));
+		});
+	}
+	
+	public static Specification <Ninja> skillAttributePredicate(NinjaFilterDTO filter){
 		return ((ninja,cq,cb) -> {
 			Subquery <SkillAttribute> subquery=  cq.subquery(SkillAttribute.class);
 			Root<SkillAttribute> skillAtributo = subquery.from(SkillAttribute.class);
@@ -94,15 +171,13 @@ public class NinjaSpecification {
 		});
 	}
 
-
-
 	private static void addPredicate(List<Predicate> predicates, Predicate attributePredicate) {
 		if(attributePredicate != null) {
 			predicates.add(attributePredicate);
 		}
 	}
 
-	public static Specification <Ninja> createAlliesEspecialPredicate(NinjaFilterDTO filter) {
+	public static Specification <Ninja> createAlliesEspecialSkillAttributePredicate(NinjaFilterDTO filter) {
 		
 		NinjaFilterDTO filterVangaurd = filter.clone();
 		filterVangaurd.setImpact("ally Vanguard");
@@ -111,16 +186,16 @@ public class NinjaSpecification {
 		NinjaFilterDTO filterSupports = filter.clone();
 		filterSupports.setImpact("ally Supports");
 		
-		Specification <Ninja> all = NinjaSpecification.skillPredicate(filter);
-		Specification <Ninja> Vanguard = NinjaSpecification.skillPredicate(filterVangaurd);
-		Specification <Ninja> Assaulters = NinjaSpecification.skillPredicate(filterAssaulters);
-		Specification <Ninja> Supports = NinjaSpecification.skillPredicate(filterSupports);
+		Specification <Ninja> all = NinjaSpecification.skillAttributePredicate(filter);
+		Specification <Ninja> Vanguard = NinjaSpecification.skillAttributePredicate(filterVangaurd);
+		Specification <Ninja> Assaulters = NinjaSpecification.skillAttributePredicate(filterAssaulters);
+		Specification <Ninja> Supports = NinjaSpecification.skillAttributePredicate(filterSupports);
 
 		return Vanguard.and(Supports).and(Assaulters).or(all); 
 		
 	}
 	
-	public static Specification <Ninja> createEnemiesEspecialPredicate(NinjaFilterDTO filter) {
+	public static Specification <Ninja> createEnemiesEspecialSkillAttributePredicate(NinjaFilterDTO filter) {
 		NinjaFilterDTO filterVangaurd = filter.clone();
 		filterVangaurd.setImpact("enemy Vanguard");
 		NinjaFilterDTO filterAssaulters = filter.clone();
@@ -128,10 +203,45 @@ public class NinjaSpecification {
 		NinjaFilterDTO filterSupports = filter.clone();
 		filterSupports.setImpact("enemy Supports");
 		
-		Specification <Ninja> all = NinjaSpecification.skillPredicate(filter);
-		Specification <Ninja> Vanguard = NinjaSpecification.skillPredicate(filterVangaurd);
-		Specification <Ninja> Assaulters = NinjaSpecification.skillPredicate(filterAssaulters);
-		Specification <Ninja> Supports = NinjaSpecification.skillPredicate(filterSupports);
+		Specification <Ninja> all = NinjaSpecification.skillAttributePredicate(filter);
+		Specification <Ninja> Vanguard = NinjaSpecification.skillAttributePredicate(filterVangaurd);
+		Specification <Ninja> Assaulters = NinjaSpecification.skillAttributePredicate(filterAssaulters);
+		Specification <Ninja> Supports = NinjaSpecification.skillAttributePredicate(filterSupports);
+		
+		return Vanguard.and(Supports).and(Assaulters).or(all);
+		
+	}
+	
+public static Specification <Ninja> createAlliesEspecialAwakeningAttributePredicate(NinjaFilterDTO filter) {
+		
+		NinjaFilterDTO filterVangaurd = filter.clone();
+		filterVangaurd.setImpact("ally Vanguard");
+		NinjaFilterDTO filterAssaulters = filter.clone();
+		filterAssaulters.setImpact("ally Assaulters");
+		NinjaFilterDTO filterSupports = filter.clone();
+		filterSupports.setImpact("ally Supports");
+		
+		Specification <Ninja> all = NinjaSpecification.skillAttributePredicate(filter);
+		Specification <Ninja> Vanguard = NinjaSpecification.skillAttributePredicate(filterVangaurd);
+		Specification <Ninja> Assaulters = NinjaSpecification.skillAttributePredicate(filterAssaulters);
+		Specification <Ninja> Supports = NinjaSpecification.skillAttributePredicate(filterSupports);
+
+		return Vanguard.and(Supports).and(Assaulters).or(all); 
+		
+	}
+	
+	public static Specification <Ninja> createEnemiesEspecialAwakeningAttributePredicate(NinjaFilterDTO filter) {
+		NinjaFilterDTO filterVangaurd = filter.clone();
+		filterVangaurd.setImpact("enemy Vanguard");
+		NinjaFilterDTO filterAssaulters = filter.clone();
+		filterAssaulters.setImpact("enemy Assaulters");
+		NinjaFilterDTO filterSupports = filter.clone();
+		filterSupports.setImpact("enemy Supports");
+		
+		Specification <Ninja> all = NinjaSpecification.skillAttributePredicate(filter);
+		Specification <Ninja> Vanguard = NinjaSpecification.skillAttributePredicate(filterVangaurd);
+		Specification <Ninja> Assaulters = NinjaSpecification.skillAttributePredicate(filterAssaulters);
+		Specification <Ninja> Supports = NinjaSpecification.skillAttributePredicate(filterSupports);
 		
 		return Vanguard.and(Supports).and(Assaulters).or(all);
 		

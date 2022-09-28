@@ -6,10 +6,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,11 @@ import com.alejandro.animeninja.bussines.model.FinalSkillsAttributes;
 import com.alejandro.animeninja.bussines.model.Formation;
 import com.alejandro.animeninja.bussines.model.FormationNinja;
 import com.alejandro.animeninja.bussines.model.Ninja;
+import com.alejandro.animeninja.bussines.model.NinjaAwakening;
+import com.alejandro.animeninja.bussines.model.NinjaAwakeningStat;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
-import com.alejandro.animeninja.bussines.model.SkillAtributeKey;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
+import com.alejandro.animeninja.bussines.model.SkillAttributeKey;
 import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
@@ -84,7 +88,7 @@ public class NinjaServiceImpl implements NinjaService {
 	@Override
 	public Page <NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
 			Pageable pageable) {
-		Specification<Ninja> specification = createAndSpecification(attributes);
+		Specification<Ninja> specification = createAndSkillAttributeSpecification(attributes);
 		Page <Ninja> page = ninjaRepository.findAll(specification,pageable);
 
 		return new PageImpl<NinjaDTO>(ninjaMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
@@ -93,7 +97,7 @@ public class NinjaServiceImpl implements NinjaService {
 	@Override
 	public Page <NinjaDTO> getNinjaFiltroOr(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
 			Pageable pageable) {
-		Specification<Ninja> specification = createOrSpecification(attributes);
+		Specification<Ninja> specification = createOrSkillAttributeSpecification(attributes);
 		Page <Ninja> page = ninjaRepository.findAll(specification,pageable);
 
 		return new PageImpl<NinjaDTO>(ninjaMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
@@ -107,18 +111,37 @@ public class NinjaServiceImpl implements NinjaService {
 	
 	@Override
 	public List<FormationNinjaDTO> getNinjaComboFormations(CreateComboNinjaDTO attributes, boolean merge,
-			boolean sorted, boolean filtred, boolean or) {
+			boolean sorted, boolean filtred, boolean or,boolean awakenings) {
 		Specification<Ninja> specification = null;
-
+		List<Ninja> ninjas1 = new ArrayList<>();
+		List<Ninja> ninjas2 = new ArrayList<>();
 		if (or) {
-			specification = createOrSpecification(attributes);
+			specification = createOrSkillAttributeSpecification(attributes);
 		} else {
-			specification = createAndSpecification(attributes);
+			specification = createAndSkillAttributeSpecification(attributes);
 		}
-		List<Ninja> ninjas = getNinjasBySpecificationPrivate(specification);
+		ninjas1 = getNinjasBySpecificationPrivate(specification);
+		
+		if(awakenings) {
+			specification = createOrSkillAwakeningSpecification(attributes);
+			ninjas2 = getNinjasBySpecificationPrivate(specification);
+		}
+		
+		
+		Set <Ninja> ninjasSet = new HashSet<>();
+		List <Ninja> ninjas = new ArrayList<>();
+		ninjasSet.addAll(ninjas1);
+		ninjasSet.addAll(ninjas2);
+		for(Ninja n : ninjasSet) {
+			ninjas.add(n);
+		}
 		
 		if(ninjas == null || ninjas.size() == 0) {
 			return new ArrayList<FormationNinjaDTO>();
+		}
+		
+		if(awakenings) {
+			mergeAwakenings(ninjas);
 		}
 		
 		List<FormationNinja> formations = generateNinjaFormations(ninjas);
@@ -164,6 +187,39 @@ public class NinjaServiceImpl implements NinjaService {
 	}
 
 	// Private Methods
+
+	private void mergeAwakenings(List<Ninja> ninjas) {
+
+		Map<SkillAttributeKey,SkillAttribute> mapa = new HashMap<>();
+		for(Ninja n : ninjas) {
+			for(NinjaSkill  skill : n.getSkills()) {
+				for(SkillAttribute attribute : skill.getAttributes()) {
+					SkillAttributeKey key = SkillAttributeKey.createKey(attribute);
+					mapa.put(key, attribute);
+				}
+				
+				for(NinjaAwakening awakening : n.getAwakenings()) {
+					if(skill.getType() == awakening.getType()) {
+						for(NinjaAwakeningStat stat : awakening.getStats()) {
+							SkillAttributeKey key = SkillAttributeKey.createKey(stat);
+							SkillAttribute attribute = SkillAttribute.createAttribute(stat);
+							SkillAttribute aux = mapa.get(key);
+							if(aux == null) {
+								mapa.put(key, attribute);
+							}else if (attribute.getValue() > aux.getValue()) {
+								mapa.put(key, attribute);
+							}
+						}
+					}
+				}
+				
+				List <SkillAttribute> nuevo = mapa.values().stream().collect(Collectors.toList());
+				skill.setAttributes(nuevo);
+				mapa = new HashMap<>();
+			}	
+		}
+		
+	}
 
 	private void filterFormationsSkillsByAttributes(List<NinjaFilterDTO> skillAttributesFilter,
 			List<FormationNinja> formations) {
@@ -232,7 +288,7 @@ public class NinjaServiceImpl implements NinjaService {
 			}
 		}
 		
-		Map<SkillAtributeKey,SkillAttribute> mapa = new HashMap<>();
+		Map<SkillAttributeKey,SkillAttribute> mapa = new HashMap<>();
 		List <NinjaSkill> skills = new ArrayList<>();
 		for(Ninja n : ninjas) {
 			skills.addAll(n.getSkills().stream().filter(ninja -> (ninja.getType() == SkillType.SKILL)).collect(Collectors.toList()));
@@ -499,36 +555,71 @@ public class NinjaServiceImpl implements NinjaService {
 
 	}
 
-	private Specification<Ninja> createAndSpecification(CreateComboNinjaDTO attributes) {
+	private Specification<Ninja> createAndAwakeningAttributeSpecification(CreateComboNinjaDTO attributes) {
 		
 		List<NinjaFilterDTO> filterList = attributes.getFilters();
 		Specification<Ninja> specification = Specification.where(null);
 
 		for (NinjaFilterDTO filter : filterList) {
 			if (filter.getImpact().equals("all allies")) {
-				specification = specification.and(NinjaSpecification.createAlliesEspecialPredicate(filter));
+				specification = specification.and(NinjaSpecification.createAlliesEspecialSkillAttributePredicate(filter));
 
 			} else if (filter.getImpact().equals("all enemies")) {
-				specification = specification.and(NinjaSpecification.createEnemiesEspecialPredicate(filter));
+				specification = specification.and(NinjaSpecification.createEnemiesEspecialSkillAttributePredicate(filter));
 			} else {
-				specification = specification.and(NinjaSpecification.skillPredicate(filter));
+				specification = specification.and(NinjaSpecification.skillAttributePredicate(filter));
 			}
 		}
 		return specification;
 	}
 
-	private Specification<Ninja> createOrSpecification(CreateComboNinjaDTO attributes) {
+	private Specification<Ninja> createOrSkillAwakeningSpecification(CreateComboNinjaDTO attributes) {
 		
 		List<NinjaFilterDTO> filterList = attributes.getFilters();
 		Specification<Ninja> specification = Specification.where(null);
 
 		for (NinjaFilterDTO filter : filterList) {
 			if (filter.getImpact().equals("all allies")) {
-				specification = specification.or(NinjaSpecification.createAlliesEspecialPredicate(filter));
+				specification = specification.or(NinjaSpecification.createAlliesEspecialSkillAttributePredicate(filter));
 			} else if (filter.getImpact().equals("all enemies")) {
-				specification = specification.or(NinjaSpecification.createEnemiesEspecialPredicate(filter));
+				specification = specification.or(NinjaSpecification.createEnemiesEspecialSkillAttributePredicate(filter));
 			} else {
-				specification = specification.or(NinjaSpecification.skillPredicate(filter));
+				specification = specification.or(NinjaSpecification.skillAttributePredicate(filter));
+			}
+		}
+		return specification;
+	}
+	
+	private Specification<Ninja> createAndSkillAttributeSpecification(CreateComboNinjaDTO attributes) {
+		
+		List<NinjaFilterDTO> filterList = attributes.getFilters();
+		Specification<Ninja> specification = Specification.where(null);
+
+		for (NinjaFilterDTO filter : filterList) {
+			if (filter.getImpact().equals("all allies")) {
+				specification = specification.and(NinjaSpecification.createAlliesEspecialSkillAttributePredicate(filter));
+
+			} else if (filter.getImpact().equals("all enemies")) {
+				specification = specification.and(NinjaSpecification.createEnemiesEspecialSkillAttributePredicate(filter));
+			} else {
+				specification = specification.and(NinjaSpecification.skillAttributePredicate(filter));
+			}
+		}
+		return specification;
+	}
+
+	private Specification<Ninja> createOrSkillAttributeSpecification(CreateComboNinjaDTO attributes) {
+		
+		List<NinjaFilterDTO> filterList = attributes.getFilters();
+		Specification<Ninja> specification = Specification.where(null);
+
+		for (NinjaFilterDTO filter : filterList) {
+			if (filter.getImpact().equals("all allies")) {
+				specification = specification.or(NinjaSpecification.createAlliesEspecialSkillAttributePredicate(filter));
+			} else if (filter.getImpact().equals("all enemies")) {
+				specification = specification.or(NinjaSpecification.createEnemiesEspecialSkillAttributePredicate(filter));
+			} else {
+				specification = specification.or(NinjaSpecification.skillAttributePredicate(filter));
 			}
 		}
 		return specification;

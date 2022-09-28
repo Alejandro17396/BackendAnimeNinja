@@ -3,7 +3,7 @@ package com.alejandro.animeninja.bussines.model;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class SkillAtributeKey implements Serializable{
+public class SkillAttributeKey implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private String skillName;
@@ -13,7 +13,7 @@ public class SkillAtributeKey implements Serializable{
 	private String action;
 	private String impact;
 	
-	public SkillAtributeKey() {
+	public SkillAttributeKey() {
 		
 	}
 
@@ -78,12 +78,34 @@ public class SkillAtributeKey implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SkillAtributeKey other = (SkillAtributeKey) obj;
+		SkillAttributeKey other = (SkillAttributeKey) obj;
 		return Objects.equals(action, other.action) && Objects.equals(attributeName, other.attributeName)
 				&& Objects.equals(impact, other.impact) && Objects.equals(ninjaName, other.ninjaName)
 				&& Objects.equals(skillName, other.skillName) && type == other.type;
 	}
 
+	public static SkillAttributeKey createKey(SkillAttribute attribute) {
+		SkillAttributeKey key = new SkillAttributeKey();
+		key.setAction(attribute.getAction());
+		key.setAttributeName(attribute.getAttributeName());
+		key.setImpact(attribute.getImpact());
+		key.setNinjaName(attribute.getNinjaName());
+		key.setSkillName(attribute.getSkillName());
+		key.setType(attribute.getType());
+		
+		return key;
+	}
 	
+	public static SkillAttributeKey createKey(NinjaAwakeningStat stat) {
+		SkillAttributeKey key = new SkillAttributeKey();
+		key.setAction(stat.getAction());
+		key.setAttributeName(stat.getAttributeName());
+		key.setImpact(stat.getImpact());
+		key.setNinjaName(stat.getNinja());
+		key.setSkillName(stat.getName());
+		key.setType(stat.getType());
+		
+		return key;
+	}
 	
 }

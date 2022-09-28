@@ -19,7 +19,8 @@ public interface NinjaService {
 	
 	Ninja getNinja(String clave);
 	
-	List<FormationNinjaDTO> getNinjaComboFormations(CreateComboNinjaDTO attributes,boolean merge,boolean sorted,boolean filtred,boolean or);
+	List<FormationNinjaDTO> getNinjaComboFormations(CreateComboNinjaDTO attributes,boolean merge,boolean sorted,boolean filtred,
+									boolean or,boolean awakenings);
 	
 	Page <NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,Pageable pageable);
 	

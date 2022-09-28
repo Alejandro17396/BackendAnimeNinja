@@ -14,22 +14,11 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="SKILL_ATRIBUTO")
-@IdClass(SkillAtributeKey.class)
+@IdClass(SkillAttributeKey.class)
 public class SkillAttribute implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
-	
-	public SkillAtributeKey getKey() {
-		SkillAtributeKey key = new SkillAtributeKey();
-		key.setImpact(impact);
-		key.setAction(action);
-		key.setAttributeName(attributeName);
-		key.setType(type);
-		key.setNinjaName("");
-		key.setSkillName("");
-		return key;
-	}
 	@Id
 	@Column(name="nombre_skill",insertable=false, updatable=false)
 	private String skillName;
@@ -253,4 +242,35 @@ public class SkillAttribute implements Serializable{
 				&& this.getImpact().equals(attribute.getImpact());
 		
 	}
+	
+	public SkillAttributeKey getKey() {
+		SkillAttributeKey key = new SkillAttributeKey();
+		key.setImpact(impact);
+		key.setAction(action);
+		key.setAttributeName(attributeName);
+		key.setType(type);
+		key.setNinjaName("");
+		key.setSkillName("");
+		return key;
+	}
+
+
+
+	public static SkillAttribute createAttribute(NinjaAwakeningStat stat) {
+		SkillAttribute attribute = new SkillAttribute();
+		attribute.setAction(stat.getAction());
+		attribute.setAttributeName(stat.getAttributeName());
+		attribute.setCondition(stat.getCondition());
+		attribute.setImpact(stat.getImpact());
+		attribute.setNinjaName(stat.getNinja());
+		attribute.setSkillName(stat.getName());
+		attribute.setTime(stat.getTime());
+		attribute.setType(stat.getType());
+		attribute.setValue(stat.getValue());
+	
+		return attribute;
+	}
+
+
+
 }
