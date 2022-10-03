@@ -21,6 +21,7 @@ com\alejandro\animeninja\bussines\model\dto\ParteAccesorioDTO.class
 com\alejandro\animeninja\bussines\services\NinjaSkillService.class
 com\alejandro\animeninja\bussines\services\BonusAccesorioService.class
 com\alejandro\animeninja\bussines\model\dto\NinjasDTO.class
+com\alejandro\animeninja\config\AsynConfig.class
 com\alejandro\animeninja\bussines\exceptions\AccesoriesException.class
 com\alejandro\animeninja\bussines\model\NinjaStats_.class
 com\alejandro\animeninja\bussines\model\dto\SetsAccesorioDTO.class
@@ -36,6 +37,7 @@ com\alejandro\animeninja\bussines\services\impl\NinjaServiceImpl.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortFinalSkillAttribute.class
 com\alejandro\animeninja\bussines\mappers\AccesorieMapperImpl.class
 com\alejandro\animeninja\bussines\model\dto\FormationNinjaDTO.class
+com\alejandro\animeninja\bussines\model\SkillAttributeKey.class
 com\alejandro\animeninja\bussines\mappers\SkillAttributeMapper.class
 com\alejandro\animeninja\bussines\services\impl\NinjaSkillServiceImpl.class
 com\alejandro\animeninja\bussines\validators\impl\PageableValidator.class
@@ -80,7 +82,6 @@ com\alejandro\animeninja\bussines\model\ParteAccesorio_.class
 com\alejandro\animeninja\presentation\controllers\SetsController.class
 com\alejandro\animeninja\bussines\model\BonusAccesorio_.class
 com\alejandro\animeninja\bussines\services\impl\AccesorioServicesImpl2.class
-com\alejandro\animeninja\bussines\model\SkillAtributeKey.class
 com\alejandro\animeninja\bussines\services\EquipoServices2.class
 com\alejandro\animeninja\bussines\model\Atributo_.class
 com\alejandro\animeninja\presentation\controllers\AccesoriosControllerOld.class
@@ -131,6 +132,7 @@ com\alejandro\animeninja\bussines\model\CreateComboSetAccesorio.class
 com\alejandro\animeninja\bussines\services\impl\AtributoServicesImpl.class
 com\alejandro\animeninja\bussines\services\impl\EquipoServicesImpl.class
 com\alejandro\animeninja\bussines\services\impl\AccesorioServicesImpl.class
+com\alejandro\animeninja\bussines\exceptions\ConcurrentNinjaException.class
 com\alejandro\animeninja\bussines\model\ParteAccesorio.class
 com\alejandro\animeninja\integration\repositories\BonusAccesorioRepository.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortPartes.class

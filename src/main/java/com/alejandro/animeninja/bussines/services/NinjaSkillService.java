@@ -1,11 +1,13 @@
 package com.alejandro.animeninja.bussines.services;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.NinjaSkillKey;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.SkillType;
+
 
 public interface NinjaSkillService {
 	
@@ -18,4 +20,6 @@ public interface NinjaSkillService {
 	List <SkillAttribute> createSkill2(List<NinjaSkillKey> skillsKeys);
 	
 	NinjaSkill findByNinjaAndType(String name,SkillType type);
+	
+	public CompletableFuture <NinjaSkill> findByNinjaAndTypeAsync(String name,SkillType type);
 }

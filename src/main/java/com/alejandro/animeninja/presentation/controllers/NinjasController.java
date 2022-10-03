@@ -1,10 +1,16 @@
 package com.alejandro.animeninja.presentation.controllers;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,12 +28,14 @@ import com.alejandro.animeninja.bussines.annotation.PageableConstraint;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.Pagination;
+import com.alejandro.animeninja.bussines.model.dto.AttackSkillDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationsNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
 import com.alejandro.animeninja.bussines.services.NinjaService;
+import com.alejandro.animeninja.bussines.services.NinjaSkillService;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 
 @RestController
@@ -36,7 +44,7 @@ import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 public class NinjasController {
 
 	@Autowired
-	private NinjaService ninjaServices;
+	private NinjaService ninjaService;
 
 	@Autowired
 	private NinjaMapper ninjaMapper;
@@ -44,13 +52,15 @@ public class NinjasController {
 	@Autowired
 	private ValidatorNinjaService validator;
 
+	@Autowired
+	private NinjaSkillService skillService;
 	
 	
 	@GetMapping
 	public NinjasDTO getNinjaPaged(Pageable pageable) {
 
 		NinjasDTO response = new NinjasDTO();
-		response.setNinjas(ninjaMapper.toDtoList(ninjaServices.getAllPaged(pageable).getContent()));
+		response.setNinjas(ninjaMapper.toDtoList(ninjaService.getAllPaged(pageable).getContent()));
 		response.setNumber(response.getNinjas().size());
 		return response;
 		
@@ -66,7 +76,7 @@ public class NinjasController {
 
 		validator.validateCreateComboNinjaDTO(attributes);
 		
-		Page <NinjaDTO> responseDTO = ninjaServices.getNinjaFiltroAnd(attributes, sorted, filtred,pageable);
+		Page <NinjaDTO> responseDTO = ninjaService.getNinjaFiltroAnd(attributes, sorted, filtred,pageable);
 		
 		ResponseEntity <Page <NinjaDTO>> response = null;
 		if(responseDTO.getContent().size() > 0) {
@@ -86,7 +96,7 @@ public class NinjasController {
 
 		validator.validateCreateComboNinjaDTO(attributes);
 		
-		Page <NinjaDTO> responseDTO = ninjaServices.getNinjaFiltroOr(attributes, sorted, filtred,pageable);
+		Page <NinjaDTO> responseDTO = ninjaService.getNinjaFiltroOr(attributes, sorted, filtred,pageable);
 		
 		ResponseEntity <Page <NinjaDTO>> response = null;
 		if(responseDTO.getContent().size() > 0) {
@@ -98,7 +108,7 @@ public class NinjasController {
 		return response;
 	}
 	
-	@GetMapping("/createformations")
+	@GetMapping("/createComboFormations")
 	public ResponseEntity <FormationsNinjaDTO> getNinjaComboFormations(
 			@RequestBody(required = false) CreateComboNinjaDTO externFilter,
 			@RequestParam(value = "merge", required = false, defaultValue = "true") boolean merge,
@@ -113,7 +123,7 @@ public class NinjasController {
 		
 		ResponseEntity <FormationsNinjaDTO> response = null;
 		FormationsNinjaDTO responseDTO = new FormationsNinjaDTO();
-		List <FormationNinjaDTO> list =ninjaServices.getNinjaComboFormations(externFilter, merge, sorted, filtred, or, awakenings);
+		List <FormationNinjaDTO> list =ninjaService.getNinjaComboFormations(externFilter, merge, sorted, filtred, or, awakenings);
 		Pagination <FormationNinjaDTO> pagination =  new Pagination <FormationNinjaDTO> 
 		(list,pageable.getPageNumber(),pageable.getPageSize());
 		responseDTO.setFormations(pagination.getPagedList());
@@ -128,6 +138,51 @@ public class NinjasController {
 
 		return response;
 	}
+	
+	
+	@GetMapping("/createFormation")
+	public String getNinjaComboFormations(@RequestBody AttackSkillDTO request) throws InterruptedException, ExecutionException{
+		List <Ninja> ninjas = new ArrayList<>();
+		
+		validator.validateAttackSkillDTO(request);
+		CompletableFuture <?> ninjaCompletables [] = new CompletableFuture<?> [request.getKeys().size()];
+		CompletableFuture <?> skillCompletables [] = new CompletableFuture<?> [request.getKeys().size()];
+		
+		for(int i = 0 ; i < ninjaCompletables.length ; i++) {
+			ninjaCompletables[i] = ninjaService.getNinjaByName(request.getKeys().get(i).getNinja());
+		}
+		
+		for(int i = 0 ; i < skillCompletables.length ; i++) {
+			ninjaCompletables[i] = skillService.findByNinjaAndTypeAsync(request.getKeys().get(i).getNinja(),
+					request.getKeys().get(i).getType());
+		}
+		
+		
+		for(CompletableFuture <?> completable : ninjaCompletables) {
+			ninjas.add((Ninja) completable.get());
+		}
+		
+		return null;
+	}
+	
+	/*@GetMapping("/createFormation")
+	public String getNinjaComboFormations(@RequestBody String [] ninjaNames) throws InterruptedException, ExecutionException{
+		List <Ninja> ninjas = new ArrayList<>();
+		
+		CompletableFuture <?> completables [] = new CompletableFuture<?> [ninjaNames.length];
+		
+		for(int i = 0 ; i < completables.length ; i++) {
+			completables[i] = ninjaServices.getNinjaByName(ninjaNames[i]);
+		}
+		
+		for(CompletableFuture <?> completable : completables) {
+			ninjas.add((Ninja) completable.get());
+		}
+		
+		
+		return null;
+	}*/
+	
 	
 	public void showHeapMemory() {
 		 int dataSize = 1024 * 1024;

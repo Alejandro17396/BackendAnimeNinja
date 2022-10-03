@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
@@ -89,6 +91,11 @@ public class NinjaSkillServiceImpl implements NinjaSkillService {
 	@Override
 	public NinjaSkill findByNinjaAndType(String name, SkillType type) {
 		return ninjaSkillRepository.findByNinjaAndType(name, type);
+	}
+	@Override
+	@Async("asyncExecutor")
+	public CompletableFuture< NinjaSkill> findByNinjaAndTypeAsync(String name, SkillType type) {
+		return CompletableFuture.completedFuture(ninjaSkillRepository.findByNinjaAndType(name, type));
 	}
 
 }

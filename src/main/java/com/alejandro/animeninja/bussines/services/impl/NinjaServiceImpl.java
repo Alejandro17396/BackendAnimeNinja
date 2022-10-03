@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +21,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.alejandro.animeninja.bussines.exceptions.ConcurrentNinjaException;
 import com.alejandro.animeninja.bussines.mappers.FormationNinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.model.FinalSkillsAttributes;
@@ -69,7 +74,7 @@ public class NinjaServiceImpl implements NinjaService {
 	}
 
 	@Override
-	public Ninja getNinja(String name) {
+	public Ninja getNinja(String name) throws InterruptedException{
 		Optional<Ninja> ninja = ninjaRepository.findById(name);
 		return ninja.isPresent() ? ninja.get() : null;
 	}
@@ -185,7 +190,74 @@ public class NinjaServiceImpl implements NinjaService {
 
 		return formationMapper.toDTOList(formations);
 	}
+	
+	
+	@Override
+	//@Async("asyncExecutor")
+	public FormationNinjaDTO getFormationFinalResultAsync(String[] ninjaNames) throws InterruptedException, ExecutionException {
+		
+		Long start = System.currentTimeMillis();
+		CompletableFuture <Ninja> c1 = getNinjaByName(ninjaNames[0]);
+		CompletableFuture <Ninja> c2 = getNinjaByName(ninjaNames[1]);
+		CompletableFuture <Ninja> c3 = getNinjaByName(ninjaNames[2]);
+		CompletableFuture <Ninja> c4 = getNinjaByName(ninjaNames[3]);
+		
+		//CompletableFuture.allOf(c1,c2,c3,c4).join();
+		List <Ninja> ninjas = new ArrayList<>();//Stream.of(c1.get(),c2.get(),c3.get(),c4.get()).collect(Collectors.toList());
+		ninjas.add(c1.get());
+		ninjas.add(c2.get());
+		ninjas.add(c3.get());
+		ninjas.add(c4.get());
+		
+		Long end = System.currentTimeMillis();
+		Long result = end - start;
+		System.out.println("Async execution time: " + result.toString());
+		/*List <Ninja> ninjas = new ArrayList<>();
+		//List <CompletableFuture<Ninja>> completables = new ArrayList<>(ninjaNames.length);
+		CompletableFuture<?>[] completables = new CompletableFuture<?>[ninjaNames.length];
+		
+		for(int i = 0 ; i < ninjaNames.length ; i++) {
+			completables[i] = getNinjaByName(ninjaNames[i]);
+		}
+		
+		
+		CompletableFuture.allOf(completables).join();
+		//CompletableFuture.allOf(completables.to);
+		//CompletableFuture<Ninja> [] array = new CompletableFuture<Ninja> [5];
+		
+ 		for(CompletableFuture<?> completable : completables) {
+			try {
+				Ninja n;
+				n = (Ninja) completable.get();
+				ninjas.add(n);
+			} catch (InterruptedException | ExecutionException e) {
+				throw new ConcurrentNinjaException("566","",HttpStatus.I_AM_A_TEAPOT);
+			}
+			
+		}
+		*/
+		return null;
+	}
+	
+	@Override
+	public FormationNinjaDTO getFormationFinalResult(String [] ninjas) throws InterruptedException{
+		
+		List <Ninja> ninjas2 = new ArrayList<>();
+		for(String n : ninjas) {
+			ninjas2.add(getNinja(n));
+		}
+		
+		return null;
+	}
 
+	@Override
+	@Async("asyncExecutor")
+	public CompletableFuture<Ninja> getNinjaByName(String name) throws InterruptedException{
+		Optional <Ninja> ninja = ninjaRepository.findById(name);
+		return ninja.isPresent() ? CompletableFuture.completedFuture(ninja.get()) : CompletableFuture.completedFuture(null);
+	}
+
+	
 	// Private Methods
 
 	private void mergeAwakenings(List<Ninja> ninjas) {
@@ -268,7 +340,6 @@ public class NinjaServiceImpl implements NinjaService {
 			combinations.forEach(combination -> {
 				createFinalSkillAttribute(formation,combination.split(","),combination,ninjas);
 			});
-			int i = 109+99;
 		});
 	}
 	
@@ -842,6 +913,7 @@ public class NinjaServiceImpl implements NinjaService {
 		}
 	}
 
+	
 	
 
 }
