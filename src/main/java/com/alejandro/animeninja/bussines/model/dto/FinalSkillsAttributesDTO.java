@@ -1,5 +1,6 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FinalSkillsAttributesDTO {
@@ -10,6 +11,7 @@ public class FinalSkillsAttributesDTO {
 
 	public FinalSkillsAttributesDTO() {
 		super();
+		attributes = new ArrayList<>();
 	}
 
 	public FinalSkillsAttributesDTO(String ninjaFormation, String[] ninjasAttackOrder,

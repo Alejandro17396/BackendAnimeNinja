@@ -24,6 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alejandro.animeninja.bussines.exceptions.ConcurrentNinjaException;
 import com.alejandro.animeninja.bussines.mappers.FormationNinjaMapper;
@@ -112,6 +113,43 @@ public class NinjaServiceImpl implements NinjaService {
 	
 	private List<Ninja> getNinjasBySpecificationPrivate(Specification<Ninja> specification) {
 		return ninjaRepository.findAll(specification);
+	}
+	
+	@Override
+	public FormationNinjaDTO createFormationWithNinjas(List<Ninja> ninjas,boolean awakenings) {
+		
+		if(ninjas == null || ninjas.isEmpty()) {
+			return new FormationNinjaDTO();
+		}
+		
+		if(awakenings) {
+			mergeAwakenings(ninjas);
+		}
+		
+		FormationNinja formation = new FormationNinja();
+		String formationNinjas = "";
+		for(Ninja n : ninjas) {
+			formationNinjas += n.getName() + ",";
+			switch(n.getFormation()) {
+			case ASSAULTER: formation.getAssaulters().add(n);
+				break;
+			case VANGUARD:	formation.getVanguards().add(n);
+				break;
+			case SUPPORT:	formation.getSupports().add(n);
+				break;
+			}
+		}
+		formation.setFormationNinjas(formationNinjas.replaceAll(",", " "));
+		List<SkillAttribute> mergedAttributes = mergeAttributes(ninjas);
+		for (SkillAttribute att : mergedAttributes) {
+			att.setNinjaName("Formation");
+			att.setSkillName("Total talent");
+			att.setType(SkillType.TALENT);
+		}
+		formation.setMergedTalentAttributes(mergedAttributes);
+		recalculateMergedAttributes((ArrayList<SkillAttribute>) formation.getMergedTalentAttributes());
+		
+		return formationMapper.toDTO(formation);
 	}
 	
 	@Override
@@ -252,6 +290,7 @@ public class NinjaServiceImpl implements NinjaService {
 
 	@Override
 	@Async("asyncExecutor")
+	@Transactional
 	public CompletableFuture<Ninja> getNinjaByName(String name) throws InterruptedException{
 		Optional <Ninja> ninja = ninjaRepository.findById(name);
 		return ninja.isPresent() ? CompletableFuture.completedFuture(ninja.get()) : CompletableFuture.completedFuture(null);

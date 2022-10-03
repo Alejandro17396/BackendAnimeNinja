@@ -62,6 +62,24 @@ public class NinjaSkillServiceImpl implements NinjaSkillService {
 				.stream().filter(attribute -> !attribute.getAction().equals("attack")).collect(Collectors.toList());
 		
 	}
+	
+	@Override
+	public List <SkillAttribute> createFinalSkill(List<NinjaSkill> skills) {
+		
+		if(skills == null || skills.isEmpty()) {
+			return null;
+		}
+
+		Map<SkillAttributeKey,SkillAttribute> mapa = new HashMap<>();
+		
+		for(NinjaSkill skill : skills) {
+			mapa.putAll(skill.getAttributes().stream().collect(Collectors.toMap(SkillAttribute::getKey, attr -> attr)));
+		}
+		
+		return  mapa.values().stream().collect(Collectors.toList())
+				.stream().filter(attribute -> !attribute.getAction().equals("attack")).collect(Collectors.toList());
+		
+	}
 
 	@Override
 	public List<SkillAttribute> createSkill2(List<NinjaSkillKey> skillsKeys) {

@@ -21,5 +21,7 @@ public interface NinjaSkillService {
 	
 	NinjaSkill findByNinjaAndType(String name,SkillType type);
 	
-	public CompletableFuture <NinjaSkill> findByNinjaAndTypeAsync(String name,SkillType type);
+	CompletableFuture <NinjaSkill> findByNinjaAndTypeAsync(String name,SkillType type);
+	
+	List <SkillAttribute> createFinalSkill(List<NinjaSkill> skills);
 }

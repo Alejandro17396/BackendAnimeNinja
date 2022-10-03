@@ -2,7 +2,9 @@ package com.alejandro.animeninja.presentation.controllers;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -26,10 +28,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.annotation.PageableConstraint;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
+import com.alejandro.animeninja.bussines.mappers.NinjaSkillMapper;
+import com.alejandro.animeninja.bussines.mappers.SkillAttributeMapper;
 import com.alejandro.animeninja.bussines.model.Ninja;
+import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.Pagination;
+import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.model.dto.AttackSkillDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.FinalSkillsAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationsNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
@@ -48,6 +55,9 @@ public class NinjasController {
 
 	@Autowired
 	private NinjaMapper ninjaMapper;
+	
+	@Autowired
+	private SkillAttributeMapper skillMapper;
 	
 	@Autowired
 	private ValidatorNinjaService validator;
@@ -115,10 +125,9 @@ public class NinjasController {
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
 			@RequestParam(value = "or", required = false, defaultValue = "true") boolean or,
-			@RequestParam(value = "or", required = false, defaultValue = "true") boolean awakenings,
+			@RequestParam(value = "awakenings", required = false, defaultValue = "true") boolean awakenings,
 			Pageable pageable) {
  
-		
 		validator.validateCreateComboNinjaDTO(externFilter);
 		
 		ResponseEntity <FormationsNinjaDTO> response = null;
@@ -157,12 +166,58 @@ public class NinjasController {
 					request.getKeys().get(i).getType());
 		}
 		
-		
 		for(CompletableFuture <?> completable : ninjaCompletables) {
 			ninjas.add((Ninja) completable.get());
 		}
 		
 		return null;
+	}
+	
+	@GetMapping("/createFormation23")
+	public Map<String,SkillType>  getNinjaComboFormations3(){
+		Map<String,SkillType>  map = new HashMap<>();
+		map.put("Hidan", SkillType.SKILL);
+		map.put("Hotaru", SkillType.NORMAL_ATTACK);
+		
+		return map;
+		
+	}
+	@GetMapping("/createFormation2")
+	public FormationNinjaDTO getNinjaComboFormations(@RequestBody HashMap<String,SkillType> request,
+			@RequestParam(value = "awakenings", required = false, defaultValue = "true") boolean awakenings
+			) throws InterruptedException, ExecutionException{
+		List <Ninja> ninjas = new ArrayList<>();
+		List <NinjaSkill> skills = new ArrayList<>();
+		//validator.validateAttackSkillDTO(request);
+		CompletableFuture <?> ninjaCompletables [] = new CompletableFuture<?> [request.size()];
+		CompletableFuture <?> skillCompletables [] = new CompletableFuture<?> [request.size()];
+		
+		/*int i = 0;
+		for(Map.Entry<String,SkillType> entry : request.entrySet()) {
+			ninjaCompletables[i] = ninjaService.getNinjaByName(entry.getKey());
+			skillCompletables[i] = skillService.findByNinjaAndTypeAsync(entry.getKey(),entry.getValue());
+			i++;
+		}
+		
+		for(CompletableFuture <?> completable : ninjaCompletables) {
+			ninjas.add((Ninja) completable.get());
+		}*/
+		
+		/*for(CompletableFuture <?> completable : skillCompletables) {
+			skills.add((NinjaSkill) completable.get());
+		}*/
+		for(Map.Entry<String,SkillType> entry : request.entrySet()) {
+			ninjas.add(ninjaService.getNinja(entry.getKey()));
+			skills.add(skillService.findByNinjaAndType(entry.getKey(),entry.getValue()));
+		}
+		
+		FormationNinjaDTO formation = ninjaService.createFormationWithNinjas(ninjas,true);
+		FinalSkillsAttributesDTO finalSkill = new FinalSkillsAttributesDTO();
+		finalSkill.setAttributes(skillMapper.toDTOList(skillService.createFinalSkill(skills)));
+		finalSkill.setNinjaFormation(formation.getFormationNinjas());
+		formation.getFinalSkillsAttributes().add(finalSkill);
+		
+		return formation;
 	}
 	
 	/*@GetMapping("/createFormation")
