@@ -1,10 +1,15 @@
 package com.alejandro.animeninja.presentation.controllers;
 
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -238,6 +243,49 @@ public class NinjasController {
 		return null;
 	}*/
 	
+	
+	@GetMapping("/trabajo")
+	public String getAll6() throws InterruptedException, IllegalArgumentException, IllegalAccessException {
+
+		Ninja n = ninjaService.getNinja("Hidan");
+		Set <String> subFields = new HashSet<>();
+		inspect(n,n.getClass(),subFields);
+		
+		for(String s : subFields) {
+			System.out.println(s);
+		}
+		return null;
+	}
+	
+	static <T> void inspect(Object instance,Class<T> klazz,Set <String> subFields) throws IllegalArgumentException, IllegalAccessException { 
+		Field[] fields = klazz.getDeclaredFields(); 
+		//System.out.printf("%d fields:%n", fields.length);
+		for (Field field : fields) 
+		{ 
+			//System.out.println(field.getAnnotatedType().getType().getTypeName());
+			String clase = field.getType().getSimpleName();
+			if( clase.contains("Entity") && subFields.add(clase)) {
+				//inspect(field.getType(),subFields);
+				field.setAccessible(true);
+				//Object newInstance = field.get(instance);
+				inspect(null,field.getType(),subFields);
+				//System.out.println(field.get(instance));
+				//System.out.println(clase);
+			}
+			if(clase.contains("List") ) {
+				ParameterizedType elementParameterizedType = (ParameterizedType) field.getGenericType();
+				Type[] friendsType = elementParameterizedType.getActualTypeArguments();
+				Class<?> userClass = (Class<?>) friendsType[0];
+				clase = userClass.getSimpleName();
+				if( subFields.add(clase)) {
+					//inspect(userClass,subFields);
+					///System.out.println(clase);
+					//System.out.printf("Lista de tipo %s %s %s%n", Modifier.toString(field.getModifiers()), userClass.getSimpleName(), field.getName() );
+				}
+				
+			}
+		}
+	}
 	
 	public void showHeapMemory() {
 		 int dataSize = 1024 * 1024;
