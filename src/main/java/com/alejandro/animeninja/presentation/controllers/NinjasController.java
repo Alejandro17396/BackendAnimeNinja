@@ -175,6 +175,8 @@ public class NinjasController {
 			ninjas.add((Ninja) completable.get());
 		}
 		
+		
+		
 		return null;
 	}
 	
@@ -197,7 +199,7 @@ public class NinjasController {
 		CompletableFuture <?> ninjaCompletables [] = new CompletableFuture<?> [request.size()];
 		CompletableFuture <?> skillCompletables [] = new CompletableFuture<?> [request.size()];
 		
-		/*int i = 0;
+		int i = 0;
 		for(Map.Entry<String,SkillType> entry : request.entrySet()) {
 			ninjaCompletables[i] = ninjaService.getNinjaByName(entry.getKey());
 			skillCompletables[i] = skillService.findByNinjaAndTypeAsync(entry.getKey(),entry.getValue());
@@ -205,16 +207,23 @@ public class NinjasController {
 		}
 		
 		for(CompletableFuture <?> completable : ninjaCompletables) {
-			ninjas.add((Ninja) completable.get());
-		}*/
+			Ninja e = (Ninja) completable.get();
+			e.getAwakenings().size();
+			e.getSkills().size();
+			ninjas.add(e);
+			//ninjas.add((Ninja) completable.get());
+		}
 		
-		/*for(CompletableFuture <?> completable : skillCompletables) {
+		for(CompletableFuture <?> completable : skillCompletables) {
 			skills.add((NinjaSkill) completable.get());
-		}*/
-		for(Map.Entry<String,SkillType> entry : request.entrySet()) {
+		}
+		for(Ninja ninja : ninjas) {
+			ninja.getAwakenings().size();
+		}
+		/*for(Map.Entry<String,SkillType> entry : request.entrySet()) {
 			ninjas.add(ninjaService.getNinja(entry.getKey()));
 			skills.add(skillService.findByNinjaAndType(entry.getKey(),entry.getValue()));
-		}
+		}*/
 		
 		FormationNinjaDTO formation = ninjaService.createFormationWithNinjas(ninjas,true);
 		FinalSkillsAttributesDTO finalSkill = new FinalSkillsAttributesDTO();

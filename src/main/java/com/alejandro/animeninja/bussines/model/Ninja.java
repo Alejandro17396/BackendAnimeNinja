@@ -14,6 +14,9 @@ import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 @Entity
 @Table(name="NINJAS")
 public class Ninja implements Serializable{
@@ -39,16 +42,19 @@ public class Ninja implements Serializable{
 	@OneToMany
 	@JoinColumns( {
 	    @JoinColumn(name="ninja", nullable = false)} )
+	
 	private List <NinjaStats> stats;
 	
 	@OneToMany
 	@JoinColumns( {
 	    @JoinColumn(name="ninja", referencedColumnName="nombre",nullable = false)} )
+
 	private List <NinjaSkill> skills;
 	
 	@OneToMany
 	@JoinColumns( {
 	    @JoinColumn(name="ninja", referencedColumnName="nombre",nullable = false)} )
+	
 	private List <NinjaAwakening> awakenings;
 	
 	public Ninja() {

@@ -293,6 +293,10 @@ public class NinjaServiceImpl implements NinjaService {
 	@Transactional
 	public CompletableFuture<Ninja> getNinjaByName(String name) throws InterruptedException{
 		Optional <Ninja> ninja = ninjaRepository.findById(name);
+		if(ninja.isPresent()) {
+			ninja.get().getAwakenings().size();
+		}
+		
 		return ninja.isPresent() ? CompletableFuture.completedFuture(ninja.get()) : CompletableFuture.completedFuture(null);
 	}
 

@@ -127,6 +127,7 @@ com\alejandro\animeninja\bussines\model\dto\NinjaDTO.class
 com\alejandro\animeninja\bussines\model\FinalSkillsAttributes.class
 com\alejandro\animeninja\bussines\utils\FormationFilterUtils.class
 com\alejandro\animeninja\bussines\model\ClaveBonus.class
+com\alejandro\animeninja\bussines\services\impl\NinjaServiceImpl$1.class
 com\alejandro\animeninja\bussines\validators\ValidatorSetService.class
 com\alejandro\animeninja\bussines\model\CreateComboSetAccesorio.class
 com\alejandro\animeninja\bussines\services\impl\AtributoServicesImpl.class
