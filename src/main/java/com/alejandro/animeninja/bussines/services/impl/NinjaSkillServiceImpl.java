@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
@@ -115,20 +116,17 @@ public class NinjaSkillServiceImpl implements NinjaSkillService {
 	}
 	@Override
 	@Async("asyncExecutor")
+	@Transactional
 	public CompletableFuture< NinjaSkill> findByNinjaAndTypeAsync(String name, SkillType type) {
 		NinjaSkill skill = ninjaSkillRepository.findByNinjaAndType(name, type);
-		skill.getAttributes().size();
-		if(skill != null) {
-			
+		PruebasReflection.getLazyListFromEntity(skill, new HashSet<>());
+		/*if(skill != null) {
 			try {
 			PruebasReflection.callAllGetterMethodsInEntity(skill, new HashSet<>());
 			}catch(Exception e1){
 				
 			}
-			//ninja.get().getAwakenings().size();
-		}else {
-			skill = null;
-		}
+		}*/
 		
 		return CompletableFuture.completedFuture(skill);
 	}

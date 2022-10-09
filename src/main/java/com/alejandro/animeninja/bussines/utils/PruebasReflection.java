@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.collection.internal.PersistentBag;
+import org.springframework.http.HttpStatus;
 
+import com.alejandro.animeninja.bussines.exceptions.ReflectionLazyInitializationException;
 import com.alejandro.animeninja.bussines.model.Ninja;
 
 
@@ -43,7 +45,18 @@ public class PruebasReflection {
 			}
 		}
 	}*/
-	static <T> void inspect(Class<T> klazz,Set <String> subFields) throws IllegalArgumentException, IllegalAccessException { 
+	
+	public static <T> void getLazyListFromEntity(T entity,Set <Object> instances) {
+		if(entity != null) {
+			try {
+				callAllGetterMethodsInEntity(entity, instances);
+			} catch (Exception e) {
+				throw new ReflectionLazyInitializationException("400","Something went wrong getting lazy list",HttpStatus.INTERNAL_SERVER_ERROR);
+			} 
+		}
+	}
+	
+	public static <T> void inspect(Class<T> klazz,Set <String> subFields) throws IllegalArgumentException, IllegalAccessException { 
 		Field[] fields = klazz.getDeclaredFields(); 
 		for (Field field : fields) { 
 			String clase = field.getType().getSimpleName();
@@ -67,7 +80,6 @@ public class PruebasReflection {
             for (Method method : methods) {
             	String returnType =method.getReturnType().getSimpleName();
                 if (method.getName().startsWith("get") &&  (returnType.contains("Entity") || returnType.contains("List"))){
-                	//method.setAccessible(true); dado que son getters no tiene sentido que esto haga falta
                 	getterResults.add(method.invoke(entity));
                 }
             }
@@ -98,11 +110,6 @@ public class PruebasReflection {
            throw new IllegalAccessException();
         }
     }
-	
-	public void var() {
-		PersistentBag v = null;
-		
-	}
 
 	
 	/*public static ExpeCfgTramiteProcEntity creaConf()
@@ -182,9 +189,5 @@ public class PruebasReflection {
 		
 		return entityOrquest;
 	}*/
-	
-	
-
-	
 
 }

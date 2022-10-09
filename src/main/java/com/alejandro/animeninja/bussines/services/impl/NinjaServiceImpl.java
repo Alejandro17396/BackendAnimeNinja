@@ -21,12 +21,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alejandro.animeninja.bussines.exceptions.ConcurrentNinjaException;
 import com.alejandro.animeninja.bussines.mappers.FormationNinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.model.FinalSkillsAttributes;
@@ -81,10 +79,7 @@ public class NinjaServiceImpl implements NinjaService {
 		return ninja.isPresent() ? ninja.get() : null;
 	}
 
-	public List<Ninja> getNinja2(Pageable pageable,Specification<Ninja> specification) {
-		Page <Ninja> page =ninjaRepository.findAll(specification,pageable);
-		return ninjaRepository.findAll();
-	}
+
 	
 	@Override
 	public List<Ninja> getNinjasBySpecification(Specification<Ninja> specification,Pageable pageable) {
@@ -140,7 +135,8 @@ public class NinjaServiceImpl implements NinjaService {
 				break;
 			}
 		}
-		formation.setFormationNinjas(formationNinjas.replaceAll(",", " "));
+		
+		formation.setFormationNinjas(formationNinjas);
 		List<SkillAttribute> mergedAttributes = mergeAttributes(ninjas);
 		for (SkillAttribute att : mergedAttributes) {
 			att.setNinjaName("Formation");
@@ -297,18 +293,12 @@ public class NinjaServiceImpl implements NinjaService {
 		Ninja e ;
 		if(ninja.isPresent()) {
 			e = ninja.get();
-			try {
-			PruebasReflection.callAllGetterMethodsInEntity(ninja.get(), new HashSet<>());
-			}catch(Exception e1){
-				
-			}
-			//ninja.get().getAwakenings().size();
+			PruebasReflection.getLazyListFromEntity(e, new HashSet<>());
 		}else {
 			e = null;
 		}
 		
 		return CompletableFuture.completedFuture(e);
-		//return ninja.isPresent() ? CompletableFuture.completedFuture(ninja.get()) : CompletableFuture.completedFuture(null);
 	}
 
 	
@@ -680,7 +670,7 @@ public class NinjaServiceImpl implements NinjaService {
 
 	}
 
-	private Specification<Ninja> createAndAwakeningAttributeSpecification(CreateComboNinjaDTO attributes) {
+	/*private Specification<Ninja> createAndAwakeningAttributeSpecification(CreateComboNinjaDTO attributes) {
 		
 		List<NinjaFilterDTO> filterList = attributes.getFilters();
 		Specification<Ninja> specification = Specification.where(null);
@@ -696,7 +686,7 @@ public class NinjaServiceImpl implements NinjaService {
 			}
 		}
 		return specification;
-	}
+	}*/
 
 	private Specification<Ninja> createOrSkillAwakeningSpecification(CreateComboNinjaDTO attributes) {
 		

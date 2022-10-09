@@ -37,6 +37,5 @@ public interface NinjaService {
 	CompletableFuture<Ninja> getNinjaByName(String name) throws InterruptedException;
 	
 	FormationNinjaDTO createFormationWithNinjas(List<Ninja> ninjas,boolean awakenings);
-	//List <SkillAttribute> createSkill(List<NinjaSkillKey> skillsKeys);
 
 }

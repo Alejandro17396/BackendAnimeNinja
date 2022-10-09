@@ -7,6 +7,7 @@ com\alejandro\animeninja\presentation\controllers\NinjaSkillsController.class
 com\alejandro\animeninja\bussines\model\NinjaStatsKey.class
 com\alejandro\animeninja\bussines\model\dto\BonusDTO.class
 com\alejandro\animeninja\bussines\model\FormationNinja.class
+com\alejandro\animeninja\bussines\utils\PruebasReflection.class
 com\alejandro\animeninja\bussines\services\EquipoServices.class
 com\alejandro\animeninja\bussines\services\impl\ParteServicesImpl.class
 com\alejandro\animeninja\bussines\model\NinjaAwakening.class
