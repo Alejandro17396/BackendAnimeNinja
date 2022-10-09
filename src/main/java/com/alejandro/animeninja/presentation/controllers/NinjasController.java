@@ -210,6 +210,7 @@ public class NinjasController {
 			Ninja e = (Ninja) completable.get();
 			e.getAwakenings().size();
 			e.getSkills().size();
+			//e.getStats().size();
 			ninjas.add(e);
 			//ninjas.add((Ninja) completable.get());
 		}

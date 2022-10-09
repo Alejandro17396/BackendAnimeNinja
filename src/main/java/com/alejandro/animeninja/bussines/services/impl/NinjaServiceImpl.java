@@ -47,6 +47,7 @@ import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortFinalSkillAttribute;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortFormationsByMergedAttributes;
 import com.alejandro.animeninja.bussines.utils.FormationFilterUtils;
+import com.alejandro.animeninja.bussines.utils.PruebasReflection;
 import com.alejandro.animeninja.integration.repositories.NinjaRepository;
 import com.alejandro.animeninja.integration.specifications.NinjaSpecification;
 
@@ -293,11 +294,21 @@ public class NinjaServiceImpl implements NinjaService {
 	@Transactional
 	public CompletableFuture<Ninja> getNinjaByName(String name) throws InterruptedException{
 		Optional <Ninja> ninja = ninjaRepository.findById(name);
+		Ninja e ;
 		if(ninja.isPresent()) {
-			ninja.get().getAwakenings().size();
+			e = ninja.get();
+			try {
+			PruebasReflection.callAllGetterMethodsInEntity(ninja.get(), new HashSet<>());
+			}catch(Exception e1){
+				
+			}
+			//ninja.get().getAwakenings().size();
+		}else {
+			e = null;
 		}
 		
-		return ninja.isPresent() ? CompletableFuture.completedFuture(ninja.get()) : CompletableFuture.completedFuture(null);
+		return CompletableFuture.completedFuture(e);
+		//return ninja.isPresent() ? CompletableFuture.completedFuture(ninja.get()) : CompletableFuture.completedFuture(null);
 	}
 
 	

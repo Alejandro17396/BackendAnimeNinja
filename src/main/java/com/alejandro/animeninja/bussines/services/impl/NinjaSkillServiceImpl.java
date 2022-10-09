@@ -2,6 +2,7 @@ package com.alejandro.animeninja.bussines.services.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,12 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.NinjaSkillKey;
 import com.alejandro.animeninja.bussines.model.SkillAttributeKey;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
+import com.alejandro.animeninja.bussines.utils.PruebasReflection;
 import com.alejandro.animeninja.integration.repositories.NinjaSkillRepository;
 
 @Service
@@ -113,7 +116,21 @@ public class NinjaSkillServiceImpl implements NinjaSkillService {
 	@Override
 	@Async("asyncExecutor")
 	public CompletableFuture< NinjaSkill> findByNinjaAndTypeAsync(String name, SkillType type) {
-		return CompletableFuture.completedFuture(ninjaSkillRepository.findByNinjaAndType(name, type));
+		NinjaSkill skill = ninjaSkillRepository.findByNinjaAndType(name, type);
+		skill.getAttributes().size();
+		if(skill != null) {
+			
+			try {
+			PruebasReflection.callAllGetterMethodsInEntity(skill, new HashSet<>());
+			}catch(Exception e1){
+				
+			}
+			//ninja.get().getAwakenings().size();
+		}else {
+			skill = null;
+		}
+		
+		return CompletableFuture.completedFuture(skill);
 	}
 
 }
