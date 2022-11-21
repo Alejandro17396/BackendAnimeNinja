@@ -50,7 +50,7 @@ public class EquipoServicesImpl implements EquipoServices {
 	@Autowired
 	private ParteServices parteService;
 	
-	@Autowired
+	@Autowired(required=true)
 	private SetMapper setMapper;
 
 	@Override

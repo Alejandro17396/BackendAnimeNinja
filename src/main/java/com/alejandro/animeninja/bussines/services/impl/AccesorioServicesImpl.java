@@ -44,7 +44,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	@Autowired
 	private ParteAccesorioService parteAccesorioService;
 	
-	@Autowired
+	@Autowired(required = false)
 	private AccesorieMapper accesorieMapper;
 
 	@Override

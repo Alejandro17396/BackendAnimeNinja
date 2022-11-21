@@ -58,6 +58,8 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\specifications\AccesorioSpecification.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\ClaveNinja.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\impl\AttributeStatServiceImpl.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\Usuario.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\auth\filter\JWTAuthenticationFilter.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\CreateComboNinjaDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\annotation\PageableConstraint.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\SkillType.java
@@ -72,6 +74,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\sort\services\impl\SortFinalSkillAttribute.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\validators\ValidatorSpring.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\NinjaStats.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\impl\JpaUserDetailsService.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\BonusAccesorioDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\SetDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\NinjaSkillService.java
@@ -81,6 +84,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\SkillAttributeDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\Bonus.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\utils\FormationFilterUtils.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\exceptions\ReflectionLazyInitializationException.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\AttributeStatKey.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\repositories\NinjaStatsRepository.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\impl\EquipoServicesImpl2.java
@@ -94,6 +98,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\repositories\impl\BonusCustomRepositoryImpl.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\mappers\NinjaMapper.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\NinjaService.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\Role.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\AnimeninjaApplication.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\mappers\DummyMapper.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\EquipoDummyDTO.java
@@ -113,6 +118,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\CreateComboSet.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\NinjaAwakeningKey.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\utils\PruebasReflection.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\config\SpringSecurityConfig.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\repositories\BonusAccesorioRepository.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\repositories\impl\EquipoCustomRepositoryImpl.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\Parte.java
@@ -148,6 +154,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\ParteDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\SetAccesorio.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\sort\services\impl\SortEquiposByAttributes.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\repositories\UsuarioRepository.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\exceptions\AccesoriesException.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\NinjaAwakeningStatDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\presentation\controllers\ParteController.java
