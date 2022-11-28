@@ -31,9 +31,11 @@ public class Usuario implements Serializable {
 	private String password;
 
 	private Boolean enabled;
+	
+	private String mail;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name="user_id")
 	private List<Role> roles;
 
 	public Usuario() {
@@ -81,6 +83,14 @@ public class Usuario implements Serializable {
 		this.enabled = enabled;
 	}
 
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
 	public List<Role> getRoles() {
 		return roles;
 	}
@@ -89,4 +99,5 @@ public class Usuario implements Serializable {
 		this.roles = roles;
 	}
 
+	
 }

@@ -9,4 +9,5 @@ import com.alejandro.animeninja.bussines.model.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
 	public Usuario findByUsername(String username);
+	public Usuario findByMail(String mail);
 }

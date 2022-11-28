@@ -12,8 +12,8 @@ import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.services.AtributoServices;
 
 
-//@RestController
-//@CrossOrigin
+@RestController
+@CrossOrigin
 @RequestMapping("/atributos")
 public class AtributosController {
 	

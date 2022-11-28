@@ -7,10 +7,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
-@Table(name="authorities", uniqueConstraints = {@UniqueConstraint(columnNames= {"user_id","authority"})})
+@Table(name="authorities")
+@JsonIdentityInfo(scope = Role.class, generator = ObjectIdGenerators.PropertyGenerator.class, 
+property = "id")
 public class Role implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -25,10 +29,11 @@ public class Role implements Serializable{
 		super();
 	}
 
-	public Role(Long id, String authority) {
+	public Role(Long id, String authority,Long user_id) {
 		super();
 		this.id = id;
 		this.authority = authority;
+		//this.user_id= user_id;
 	}
 
 	public Long getId() {
@@ -39,6 +44,14 @@ public class Role implements Serializable{
 		this.id = id;
 	}
 
+	/*public Long getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(Long user_id) {
+		this.user_id = user_id;
+	}*/
+
 	public String getAuthority() {
 		return authority;
 	}
@@ -46,6 +59,9 @@ public class Role implements Serializable{
 	public void setAuthority(String authority) {
 		this.authority = authority;
 	}
+
+	
+	
 	
 	
 }

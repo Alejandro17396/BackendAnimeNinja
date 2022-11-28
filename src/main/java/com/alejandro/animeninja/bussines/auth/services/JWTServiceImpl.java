@@ -68,17 +68,16 @@ public class JWTServiceImpl implements JWTService {
 	@Override
 	public Claims getClaims(String token) {
 		
-		Claims claims = Jwts.parser()
+		Claims claims =  Jwts.parserBuilder()
 				.setSigningKey(SECRET_KEY)
+				.build()
 				.parseClaimsJws(resolveToken(token))
 				.getBody();
-		
 		return claims;
 	}
 
 	@Override
 	public String getUsername(String token) {
-		// TODO Auto-generated method stub
 		return getClaims(token).getSubject();
 	}
 
@@ -95,7 +94,7 @@ public class JWTServiceImpl implements JWTService {
 
 	@Override
 	public String resolveToken(String token) {
-		if(token != null || token.startsWith(TOKEN_PREFIX)) {		
+		if(token != null && token.startsWith(TOKEN_PREFIX)) {		
 			return token.replace(TOKEN_PREFIX, "");
 		}
 		return null;

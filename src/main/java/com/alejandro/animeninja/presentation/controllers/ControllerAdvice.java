@@ -10,6 +10,7 @@ import com.alejandro.animeninja.bussines.exceptions.AccesoriesException;
 import com.alejandro.animeninja.bussines.exceptions.NinjaFilterException;
 import com.alejandro.animeninja.bussines.exceptions.NinjaSkillException;
 import com.alejandro.animeninja.bussines.exceptions.SetException;
+import com.alejandro.animeninja.bussines.exceptions.UserException;
 import com.alejandro.animeninja.bussines.model.dto.ErrorDTO;
 
 @RestControllerAdvice
@@ -55,6 +56,14 @@ public class ControllerAdvice {
 	
 	@ExceptionHandler(value = AccesoriesException.class)
 	public ResponseEntity<ErrorDTO> setExceptionHandler(AccesoriesException exception){
+		ErrorDTO error = new ErrorDTO();
+		error.setCode(exception.getCode());
+		error.setMessage(exception.getMessage());
+		return new ResponseEntity<ErrorDTO>(error,exception.getStatus());
+	}
+	
+	@ExceptionHandler(value = UserException.class)
+	public ResponseEntity<ErrorDTO> setExceptionHandler(UserException exception){
 		ErrorDTO error = new ErrorDTO();
 		error.setCode(exception.getCode());
 		error.setMessage(exception.getMessage());
