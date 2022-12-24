@@ -36,4 +36,6 @@ public interface EquipoServices {
 	Page <SetDTO> getAllPage(Pageable pageable);
 	
 	List <SetDTO> generateCombinationSetsByBonus(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable);
+	
+	SetDTO createSet(String nombre);
 }

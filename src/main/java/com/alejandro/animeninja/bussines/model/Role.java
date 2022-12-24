@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.bussines.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,44 +14,21 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name="authorities")
-@JsonIdentityInfo(scope = Role.class, generator = ObjectIdGenerators.PropertyGenerator.class, 
-property = "id")
 public class Role implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
 	private String authority;
 
 	public Role() {
 		super();
 	}
 
-	public Role(Long id, String authority,Long user_id) {
+	public Role(String authority) {
 		super();
-		this.id = id;
 		this.authority = authority;
-		//this.user_id= user_id;
 	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	/*public Long getUser_id() {
-		return user_id;
-	}
-
-	public void setUser_id(Long user_id) {
-		this.user_id = user_id;
-	}*/
 
 	public String getAuthority() {
 		return authority;
@@ -58,6 +36,23 @@ public class Role implements Serializable{
 
 	public void setAuthority(String authority) {
 		this.authority = authority;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(authority);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Role other = (Role) obj;
+		return Objects.equals(authority, other.authority);
 	}
 
 	

@@ -431,6 +431,52 @@ public class EquipoServicesImpl implements EquipoServices {
 
 	}
 
+	@Override
+	public SetDTO createSet(String nombre) {
+		List <String> partes = Arrays.asList(nombre.split("set"));
+		List <Equipo> equipos = new ArrayList<>();
+		for(String s : partes) {
+			s = s.trim() +" set";
+			equipos.add(getByNombre(s));
+		}
+		
+		String r = "";
+		
+		if(equipos.size() == 2) {
+			Equipo e = createSetFusion2(equipos);
+		}
+		
+		if(equipos.size() == 3) {
+			
+		}
+		
+		return null;
+	}
 	
+	private Equipo createSetFusion2(List<Equipo> equipos) {
+		
+		if(equipos == null || equipos.contains(null)) {
+			return null;
+		}
+		
+		Equipo e2 = equipos.get(0);
+		Equipo e4 = equipos.get(1);
+		Equipo result = new Equipo();
+		
+		
+		if(e2.getPartes().get(0).getValor() > e4.getPartes().get(0).getValor()) {
+			
+		}
+		
+		
+		return null;
+	}
+	
+	private Equipo  fusionSets(Equipo e1 , Equipo e2) {
+			
+			
+			return null;
+		}
+
 
 }

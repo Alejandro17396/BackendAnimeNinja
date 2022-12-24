@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alejandro.animeninja.bussines.exceptions.AccesoriesException;
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
 import com.alejandro.animeninja.bussines.model.Pagination;

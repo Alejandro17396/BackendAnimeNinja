@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.alejandro.animeninja.bussines.model.Usuario;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+public interface UsuarioRepository extends JpaRepository<Usuario, String> {
 
 	public Usuario findByUsername(String username);
 	public Usuario findByMail(String mail);

@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.bussines.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,7 +27,6 @@ public class Equipo implements Serializable {
 	@JoinColumn(name="nombre_equipo")
 	private List <Parte> partes;
 	
-	//@Transient
 	@OneToMany
 	@JoinColumn(name="nombre_equipo")
 	private List <Bonus> bonuses;
@@ -51,16 +51,8 @@ public class Equipo implements Serializable {
 
 	public void setBonuses(List<Bonus> bonuses) {
 		this.bonuses = bonuses;
-	}
-
-
-
-	public Equipo() {
-		
-	}
+	}	
 	
-	
-
 	public String getNombre() {
 		return nombre;
 	}
@@ -97,4 +89,20 @@ public class Equipo implements Serializable {
 		return "Equipo [nombre=" + nombre + ", partes=" + partes + ", bonuses=" + bonuses + "]";
 	}
 
+
+	public Equipo(String nombre, List<Parte> partes, List<Bonus> bonuses) {
+		super();
+		this.nombre = nombre;
+		this.partes = partes;
+		this.bonuses = bonuses;
+	}
+
+
+	public Equipo() {
+		this.partes = new ArrayList <> ();
+		this.bonuses = new ArrayList <> ();
+	}
+
+	
+	
 }

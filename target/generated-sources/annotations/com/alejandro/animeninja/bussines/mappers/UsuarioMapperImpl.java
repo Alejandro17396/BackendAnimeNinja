@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-11-27T17:06:01+0100",
+    date = "2022-12-08T22:40:05+0100",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
@@ -25,7 +25,6 @@ public class UsuarioMapperImpl implements UsuarioMapper {
 
         UsuarioDTO usuarioDTO = new UsuarioDTO();
 
-        usuarioDTO.setId( ninja.getId() );
         usuarioDTO.setUsername( ninja.getUsername() );
         usuarioDTO.setPassword( ninja.getPassword() );
         usuarioDTO.setEnabled( ninja.getEnabled() );
@@ -43,7 +42,6 @@ public class UsuarioMapperImpl implements UsuarioMapper {
 
         Usuario usuario = new Usuario();
 
-        usuario.setId( ninja.getId() );
         usuario.setUsername( ninja.getUsername() );
         usuario.setPassword( ninja.getPassword() );
         usuario.setEnabled( ninja.getEnabled() );
@@ -60,7 +58,6 @@ public class UsuarioMapperImpl implements UsuarioMapper {
 
         RoleDTO roleDTO = new RoleDTO();
 
-        roleDTO.setId( role.getId() );
         roleDTO.setAuthority( role.getAuthority() );
 
         return roleDTO;
@@ -86,7 +83,6 @@ public class UsuarioMapperImpl implements UsuarioMapper {
 
         Role role = new Role();
 
-        role.setId( roleDTO.getId() );
         role.setAuthority( roleDTO.getAuthority() );
 
         return role;

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class UsuarioDTO {
 
-	private Long id;
+
 	private String username;
 	private String password;
 	private Boolean enabled;
@@ -16,22 +16,13 @@ public class UsuarioDTO {
 		super();
 	}
 
-	public UsuarioDTO(Long id, String username, String password, Boolean enabled, String mail, List<RoleDTO> roles) {
+	public UsuarioDTO( String username, String password, Boolean enabled, String mail, List<RoleDTO> roles) {
 		super();
-		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.enabled = enabled;
 		this.mail = mail;
 		this.roles = roles;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getUsername() {

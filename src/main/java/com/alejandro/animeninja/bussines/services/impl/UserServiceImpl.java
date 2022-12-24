@@ -41,47 +41,39 @@ public class UserServiceImpl implements UserService {
 	public boolean create(UsuarioDTO usuario) {
 		Usuario user = usuarioMapper.toEntity(usuario);
 		Usuario result = null;
-		if(checkAuthoritiy(user) && userNameFree(user.getUsername()) 
-				&& mailFree(user.getMail())) {
-			user.setPassword(encryptPassword(user.getPassword()));
-			result = usuarioRepository.save(user);
-		}
+		checkAuthoritiy(user);
+		userNameFree(user.getUsername());
+		mailFree(user.getMail());
+		user.setPassword(encryptPassword(user.getPassword()));
+		result = usuarioRepository.save(user);
 		
 		return result != null ? true : false;
 	}
 	
-	private boolean mailFree(String mail) {
+	private void mailFree(String mail) {
 		Usuario usuario = usuarioRepository.findByMail(mail);
-		
-		return usuario != null ? false:true;
+		if(usuario != null) {
+			throw new UserException("400","cant create account mail alredy exists",HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	private String encryptPassword(String password) {
 		return passwordEncoder.encode(password);
 	}
 
-	private boolean userNameFree(String username) {
+	private void userNameFree(String username) {
 		Usuario usuario = usuarioRepository.findByUsername(username);
-		
-		return usuario != null ? false:true;
+		if(usuario != null) {
+			throw new UserException("400","cant create account username alredy exists",HttpStatus.BAD_REQUEST);
+		}
 	}
 
-	private boolean checkAuthoritiy(Usuario user) {
+	private void checkAuthoritiy(Usuario user) {
 		List <Role>  roles = user.getRoles();
 		if(roles == null || roles.isEmpty()) {
 		 roles = new ArrayList <>();
-		 user.getRoles().add(new Role(null,"ROLE_USER",user.getId()));
-		 return true;
+		 user.getRoles().add(new Role("ROLE_USER"));
 		}
-		for(Role role : roles) {
-			if(StringUtils.containsIgnoreCase(role.getAuthority(), "admin")) {
-				logger.error("Alguien intento crea una cuenta admin se paro el proceso");
-				throw new UserException("400","cant create account",HttpStatus.BAD_REQUEST);
-				
-			}
-		}
-		
-		return true;
 	}
 
 }

@@ -9,10 +9,8 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class Role_ {
 
 	public static volatile SingularAttribute<Role, String> authority;
-	public static volatile SingularAttribute<Role, Long> id;
 
 	public static final String AUTHORITY = "authority";
-	public static final String ID = "id";
 
 }
 

@@ -50,13 +50,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		String username = obtainUsername(request);
 		String password = obtainPassword(request);
 		
-		
 		if(username != null && password != null) {
 			logger.info("Username usando form data : " + username);
 			logger.info("Password usando form data : " + password);
 		}else {
 			Usuario usuario = null;
 			try {
+				String res = request.getInputStream().toString();
 				usuario = new ObjectMapper().readValue(request.getInputStream(), Usuario.class);
 				username = usuario.getUsername();
 				password = usuario.getPassword();
@@ -64,7 +64,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				logger.info("Username usando json : " + username);
 				logger.info("Password usando json : " + password);
 			}catch (Exception e) {
-				
+				logger.error("Error al parsear el json");
 			}
 		}
 

@@ -26,6 +26,7 @@ import com.alejandro.animeninja.bussines.annotation.PageableConstraint;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.SkillAttributeMapper;
 import com.alejandro.animeninja.bussines.model.Ninja;
+import com.alejandro.animeninja.bussines.model.NinjaEquipment;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.SkillType;
@@ -38,6 +39,7 @@ import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
 import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
+import com.alejandro.animeninja.integration.repositories.NinjaEquipmentRepository;
 
 @RestController
 @CrossOrigin
@@ -178,6 +180,16 @@ public class NinjasController {
 		formation.getFinalSkillsAttributes().add(finalSkill);
 		
 		return formation;
+	}
+	
+	@Autowired
+	private NinjaEquipmentRepository repository1;
+	
+	@GetMapping("/equipment")
+	public List <NinjaEquipment> getNinjaEquipment() {
+		
+		List <NinjaEquipment> list = repository1.findAll();
+		return list;
 	}
 	
 	public void showHeapMemory() {

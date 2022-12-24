@@ -2,6 +2,8 @@ package com.alejandro.animeninja.presentation.controllers;
 
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.mappers.SetMapper;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
+import com.alejandro.animeninja.bussines.model.NinjaEquipment;
 import com.alejandro.animeninja.bussines.model.Pagination;
+import com.alejandro.animeninja.bussines.model.UserFormation;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetsDTO;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
+import com.alejandro.animeninja.integration.repositories.NinjaEquipmentRepository;
+import com.alejandro.animeninja.integration.repositories.UserFormationRepository;
 
 @RestController
 @CrossOrigin
@@ -108,6 +114,33 @@ public class SetsController {
 		
 	}
 	
+	@Autowired
+	private NinjaEquipmentRepository repository1;
 	
+	@GetMapping("/equipment")
+	public NinjaEquipment getNinjaEquipment() {
+		
+		List <NinjaEquipment> list = repository1.findAll();
+		return list.get(0);
+	}
+	
+	
+	@Autowired
+	private UserFormationRepository repository;
+	
+	@GetMapping("/equipmentformation")
+	public UserFormation getNinjaEquipment2() {
+		
+		List <UserFormation> list = repository.findAll();
+		return list.get(0);
+	}
+	
+	@GetMapping("/createSet/{nombre}")
+	public UserFormation getNinjaEquipment3(@PathVariable String nombre) {
+		
+		List <UserFormation> list = repository.findAll();
+		equipoServices.createSet(nombre);
+		return list.get(0);
+	}
 
 }

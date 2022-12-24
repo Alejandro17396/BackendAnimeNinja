@@ -58,29 +58,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http ) throws Exception{
 		
 		http.authorizeRequests().
-		antMatchers("/sets/**","/skills/**","/partes/**","/bonuses/**","/atributos/**","/accesories/**","/users/**","/").permitAll()
+		antMatchers("/accesorios/**","/equipos/**","/sets/**","/skills/**","/partes/**","/bonuses/**","/atributos/**","/accesories/**","/users/**","/").permitAll()
 		.antMatchers("/ninjas/*").hasAnyRole("ROLE_USER")
 		.anyRequest().authenticated()
 		.and()
-	    //.formLogin()
-	    //.permitAll()
-		//.and()
 		.addFilter(new JWTAuthenticationFilter(authenticationManagerBean(),jwtService))
 		.addFilter(new JWTAuthorizationFilter(authenticationManagerBean(),jwtService))
-		//.logout().permitAll()
-		//.and()
 		.csrf().disable()
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		
-		/*http.authorizeRequests().
-		antMatchers("/sets/**","/skills/**","/partes/**","/bonuses/**","/atributos/**","/accesories/**").permitAll()
-		.antMatchers("/ninjas/*").hasAnyRole("ROLE_USER")
-		.anyRequest().authenticated()
-		.and()
-	    .formLogin()
-	    .permitAll()
-		.and()
-		.logout().permitAll();*/
 	}
 	
 	

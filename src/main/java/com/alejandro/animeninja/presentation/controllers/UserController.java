@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.model.dto.UsuarioDTO;
 import com.alejandro.animeninja.bussines.services.UserService;
+import com.alejandro.animeninja.bussines.validators.ValidatorUserService;
 
 @RestController
 @CrossOrigin
@@ -20,8 +21,13 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private ValidatorUserService userValidator;
+	
 	@GetMapping("/create")
 	public ResponseEntity <String> createUser(@RequestBody(required = false) UsuarioDTO user){
+		
+		userValidator.validateUserDTO(user);
 		
 		ResponseEntity <String> response = null;
 		if(userService.create(user)) {
