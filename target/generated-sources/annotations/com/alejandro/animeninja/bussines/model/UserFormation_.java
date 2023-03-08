@@ -10,9 +10,9 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class UserFormation_ {
 
 	public static volatile SingularAttribute<UserFormation, String> name;
-	public static volatile ListAttribute<UserFormation, NinjaEquipment> ninjas;
+	public static volatile ListAttribute<UserFormation, NinjaUserFormation> ninjas;
 	public static volatile SingularAttribute<UserFormation, Long> id;
-	public static volatile SingularAttribute<UserFormation, Usuario> user;
+	public static volatile SingularAttribute<UserFormation, String> user;
 
 	public static final String NAME = "name";
 	public static final String NINJAS = "ninjas";

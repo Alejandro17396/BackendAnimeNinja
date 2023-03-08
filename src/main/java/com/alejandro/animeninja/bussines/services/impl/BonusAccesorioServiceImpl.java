@@ -1,12 +1,14 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
+import com.alejandro.animeninja.bussines.model.ClaveBonusAccesorio;
 import com.alejandro.animeninja.bussines.services.BonusAccesorioService;
 import com.alejandro.animeninja.integration.repositories.BonusAccesorioRepository;
 
@@ -30,5 +32,13 @@ public class BonusAccesorioServiceImpl implements BonusAccesorioService{
 	public List<BonusAccesorio> getBonusByParteBonus(Long valor) {
 		return bonusAccesorioRepository.findBySets(50000L);
 	}
+
+	@Override
+	public BonusAccesorio getBonusById(ClaveBonusAccesorio clave) {
+		Optional <BonusAccesorio> optional = bonusAccesorioRepository.findById(clave);
+		return optional.isPresent() ? optional.get() : null;
+	}
+	
+	
 	
 }

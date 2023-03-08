@@ -31,6 +31,18 @@ public class BonusAccesorioAtributo implements Serializable {
 	
 	@Column(name="valor")
 	private long valor;
+	
+	@Column(name="accion")
+	private String action;
+	
+	@Column(name="afecta")
+	private String impact;
+	
+	@Column(name="condicion")
+	private String condition;
+	
+	@Column(name="tiempo")
+	private String time;
 
 	@Override
 	public int hashCode() {
@@ -86,6 +98,38 @@ public class BonusAccesorioAtributo implements Serializable {
 
 	public void setValor(long valor) {
 		this.valor = valor;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getImpact() {
+		return impact;
+	}
+
+	public void setImpact(String impact) {
+		this.impact = impact;
+	}
+
+	public String getCondition() {
+		return condition;
+	}
+
+	public void setCondition(String condition) {
+		this.condition = condition;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
 	}
 	
 	

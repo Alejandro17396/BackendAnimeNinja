@@ -1,10 +1,12 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,7 +21,10 @@ import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
+import com.alejandro.animeninja.bussines.model.ClaveBonusAccesorio;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
+import com.alejandro.animeninja.bussines.model.Equipo;
+import com.alejandro.animeninja.bussines.model.Parte;
 import com.alejandro.animeninja.bussines.model.ParteAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorioUtils;
@@ -248,10 +253,17 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		
 		return (parte.getNombreSet().equals(bonus.getNombreAccesorioSet()) && parte.getTipo().equals(bonus.getTipo())) ? true:false;
 	}
+	
 	@Override
 	public SetAccesorioDTO getByNombre(String nombre) {
 		Optional <SetAccesorio> miSet= accesorioRepository.findById(nombre);
 		return miSet.isPresent() ? accesorieMapper.toDTO(miSet.get()) : null;
+	}
+	
+	@Override
+	public SetAccesorio getSetByNombre(String nombre) {
+		Optional <SetAccesorio> miSet= accesorioRepository.findById(nombre);
+		return miSet.isPresent() ? miSet.get() : null;
 	}
 
 	// ==================================================================
@@ -311,6 +323,83 @@ public class AccesorioServicesImpl implements AccesorioServices {
 				});
 			});
 		});
+	}
+
+	@Override
+	public SetAccesorio createAccesorieSet(List<String> accesories) {
+		// TODO Auto-generated method stub
+		if(accesories == null || accesories.isEmpty()) {
+			return null;
+		}
+		Map <ParteAccesorio,SetAccesorio> map = new HashMap <>();
+		for(String part : accesories) {
+			Map.Entry<ParteAccesorio, SetAccesorio> entry = findSetAccesorieByPart(part);
+			map.put(entry.getKey(), entry.getValue());
+		}
+		
+		SetAccesorio set = createAccesorieSetByParts(map);
+		return set;
+	}
+
+	private SetAccesorio createAccesorieSetByParts(Map<ParteAccesorio, SetAccesorio> map) {
+		SetAccesorio set = new SetAccesorio();
+		set.setBonuses(new ArrayList<>());
+		set.setPartes(new ArrayList<>());
+		
+		List <BonusAccesorio> bonuses = new ArrayList<>();
+		List <ParteAccesorio> partes = new ArrayList<>();
+		
+		Map<String,Long> mapaTipo = new HashMap<>();
+		Map<SetAccesorio,Map<String,Long>> mapaSetAccesorios = new HashMap<>();
+		for(Map.Entry<ParteAccesorio, SetAccesorio> entry : map.entrySet()) {
+			if(mapaSetAccesorios.containsKey(entry.getValue())){
+				Map<String,Long> mapaAux = mapaSetAccesorios.get(entry.getValue());
+				ParteAccesorio part = entry.getKey();
+				if(mapaAux.containsKey(part.getTipo())) {
+					mapaAux.put(part.getTipo(), mapaAux.get(part.getTipo())+1L);
+				}else {
+					mapaAux.put(part.getTipo(), 1L);
+				}
+			}else {
+				Map<String,Long> mapaAux = new HashMap<>();
+				mapaAux.put(entry.getKey().getTipo(), 1L);
+				mapaSetAccesorios.put(entry.getValue(),mapaAux);
+			}
+			
+			partes.add(entry.getKey());
+		}
+		
+		bonuses = addBonusToAccesorieSet(mapaSetAccesorios);
+		set.setPartes(partes);
+		set.setBonuses(bonuses);
+		return set;
+	}
+
+	private List<BonusAccesorio> addBonusToAccesorieSet(Map <SetAccesorio, Map<String, Long>> mapaSetAccesorios) {
+
+		List<BonusAccesorio> bonuses = new ArrayList<>();
+		
+		for(Map.Entry <SetAccesorio, Map<String, Long>> entry : mapaSetAccesorios.entrySet()) {
+			//Map<String, Long> mapa = entry.getValue();
+			for(Map.Entry<String, Long> entry2 : entry.getValue().entrySet()) {
+				if(entry2.getValue() == 2) {
+					ClaveBonusAccesorio clave = new ClaveBonusAccesorio();
+					clave.setTipo(entry2.getKey());
+					clave.setNombreAccesorioSet(entry.getKey().getNombre());
+					bonuses.add(bonusService.getBonusById(clave));
+				}	
+			}
+		}
+		
+		return bonuses;
+	}
+
+	private Entry<ParteAccesorio, SetAccesorio> findSetAccesorieByPart(String part) {
+		
+		ParteAccesorio p = parteAccesorioService.getById(part);
+		SetAccesorio eq = getSetByNombre(p.getNombreSet());
+		Map.Entry<ParteAccesorio, SetAccesorio> entry =  new AbstractMap.SimpleEntry<ParteAccesorio, SetAccesorio>(p,eq);
+		return entry;
 	}
 
 }

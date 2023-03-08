@@ -37,7 +37,7 @@ public class Ninja implements Serializable{
 
 	@Column(name="formacion")
 	@Enumerated(EnumType.STRING)
-	private Formation Formation;
+	private Formation formation;
 	
 	@OneToMany
 	@JoinColumns( {
@@ -88,11 +88,11 @@ public class Ninja implements Serializable{
 	}
 
 	public Formation getFormation() {
-		return Formation;
+		return formation;
 	}
 
 	public void setFormation(Formation formation) {
-		Formation = formation;
+		formation = formation;
 	}
 	
 	public List<NinjaStats> getStats() {
@@ -143,7 +143,7 @@ public class Ninja implements Serializable{
 		n.setName(name);
 		n.setChakraNature(chakraNature);
 		n.setType(type);
-		n.setFormation(Formation);
+		n.setFormation(formation);
 		
 		return n;
 	}

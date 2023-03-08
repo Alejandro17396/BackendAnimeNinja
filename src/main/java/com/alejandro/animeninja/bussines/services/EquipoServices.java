@@ -38,4 +38,6 @@ public interface EquipoServices {
 	List <SetDTO> generateCombinationSetsByBonus(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable);
 	
 	SetDTO createSet(String nombre);
+	
+	Equipo createSet(List<String> equipment,String name);
 }

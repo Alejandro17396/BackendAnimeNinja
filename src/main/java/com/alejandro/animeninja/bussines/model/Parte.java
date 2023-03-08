@@ -28,6 +28,9 @@ public class Parte implements Serializable {
 
 	@Column(name = "valor")
 	private Long valor;
+	
+	@Column(name="nombre_equipo")
+	private String equipo;
 
 	public String getNombre() {
 		return nombre;
@@ -51,6 +54,14 @@ public class Parte implements Serializable {
 
 	public void setValor(Long valor) {
 		this.valor = valor;
+	}
+
+	public String getEquipo() {
+		return equipo;
+	}
+
+	public void setEquipo(String equipo) {
+		this.equipo = equipo;
 	}
 
 	@Override

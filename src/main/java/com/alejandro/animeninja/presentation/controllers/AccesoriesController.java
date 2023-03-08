@@ -37,6 +37,7 @@ public class AccesoriesController {
 	@Autowired
 	private ValidatorNinjaService validator;
 
+	
 	@GetMapping
 	public ResponseEntity <Page <SetAccesorioDTO>> getAll(Pageable pageable) {
 		Page <SetAccesorioDTO> responseDTO = accesorioServices.getAll(pageable);
@@ -99,5 +100,8 @@ public class AccesoriesController {
 
 		return response;
 	}
+	
+	
+	
 	
 }

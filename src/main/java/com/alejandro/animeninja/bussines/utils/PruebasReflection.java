@@ -91,7 +91,7 @@ public class PruebasReflection {
             	}else if(o != null &&  o.getClass().getSimpleName().contains("List") ) {
             		List<?> list = (List<?>) o;
         			if(!list.isEmpty()) {
-        				System.out.println( list.size());
+        				//System.out.println( list.size());
         				for(Object ol: list) {
         					callAllGetterMethodsInEntity(ol,instances);
         				}
@@ -99,7 +99,7 @@ public class PruebasReflection {
             	}else if(o != null &&  o.getClass().getSimpleName().contains("PersistentBag") ) {
             		PersistentBag list = (PersistentBag) o;
         			if(!list.isEmpty()) {
-        				System.out.println( list.size());
+        				//System.out.println( list.size());
         				for(Object ol: list) {
         					callAllGetterMethodsInEntity(ol,instances);
         				}

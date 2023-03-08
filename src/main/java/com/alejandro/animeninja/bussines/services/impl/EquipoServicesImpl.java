@@ -1,5 +1,6 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import com.alejandro.animeninja.bussines.model.ClaveBonus;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Parte;
+import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
@@ -33,9 +35,11 @@ import com.alejandro.animeninja.bussines.services.ParteServices;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusById;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusBySetStat;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
+import com.alejandro.animeninja.bussines.utils.BonusAtributoUtils;
 import com.alejandro.animeninja.integration.repositories.EquipoRepository;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 import com.alejandro.animeninja.integration.specifications.EquipoSpecification;
+import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
 import com.alejandro.animeninja.bussines.mappers.SetMapper;
 
 @Service("Nuevo")
@@ -52,6 +56,9 @@ public class EquipoServicesImpl implements EquipoServices {
 	
 	@Autowired(required=true)
 	private SetMapper setMapper;
+	
+	@Autowired(required=true)
+	private BonusAtributoMapper bonusAtributoMapper;
 
 	@Override
 	public List<Equipo> getAll() {
@@ -433,50 +440,120 @@ public class EquipoServicesImpl implements EquipoServices {
 
 	@Override
 	public SetDTO createSet(String nombre) {
-		List <String> partes = Arrays.asList(nombre.split("set"));
-		List <Equipo> equipos = new ArrayList<>();
-		for(String s : partes) {
-			s = s.trim() +" set";
-			equipos.add(getByNombre(s));
-		}
-		
-		String r = "";
-		
-		if(equipos.size() == 2) {
-			Equipo e = createSetFusion2(equipos);
-		}
-		
-		if(equipos.size() == 3) {
-			
-		}
+	
 		
 		return null;
 	}
 	
-	private Equipo createSetFusion2(List<Equipo> equipos) {
-		
-		if(equipos == null || equipos.contains(null)) {
-			return null;
-		}
-		
-		Equipo e2 = equipos.get(0);
-		Equipo e4 = equipos.get(1);
-		Equipo result = new Equipo();
-		
-		
-		if(e2.getPartes().get(0).getValor() > e4.getPartes().get(0).getValor()) {
-			
-		}
-		
-		
-		return null;
-	}
-	
-	private Equipo  fusionSets(Equipo e1 , Equipo e2) {
-			
-			
-			return null;
-		}
 
+	@Override
+	public Equipo createSet(List<String> equipment,String name) {
+		
+		if(equipment == null || equipment.isEmpty()) {
+			return null;
+		}
+		
+		Map <Parte,Equipo> map = new HashMap <>();
+		for(String part : equipment) {
+			Map.Entry<Parte, Equipo> entry = findSetByPart(part);
+			map.put(entry.getKey(), entry.getValue());
+		}
+		
+		Equipo e = createSetbyPartsComboType42(map);
+		
+		
+		return e;
+	}
+
+	private Equipo createSetbyPartsComboType42(Map<Parte, Equipo> map) {
+		Equipo equipo = new Equipo();
+		equipo.setPartes(new ArrayList<>());
+		equipo.setBonuses(new ArrayList<>());
+		
+		List <Bonus> bonuses = new ArrayList<>();
+		List <Parte> partes = new ArrayList<>();
+		
+		Map<Equipo,Long> mapa = new HashMap<>();
+		for(Map.Entry<Parte, Equipo> entry : map.entrySet()) {
+			if(mapa.containsKey(entry.getValue())){
+				mapa.put(entry.getValue(), mapa.get(entry.getValue())+1L);
+			}else {
+				mapa.put(entry.getValue(), 1L);
+			}
+		}
+		
+		for(Map.Entry<Equipo,Long> entry : mapa.entrySet()) {
+			if(entry.getValue() == 6) {
+				Equipo aux = entry.getKey();
+				for(Bonus bonus: aux.getBonuses()) {
+					bonuses.add(bonus);
+				}
+				break;
+			}
+			
+			if(entry.getValue() >= 4 && entry.getValue() <6) {
+				Equipo aux = entry.getKey();
+				for(Bonus bonus: aux.getBonuses()) {
+					if(bonus.getId() == 2 ) {
+						bonuses.add(bonus);
+					}
+					if(bonus.getId() == 4 ) {
+						bonuses.add(bonus);
+					}
+				}
+			}
+			
+			if(entry.getValue()>= 2 && entry.getValue() <4) {
+				Equipo aux = entry.getKey();
+				for(Bonus bonus: aux.getBonuses()) {
+					if(bonus.getId() == 2 ) {
+						bonuses.add(bonus);
+					}
+				}
+			}
+		}
+		
+		for(Map.Entry<Parte, Equipo> entry : map.entrySet()) {
+			partes.add(entry.getKey());
+		}
+		
+		equipo.setBonuses(bonuses);
+		equipo.setPartes(partes);
+		return equipo;
+	}
+
+	private Bonus mergeBonuses(List<Bonus> bonuses) {
+		
+		Map <BonusAtributoUtils, Long> mapa = new HashMap<>();
+		for(Bonus bonus: bonuses) {
+			for(BonusAtributo b : bonus.getListaBonus()) {
+				
+				BonusAtributoUtils aux = bonusAtributoMapper.toUtils(b);
+				if(mapa.containsKey(aux)) {
+					mapa.put(aux, mapa.get(aux)+aux.getValue());
+				}else {
+					mapa.put(aux, aux.getValue());
+				}
+			}
+		}
+		
+		Bonus bonus = new Bonus();
+		bonus.setListaBonus(new ArrayList<>());
+		for(Map.Entry<BonusAtributoUtils, Long> entry : mapa.entrySet()) {
+			BonusAtributoUtils aux = entry.getKey();
+			aux.setValue(entry.getValue());
+			bonus.getListaBonus().add(bonusAtributoMapper.toEntity(aux));
+		}
+		
+		return bonus;
+	}
+
+	private Map.Entry<Parte, Equipo> findSetByPart(String part) {
+
+		Parte p = parteService.getPartesByNombre(part);
+		Equipo eq = this.getByNombre(p.getEquipo());
+		Map.Entry<Parte, Equipo> entry =  new AbstractMap.SimpleEntry<Parte, Equipo>(p,eq);
+		return entry;
+	}
 
 }

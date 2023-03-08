@@ -10,4 +10,5 @@ public interface ParteAccesorioService {
 	List<ParteAccesorio> getAll();
 	List<ParteAccesorio> getParteAccesorioByBonus(BonusAccesorio bonus);
 	ParteAccesorio getById(String name);
+	
 }

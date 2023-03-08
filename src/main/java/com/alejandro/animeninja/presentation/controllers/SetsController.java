@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.mappers.SetMapper;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
-import com.alejandro.animeninja.bussines.model.NinjaEquipment;
+import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.UserFormation;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
@@ -118,9 +118,9 @@ public class SetsController {
 	private NinjaEquipmentRepository repository1;
 	
 	@GetMapping("/equipment")
-	public NinjaEquipment getNinjaEquipment() {
+	public NinjaUserFormation getNinjaEquipment() {
 		
-		List <NinjaEquipment> list = repository1.findAll();
+		List <NinjaUserFormation> list = repository1.findAll();
 		return list.get(0);
 	}
 	

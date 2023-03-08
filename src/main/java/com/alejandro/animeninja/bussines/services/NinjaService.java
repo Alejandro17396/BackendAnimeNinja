@@ -19,7 +19,7 @@ public interface NinjaService {
 	
 	List <Ninja> getNinjasBySpecification(Specification <Ninja> specification,Pageable pageable);
 	
-	Ninja getNinja(String clave) throws InterruptedException;
+	Ninja getNinja(String clave);
 	
 	List<FormationNinjaDTO> getNinjaComboFormations(CreateComboNinjaDTO attributes,boolean merge,boolean sorted,boolean filtred,
 									boolean or,boolean awakenings);

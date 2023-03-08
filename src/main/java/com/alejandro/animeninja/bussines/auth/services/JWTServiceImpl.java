@@ -28,7 +28,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JWTServiceImpl implements JWTService {
 
-	public static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512); 
+	 
 	public static final long  EXPIRATION_DATE = 3600000*4;
 	public static final String TOKEN_PREFIX = "Bearer ";
 	public static final String HEADER_STRING = "Authorization";
@@ -67,13 +67,16 @@ public class JWTServiceImpl implements JWTService {
 
 	@Override
 	public Claims getClaims(String token) {
-		
+	try {
 		Claims claims =  Jwts.parserBuilder()
 				.setSigningKey(SECRET_KEY)
 				.build()
 				.parseClaimsJws(resolveToken(token))
 				.getBody();
 		return claims;
+	}catch(JwtException |IllegalArgumentException e) {
+		return null;
+	}
 	}
 
 	@Override

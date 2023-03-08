@@ -74,7 +74,10 @@ public class NinjaServiceImpl implements NinjaService {
 	}
 
 	@Override
-	public Ninja getNinja(String name) throws InterruptedException{
+	public Ninja getNinja(String name){
+		if(name == null) {
+			return null;
+		}
 		Optional<Ninja> ninja = ninjaRepository.findById(name);
 		return ninja.isPresent() ? ninja.get() : null;
 	}
@@ -819,13 +822,13 @@ public class NinjaServiceImpl implements NinjaService {
 		for (int i = 0; i < assaulters.size();) {
 			Ninja assaulter1 = assaulters.get(i);
 			assaulters.remove(assaulter1);
-			ass1Combo(formations, assaulter1, assaulters, vanguards);
+			add1Combo(formations, assaulter1, assaulters, vanguards);
 		}
 
 		return formations;
 	}
 
-	private void ass1Combo(List<FormationNinja> formations, Ninja assaulter1, ArrayList<Ninja> assaulters,
+	private void add1Combo(List<FormationNinja> formations, Ninja assaulter1, ArrayList<Ninja> assaulters,
 			ArrayList<Ninja> vanguards) {
 		for (int j = 0; j < assaulters.size(); j++) {
 			Ninja assaulter2 = assaulters.get(j);

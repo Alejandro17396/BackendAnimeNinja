@@ -4,6 +4,7 @@ import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Parte;
+import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.ParteDTO;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-12-08T22:40:05+0100",
+    date = "2023-03-08T01:17:51+0100",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
@@ -49,6 +50,27 @@ public class SetMapperImpl implements SetMapper {
         equipo.setNombre( ninja.getNombre() );
 
         return equipo;
+    }
+
+    @Override
+    public UserSet toUserSet(Equipo set) {
+        if ( set == null ) {
+            return null;
+        }
+
+        UserSet userSet = new UserSet();
+
+        userSet.setNombre( set.getNombre() );
+        List<Parte> list = set.getPartes();
+        if ( list != null ) {
+            userSet.setPartes( new ArrayList<Parte>( list ) );
+        }
+        List<Bonus> list1 = set.getBonuses();
+        if ( list1 != null ) {
+            userSet.setBonuses( new ArrayList<Bonus>( list1 ) );
+        }
+
+        return userSet;
     }
 
     protected ParteDTO parteToParteDTO(Parte parte) {
@@ -87,6 +109,10 @@ public class SetMapperImpl implements SetMapper {
 
         bonusAtributoDTO.setNombreAtributo( bonusAtributo.getNombreAtributo() );
         bonusAtributoDTO.setValor( bonusAtributo.getValor() );
+        bonusAtributoDTO.setAction( bonusAtributo.getAction() );
+        bonusAtributoDTO.setImpact( bonusAtributo.getImpact() );
+        bonusAtributoDTO.setCondition( bonusAtributo.getCondition() );
+        bonusAtributoDTO.setTime( bonusAtributo.getTime() );
 
         return bonusAtributoDTO;
     }
@@ -166,6 +192,10 @@ public class SetMapperImpl implements SetMapper {
 
         bonusAtributo.setNombreAtributo( bonusAtributoDTO.getNombreAtributo() );
         bonusAtributo.setValor( bonusAtributoDTO.getValor() );
+        bonusAtributo.setAction( bonusAtributoDTO.getAction() );
+        bonusAtributo.setImpact( bonusAtributoDTO.getImpact() );
+        bonusAtributo.setCondition( bonusAtributoDTO.getCondition() );
+        bonusAtributo.setTime( bonusAtributoDTO.getTime() );
 
         return bonusAtributo;
     }

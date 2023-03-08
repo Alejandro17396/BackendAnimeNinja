@@ -1,9 +1,17 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
+import java.util.Objects;
+
+;
+
 public class BonusAtributoDTO {
 
 	private String nombreAtributo;
 	private long valor;
+	private String action;
+	private String impact;
+	private String condition;
+	private String time;
 
 	public BonusAtributoDTO( String nombreAtributo, long valor) {
 		super();
@@ -31,4 +39,56 @@ public class BonusAtributoDTO {
 		this.valor = valor;
 	}
 
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getImpact() {
+		return impact;
+	}
+
+	public void setImpact(String impact) {
+		this.impact = impact;
+	}
+
+	public String getCondition() {
+		return condition;
+	}
+
+	public void setCondition(String condition) {
+		this.condition = condition;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(action, condition, impact, nombreAtributo);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BonusAtributoDTO other = (BonusAtributoDTO) obj;
+		return Objects.equals(action, other.action) && Objects.equals(condition, other.condition)
+				&& Objects.equals(impact, other.impact) && Objects.equals(nombreAtributo, other.nombreAtributo);
+	}
+
+	
+	
 }

@@ -4,6 +4,7 @@ import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
 import com.alejandro.animeninja.bussines.model.ParteAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
+import com.alejandro.animeninja.bussines.model.UserAccesories;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.ParteAccesorioDTO;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-12-08T22:40:05+0100",
+    date = "2023-03-08T01:17:51+0100",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
@@ -49,6 +50,27 @@ public class AccesorieMapperImpl implements AccesorieMapper {
         setAccesorio.setBonuses( bonusAccesorioDTOListToBonusAccesorioList( ninja.getBonuses() ) );
 
         return setAccesorio;
+    }
+
+    @Override
+    public UserAccesories toUserAccesories(SetAccesorio accesorios) {
+        if ( accesorios == null ) {
+            return null;
+        }
+
+        UserAccesories userAccesories = new UserAccesories();
+
+        userAccesories.setNombre( accesorios.getNombre() );
+        List<ParteAccesorio> list = accesorios.getPartes();
+        if ( list != null ) {
+            userAccesories.setPartes( new ArrayList<ParteAccesorio>( list ) );
+        }
+        List<BonusAccesorio> list1 = accesorios.getBonuses();
+        if ( list1 != null ) {
+            userAccesories.setBonuses( new ArrayList<BonusAccesorio>( list1 ) );
+        }
+
+        return userAccesories;
     }
 
     protected ParteAccesorioDTO parteAccesorioToParteAccesorioDTO(ParteAccesorio parteAccesorio) {
@@ -85,6 +107,10 @@ public class AccesorieMapperImpl implements AccesorieMapper {
 
         BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO = new BonusAccesorioAtributoDTO();
 
+        bonusAccesorioAtributoDTO.setAction( bonusAccesorioAtributo.getAction() );
+        bonusAccesorioAtributoDTO.setImpact( bonusAccesorioAtributo.getImpact() );
+        bonusAccesorioAtributoDTO.setCondition( bonusAccesorioAtributo.getCondition() );
+        bonusAccesorioAtributoDTO.setTime( bonusAccesorioAtributo.getTime() );
         bonusAccesorioAtributoDTO.setNombreAtributo( bonusAccesorioAtributo.getNombreAtributo() );
         bonusAccesorioAtributoDTO.setValor( bonusAccesorioAtributo.getValor() );
 
@@ -166,6 +192,10 @@ public class AccesorieMapperImpl implements AccesorieMapper {
 
         bonusAccesorioAtributo.setNombreAtributo( bonusAccesorioAtributoDTO.getNombreAtributo() );
         bonusAccesorioAtributo.setValor( bonusAccesorioAtributoDTO.getValor() );
+        bonusAccesorioAtributo.setAction( bonusAccesorioAtributoDTO.getAction() );
+        bonusAccesorioAtributo.setImpact( bonusAccesorioAtributoDTO.getImpact() );
+        bonusAccesorioAtributo.setCondition( bonusAccesorioAtributoDTO.getCondition() );
+        bonusAccesorioAtributo.setTime( bonusAccesorioAtributoDTO.getTime() );
 
         return bonusAccesorioAtributo;
     }

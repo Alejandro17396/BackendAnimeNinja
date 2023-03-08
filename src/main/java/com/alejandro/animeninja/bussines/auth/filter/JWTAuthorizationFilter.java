@@ -2,6 +2,8 @@ package com.alejandro.animeninja.bussines.auth.filter;
 
 import java.io.IOException;
 import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,21 +12,27 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import com.alejandro.animeninja.bussines.auth.SimpleGrantedAuthorityMixin;
 import com.alejandro.animeninja.bussines.auth.services.JWTService;
 import com.alejandro.animeninja.bussines.auth.services.JWTServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
-
-	private final Key SECRET_KEY;
 	
 	private JWTService jwtService;
 	
 	public JWTAuthorizationFilter(AuthenticationManager authenticationManager,JWTService jwtService) {
 		super(authenticationManager);
-		this.SECRET_KEY = JWTAuthenticationFilter.SECRET_KEY;
 		this.jwtService= jwtService;
 	}
 
@@ -49,7 +57,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
 
 			authentication = new UsernamePasswordAuthenticationToken(jwtService.getUsername(header), null, jwtService.getRoles(header));
 		}
-		
+
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		chain.doFilter(request, response);
 		

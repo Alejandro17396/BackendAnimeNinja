@@ -58,8 +58,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http ) throws Exception{
 		
 		http.authorizeRequests().
-		antMatchers("/accesorios/**","/equipos/**","/sets/**","/skills/**","/partes/**","/bonuses/**","/atributos/**","/accesories/**","/users/**","/").permitAll()
-		.antMatchers("/ninjas/*").hasAnyRole("ROLE_USER")
+		antMatchers("/accesorios/**","/equipos/**","/sets/**","/skills/**","/partes/**","/bonuses/**","/atributos/**","/accesories/**","/users/**","/formation/**","/").permitAll()
+		.antMatchers("/ninjas/**").hasAnyRole("USER")
 		.anyRequest().authenticated()
 		.and()
 		.addFilter(new JWTAuthenticationFilter(authenticationManagerBean(),jwtService))

@@ -26,7 +26,7 @@ import com.alejandro.animeninja.bussines.annotation.PageableConstraint;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.SkillAttributeMapper;
 import com.alejandro.animeninja.bussines.model.Ninja;
-import com.alejandro.animeninja.bussines.model.NinjaEquipment;
+import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.SkillType;
@@ -36,6 +36,7 @@ import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationsNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
+import com.alejandro.animeninja.bussines.services.FormationService;
 import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
@@ -60,6 +61,9 @@ public class NinjasController {
 
 	@Autowired
 	private NinjaSkillService skillService;
+	
+	@Autowired
+	private FormationService formationService;
 	
 	
 	@GetMapping
@@ -147,7 +151,7 @@ public class NinjasController {
 	public FormationNinjaDTO getNinjaComboFormations(@RequestBody HashMap<String,SkillType> request,
 			@RequestParam(value = "awakenings", required = false, defaultValue = "true") boolean awakenings
 			) throws InterruptedException, ExecutionException{
-		List <Ninja> ninjas = new ArrayList<>();
+		/*List <Ninja> ninjas = new ArrayList<>();
 		List <NinjaSkill> skills = new ArrayList<>();
 		CompletableFuture <?> ninjaCompletables [] = new CompletableFuture<?> [request.size()];
 		CompletableFuture <?> skillCompletables [] = new CompletableFuture<?> [request.size()];
@@ -177,8 +181,9 @@ public class NinjasController {
 		FinalSkillsAttributesDTO finalSkill = new FinalSkillsAttributesDTO();
 		finalSkill.setAttributes(skillMapper.toDTOList(skillService.createFinalSkill(skills)));
 		finalSkill.setNinjaFormation(formation.getFormationNinjas());
-		formation.getFinalSkillsAttributes().add(finalSkill);
+		formation.getFinalSkillsAttributes().add(finalSkill);*/
 		
+		FormationNinjaDTO formation = formationService.createFormation(request, awakenings);
 		return formation;
 	}
 	
@@ -186,9 +191,9 @@ public class NinjasController {
 	private NinjaEquipmentRepository repository1;
 	
 	@GetMapping("/equipment")
-	public List <NinjaEquipment> getNinjaEquipment() {
+	public List <NinjaUserFormation> getNinjaEquipment() {
 		
-		List <NinjaEquipment> list = repository1.findAll();
+		List <NinjaUserFormation> list = repository1.findAll();
 		return list;
 	}
 	

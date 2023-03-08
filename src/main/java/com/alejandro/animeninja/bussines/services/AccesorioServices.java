@@ -32,5 +32,9 @@ public interface AccesorioServices {
 	void addPartes(List<SetAccesorio> sets);
 
 	SetAccesorioDTO getByNombre(String nombre);
+	
+	SetAccesorio getSetByNombre(String nombre);
+	
+	SetAccesorio createAccesorieSet(List<String> accesories);
 
 }

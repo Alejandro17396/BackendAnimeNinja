@@ -6,6 +6,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -13,12 +15,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="user_formation")
+@Table(name="formation_user")
 public class UserFormation implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 	
 	@Column(name="nombre")
@@ -29,17 +32,17 @@ public class UserFormation implements Serializable{
 	
 	@ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
-        name = "user_formation_ninja_equipment", 
-        joinColumns = { @JoinColumn(name = "formation_id") }, 
-        inverseJoinColumns = { @JoinColumn(name = "ninja_id") }
+        name = "formation_user_ninja_user", 
+        joinColumns = { @JoinColumn(name = "formation_user_id") }, 
+        inverseJoinColumns = { @JoinColumn(name = "ninja_user_id") }
     )
-	private List <NinjaEquipment> ninjas;
+	private List <NinjaUserFormation> ninjas;
 	
 	public UserFormation() {
 		
 	}
 
-	public UserFormation(Long id, String name, String user, List<NinjaEquipment> ninjas) {
+	public UserFormation(Long id, String name, String user, List<NinjaUserFormation> ninjas) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -63,11 +66,11 @@ public class UserFormation implements Serializable{
 		this.name = name;
 	}
 
-	public List<NinjaEquipment> getNinjas() {
+	public List<NinjaUserFormation> getNinjas() {
 		return ninjas;
 	}
 
-	public void setNinjas(List<NinjaEquipment> ninjas) {
+	public void setNinjas(List<NinjaUserFormation> ninjas) {
 		this.ninjas = ninjas;
 	}
 

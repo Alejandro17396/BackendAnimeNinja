@@ -20,6 +20,8 @@ public interface BonusRepository  extends JpaRepository<Bonus, ClaveBonus>,
 	@Query(value = "select * from bonuses join equipos on equipos.nombre=bonuses.nombre_equipo left join partes on equipos.nombre=partes.nombre_equipo where partes.nombre like '%kunai%' and partes.valor>=:valor",
 			nativeQuery = true)
 	List<Bonus> findBySets(@Param("valor") Long valor);
+	
+	Bonus findByIdAndEquipo(@Param("id") Long id,@Param("equipo") String equipo);
 	//List<Bonus> findBySets(@Param("parte") String parte,@Param("valor") Long valor);
 	
 

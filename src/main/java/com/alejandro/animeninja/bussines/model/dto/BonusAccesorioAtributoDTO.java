@@ -4,8 +4,42 @@ public class BonusAccesorioAtributoDTO {
 
 	private String nombreAtributo;
 	private long valor;
+	private String action;
+	private String impact;
+	private String condition;
+	private String time;
 
-	
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getImpact() {
+		return impact;
+	}
+
+	public void setImpact(String impact) {
+		this.impact = impact;
+	}
+
+	public String getCondition() {
+		return condition;
+	}
+
+	public void setCondition(String condition) {
+		this.condition = condition;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
 
 	public String getNombreAtributo() {
 		return nombreAtributo;
