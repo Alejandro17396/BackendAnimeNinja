@@ -7,6 +7,7 @@ import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaSkillDTO;
 import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
+import com.alejandro.animeninja.bussines.model.utils.BonusAtributoUtilsDTO;
 import com.alejandro.animeninja.bussines.utils.BonusAtributoUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-08T01:17:50+0100",
+    date = "2023-03-10T01:31:07+0100",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
@@ -67,6 +68,8 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
 
         BonusAccesorioDTO bonusAccesorioDTO = new BonusAccesorioDTO();
 
+        bonusAccesorioDTO.setBonuses( bonusAtributoDTOListToBonusAccesorioAtributoDTOList( bonus.getListaBonus() ) );
+
         return bonusAccesorioDTO;
     }
 
@@ -115,6 +118,72 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
         bonusDTO.setNombre( bonus.getNombre() );
 
         return bonusDTO;
+    }
+
+    @Override
+    public BonusAtributoUtilsDTO toBonusAtributoUtilsDTO(BonusAtributoDTO bonus) {
+        if ( bonus == null ) {
+            return null;
+        }
+
+        BonusAtributoUtilsDTO bonusAtributoUtilsDTO = new BonusAtributoUtilsDTO();
+
+        bonusAtributoUtilsDTO.setNombreAtributo( bonus.getNombreAtributo() );
+        bonusAtributoUtilsDTO.setValor( bonus.getValor() );
+        bonusAtributoUtilsDTO.setAction( bonus.getAction() );
+        bonusAtributoUtilsDTO.setImpact( bonus.getImpact() );
+        bonusAtributoUtilsDTO.setCondition( bonus.getCondition() );
+        bonusAtributoUtilsDTO.setTime( bonus.getTime() );
+
+        return bonusAtributoUtilsDTO;
+    }
+
+    @Override
+    public BonusAtributoDTO toBonusDTO(BonusAtributoUtilsDTO bonus) {
+        if ( bonus == null ) {
+            return null;
+        }
+
+        BonusAtributoDTO bonusAtributoDTO = new BonusAtributoDTO();
+
+        bonusAtributoDTO.setNombreAtributo( bonus.getNombreAtributo() );
+        bonusAtributoDTO.setValor( bonus.getValor() );
+        bonusAtributoDTO.setAction( bonus.getAction() );
+        bonusAtributoDTO.setImpact( bonus.getImpact() );
+        bonusAtributoDTO.setCondition( bonus.getCondition() );
+        bonusAtributoDTO.setTime( bonus.getTime() );
+
+        return bonusAtributoDTO;
+    }
+
+    protected BonusAccesorioAtributoDTO bonusAtributoDTOToBonusAccesorioAtributoDTO(BonusAtributoDTO bonusAtributoDTO) {
+        if ( bonusAtributoDTO == null ) {
+            return null;
+        }
+
+        BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO = new BonusAccesorioAtributoDTO();
+
+        bonusAccesorioAtributoDTO.setAction( bonusAtributoDTO.getAction() );
+        bonusAccesorioAtributoDTO.setImpact( bonusAtributoDTO.getImpact() );
+        bonusAccesorioAtributoDTO.setCondition( bonusAtributoDTO.getCondition() );
+        bonusAccesorioAtributoDTO.setTime( bonusAtributoDTO.getTime() );
+        bonusAccesorioAtributoDTO.setNombreAtributo( bonusAtributoDTO.getNombreAtributo() );
+        bonusAccesorioAtributoDTO.setValor( bonusAtributoDTO.getValor() );
+
+        return bonusAccesorioAtributoDTO;
+    }
+
+    protected List<BonusAccesorioAtributoDTO> bonusAtributoDTOListToBonusAccesorioAtributoDTOList(List<BonusAtributoDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<BonusAccesorioAtributoDTO> list1 = new ArrayList<BonusAccesorioAtributoDTO>( list.size() );
+        for ( BonusAtributoDTO bonusAtributoDTO : list ) {
+            list1.add( bonusAtributoDTOToBonusAccesorioAtributoDTO( bonusAtributoDTO ) );
+        }
+
+        return list1;
     }
 
     protected BonusAtributoDTO bonusAccesorioAtributoDTOToBonusAtributoDTO(BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO) {

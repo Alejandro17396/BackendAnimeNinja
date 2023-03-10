@@ -9,6 +9,7 @@ import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.ParteDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Generated;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-08T01:17:51+0100",
+    date = "2023-03-10T01:31:07+0100",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
@@ -71,6 +72,22 @@ public class SetMapperImpl implements SetMapper {
         }
 
         return userSet;
+    }
+
+    @Override
+    public UserSetDTO toUserSetDTO(UserSet set) {
+        if ( set == null ) {
+            return null;
+        }
+
+        UserSetDTO userSetDTO = new UserSetDTO();
+
+        userSetDTO.setNombre( set.getNombre() );
+        userSetDTO.setUsername( set.getUsername() );
+        userSetDTO.setPartes( parteListToParteDTOList( set.getPartes() ) );
+        userSetDTO.setBonuses( bonusListToBonusDTOList( set.getBonuses() ) );
+
+        return userSetDTO;
     }
 
     protected ParteDTO parteToParteDTO(Parte parte) {

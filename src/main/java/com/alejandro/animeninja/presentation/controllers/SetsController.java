@@ -12,18 +12,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alejandro.animeninja.bussines.auth.services.JWTService;
 import com.alejandro.animeninja.bussines.mappers.SetMapper;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
 import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.UserFormation;
+import com.alejandro.animeninja.bussines.model.UserSet;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetsDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 import com.alejandro.animeninja.integration.repositories.NinjaEquipmentRepository;
@@ -42,6 +49,9 @@ public class SetsController {
 	
 	@Autowired
 	private ValidatorNinjaService validator;
+	
+	@Autowired
+	private JWTService jwtService;
 	
 	@GetMapping
 	public ResponseEntity <Page <SetDTO>> getAll(Pageable pageable) { 
@@ -114,8 +124,37 @@ public class SetsController {
 		
 	}
 	
-	@Autowired
+	@PostMapping("/create")
+	public ResponseEntity <UserSetDTO> createSet(
+			@RequestBody CreateSetDTO dto
+			/*@RequestHeader (name="Authorization") String token*/){
+		
+		UserSet set = equipoServices.createSet(dto, "kirotodo");
+		UserSetDTO response = null;
+		boolean merge = true;
+		if(merge) {
+			set = equipoServices.saveUserSet(set);
+			response = equipoServices.mergeBonus(set);
+		}else {
+			response = setMapper.toUserSetDTO(equipoServices.saveUserSet(set));
+		}
+		
+		ResponseEntity <UserSetDTO> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
+	}
+	
+	/*@Autowired
 	private NinjaEquipmentRepository repository1;
+	
+	@Autowired
+	private UserFormationRepository repository;
 	
 	@GetMapping("/equipment")
 	public NinjaUserFormation getNinjaEquipment() {
@@ -125,8 +164,7 @@ public class SetsController {
 	}
 	
 	
-	@Autowired
-	private UserFormationRepository repository;
+	
 	
 	@GetMapping("/equipmentformation")
 	public UserFormation getNinjaEquipment2() {
@@ -141,6 +179,6 @@ public class SetsController {
 		List <UserFormation> list = repository.findAll();
 		equipoServices.createSet(nombre);
 		return list.get(0);
-	}
+	}*/
 
 }

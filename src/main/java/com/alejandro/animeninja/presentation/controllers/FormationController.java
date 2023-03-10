@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alejandro.animeninja.bussines.auth.services.JWTService;
 import com.alejandro.animeninja.bussines.mappers.UserFormationMapper;
 import com.alejandro.animeninja.bussines.model.UserFormation;
 import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationDTO;
@@ -40,6 +42,9 @@ public class FormationController {
 	@Autowired
 	private ValidatorUserFormation validatorUserFormation;
 	
+	@Autowired
+	private JWTService jwtService;
+	
 	@GetMapping("/find/{id}")
 	public ResponseEntity <UserFormationDTO> findFormation(@PathVariable Long id) throws InterruptedException, ExecutionException {
 
@@ -56,18 +61,22 @@ public class FormationController {
 	}
 	
 	@PostMapping
-	public ResponseEntity <UserFormationDTO> createFormation(@RequestBody CreateUserFormationDTO dto) throws InterruptedException, ExecutionException {
+	public ResponseEntity <UserFormationDTO> createFormation(
+			@RequestBody CreateUserFormationDTO dto
+			/*@RequestHeader (name="Authorization") String token*/) throws InterruptedException, ExecutionException {
 		
 		validatorUserFormation.validateCreateUserFormationDTO(dto);
 		if(dto.getNinjas() == null || dto.getNinjas().isEmpty()) {
 			return null;
 		}
 		
-		UserFormation result = formationService.createUserFormation(dto);
+		//UserFormation result = formationService.createUserFormation(dto,jwtService.getUsername(token));
+		UserFormation result = formationService.createUserFormation(dto,"kirotodo");
 		UserFormationDTO response = null;
 		boolean merge = true;
 		
 		if(merge) {
+			
 			//result = formationService.saveUserFormation(result);		
 			response = formationService.mergeBonus(result);
 		}else {

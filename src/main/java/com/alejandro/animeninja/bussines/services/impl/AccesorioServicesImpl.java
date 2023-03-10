@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
+import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
@@ -28,12 +29,19 @@ import com.alejandro.animeninja.bussines.model.Parte;
 import com.alejandro.animeninja.bussines.model.ParteAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorioUtils;
+import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.BonusAccesorioService;
+import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.ParteAccesorioService;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosByAttributes;
 import com.alejandro.animeninja.integration.repositories.AccesorioRepository;
+import com.alejandro.animeninja.integration.repositories.UserAccesoriesRepository;
 import com.alejandro.animeninja.integration.specifications.AccesorioSpecification;
 import com.alejandro.animeninja.integration.specifications.BonusAccesorioSpecification;
 
@@ -45,12 +53,21 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 	@Autowired
 	private BonusAccesorioService bonusService;
+	
+	@Autowired
+	private BonusServices bonusService2;
 
 	@Autowired
 	private ParteAccesorioService parteAccesorioService;
 	
 	@Autowired(required = false)
 	private AccesorieMapper accesorieMapper;
+	
+	@Autowired 
+	private BonusAtributoMapper bonusMapper;
+	
+	@Autowired
+	private UserAccesoriesRepository userAccesoriesRepository;
 
 	@Override
 	public Page <SetAccesorioDTO> getAll(Pageable pageable) {
@@ -401,5 +418,42 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		Map.Entry<ParteAccesorio, SetAccesorio> entry =  new AbstractMap.SimpleEntry<ParteAccesorio, SetAccesorio>(p,eq);
 		return entry;
 	}
+	
+	@Override
+	public UserAccesories createAccesorieSet(CreateAccesorieSetDTO dto, String user) {
+
+		UserAccesories accesories  = getUserAccesorieSet(dto.getAccesorieSetName());
+		if(accesories == null && dto.getAccesorieSetName() != null) {
+			accesories = accesorieMapper.toUserAccesories(createAccesorieSet(dto.getAccesories()));
+			accesories.setNombre(dto.getAccesorieSetName());
+			accesories.setUsername(user);
+		}
+		return accesories;
+	}
+	
+	private UserAccesories getUserAccesorieSet(String accesorieSetName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserAccesories saveUserSet(UserAccesories accesories) {
+		return userAccesoriesRepository.save(accesories);
+	}
+	
+	@Override
+	public UserAccesoriesDTO mergeBonus(UserAccesories accesories) {
+
+		UserAccesoriesDTO result = accesorieMapper.toUserAccesoriesDTO(accesories);
+		
+		List<BonusDTO> bonuses = bonusMapper.toBonusDTOList(result.getBonuses());
+		BonusDTO bonus = bonusService2.mergeBonuses(bonuses);
+		result.getBonuses().clear();
+		BonusAccesorioDTO bonusA = bonusMapper.toBonusAccesorioDTO(bonus);
+		result.getBonuses().add(bonusMapper.toBonusAccesorioDTO(bonus));
+		
+		return result;
+	}
+	
 
 }

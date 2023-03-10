@@ -6,7 +6,7 @@ import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-08T01:17:51+0100",
+    date = "2023-03-10T01:31:07+0100",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 public class NinjaAwakeningStatMapperImpl implements NinjaAwakeningStatMapper {

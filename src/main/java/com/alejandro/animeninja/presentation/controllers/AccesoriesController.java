@@ -13,16 +13,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
 import com.alejandro.animeninja.bussines.model.Pagination;
+import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.UserSet;
+import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetsAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 
@@ -36,6 +44,9 @@ public class AccesoriesController {
 	
 	@Autowired
 	private ValidatorNinjaService validator;
+	
+	@Autowired
+	private AccesorieMapper accesorieMapper;
 
 	
 	@GetMapping
@@ -99,6 +110,32 @@ public class AccesoriesController {
 		}
 
 		return response;
+	}
+	
+	@PostMapping("/create")
+	public ResponseEntity <UserAccesoriesDTO> createSet(
+			@RequestBody CreateAccesorieSetDTO dto
+			/*@RequestHeader (name="Authorization") String token*/){
+		
+		UserAccesories accesories = accesorioServices.createAccesorieSet(dto, "kirotodo");
+		UserAccesoriesDTO response = null;
+		boolean merge = true;
+		if(merge) {
+			accesories = accesorioServices.saveUserSet(accesories);
+			response = accesorioServices.mergeBonus(accesories);
+		}else {
+			response = accesorieMapper.toUserAccesoriesDTO(accesorioServices.saveUserSet(accesories));
+		}
+		
+		ResponseEntity <UserAccesoriesDTO> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
 	}
 	
 	

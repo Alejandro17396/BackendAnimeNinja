@@ -39,6 +39,7 @@ public interface BonusAtributoMapper {
 	@Mapping(target="time", source="bonus.time")
 	BonusAtributo toEntity(BonusAtributoUtils bonus);
 	
+	@Mapping(target="bonuses",source="bonus.listaBonus")
 	BonusAccesorioDTO toBonusAccesorioDTO (BonusDTO bonus);
 	
 	@Mapping(target="listaBonus",source="bonus.bonuses")

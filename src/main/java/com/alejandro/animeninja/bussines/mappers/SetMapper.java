@@ -11,6 +11,7 @@ import org.mapstruct.factory.Mappers;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 
 @Mapper(componentModel = "spring")
 public interface SetMapper {
@@ -25,6 +26,15 @@ public interface SetMapper {
 	@Mapping(target="partes", source="set.partes")
 	@Mapping(target="bonuses", source="set.bonuses")
 	UserSet toUserSet(Equipo set);
+	
+	UserSetDTO toUserSetDTO(UserSet set);
+	
+	default List<UserSetDTO> toUserSetDTO(List<UserSet> ninjaList){
+		if(ninjaList == null) {
+			return new ArrayList<>();
+		}
+		return ninjaList.stream().map(this::toUserSetDTO).collect(Collectors.toList());
+	}
 	
 	default List<SetDTO> toDtoList(List<Equipo> ninjaList){
 		if(ninjaList == null) {

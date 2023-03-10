@@ -11,35 +11,23 @@ public class CreateNinjaEquipmentDTO {
 	private String ninja;
 	private SkillType type;
 	private	ChakraNature chakraNature;
-	private List<String> equipment;
-	private List<String> accesories;
-	private String setName;
-	private String accesorieSetName;
+	private CreateSetDTO set;
+	private CreateAccesorieSetDTO accesories;
+	
+	public CreateAccesorieSetDTO getAccesories() {
+		return accesories;
+	}
 
-	
-	
+	public void setAccesories(CreateAccesorieSetDTO accesories) {
+		this.accesories = accesories;
+	}
+
 	public ChakraNature getChakraNature() {
 		return chakraNature;
 	}
 
 	public void setChakraNature(ChakraNature chakraNature) {
 		this.chakraNature = chakraNature;
-	}
-
-	public String getSetName() {
-		return setName;
-	}
-
-	public void setSetName(String setName) {
-		this.setName = setName;
-	}
-
-	public String getAccesorieSetName() {
-		return accesorieSetName;
-	}
-
-	public void setAccesorieSetName(String accesorieSetName) {
-		this.accesorieSetName = accesorieSetName;
 	}
 
 	public String getName() {
@@ -66,32 +54,23 @@ public class CreateNinjaEquipmentDTO {
 		this.type = type;
 	}
 
-	public List<String> getEquipment() {
-		return equipment;
-	}
-
-	public void setEquipment(List<String> equipment) {
-		this.equipment = equipment;
-	}
-
-	public List<String> getAccesories() {
-		return accesories;
-	}
-
-	public void setAccesories(List<String> accesories) {
-		this.accesories = accesories;
-	}
-
-	public CreateNinjaEquipmentDTO(String name, String ninja, List<String> equipment, List<String> accesories) {
+	public CreateNinjaEquipmentDTO(String name, String ninja) {
 		super();
 		this.name = name;
 		this.ninja = ninja;
-		this.equipment = equipment;
-		this.accesories = accesories;
 	}
 
 	public CreateNinjaEquipmentDTO() {
 		super();
 	}
 
+	public CreateSetDTO getSet() {
+		return set;
+	}
+
+	public void setSet(CreateSetDTO set) {
+		this.set = set;
+	}
+
+	
 }

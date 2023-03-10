@@ -3,6 +3,7 @@ com\alejandro\animeninja\bussines\services\ParteAccesorioService.class
 com\alejandro\animeninja\presentation\controllers\FormationController.class
 com\alejandro\animeninja\integration\repositories\UserFormationRepository.class
 com\alejandro\animeninja\bussines\model\NinjaStatsKey.class
+com\alejandro\animeninja\bussines\model\utils\BonusAtributoUtilsDTO.class
 com\alejandro\animeninja\bussines\auth\filter\JWTAuthenticationFilter.class
 com\alejandro\animeninja\bussines\services\EquipoServices.class
 com\alejandro\animeninja\bussines\services\impl\ParteServicesImpl.class
@@ -36,6 +37,7 @@ com\alejandro\animeninja\bussines\model\ClaveNinja.class
 com\alejandro\animeninja\bussines\model\dto\FinalSkillsAttributesDTO.class
 com\alejandro\animeninja\integration\repositories\AccesorioRepository.class
 com\alejandro\animeninja\bussines\model\Parte.class
+com\alejandro\animeninja\integration\repositories\UserAccesoriesRepository.class
 com\alejandro\animeninja\bussines\model\dto\CreateNinjaEquipmentDTO.class
 com\alejandro\animeninja\bussines\model\dto\NinjaUserFormationDTO.class
 com\alejandro\animeninja\bussines\model\NinjaAwakening_.class
@@ -45,6 +47,7 @@ com\alejandro\animeninja\integration\repositories\impl\EquipoCustomRepositoryImp
 com\alejandro\animeninja\bussines\mappers\UsuarioMapperImpl.class
 com\alejandro\animeninja\bussines\model\AttributeStat.class
 com\alejandro\animeninja\bussines\mappers\FormationNinjaMapperImpl.class
+com\alejandro\animeninja\bussines\model\dto\CreateSetDTO.class
 com\alejandro\animeninja\bussines\model\dto\UsuarioDTO.class
 com\alejandro\animeninja\bussines\services\impl\AttributeStatServiceImpl.class
 com\alejandro\animeninja\bussines\model\CreateComboSet.class
@@ -76,6 +79,7 @@ com\alejandro\animeninja\bussines\model\UserAccesories_.class
 com\alejandro\animeninja\bussines\model\Formation.class
 com\alejandro\animeninja\integration\repositories\NinjaSkillRepository.class
 com\alejandro\animeninja\bussines\services\UserService.class
+com\alejandro\animeninja\bussines\model\Formation$1.class
 com\alejandro\animeninja\bussines\model\Parte_.class
 com\alejandro\animeninja\presentation\controllers\AccesoriesController.class
 com\alejandro\animeninja\bussines\validators\impl\ValidatorCreateNinjaEquipmentImpl.class
@@ -91,6 +95,7 @@ com\alejandro\animeninja\bussines\model\BonusAtributo.class
 com\alejandro\animeninja\bussines\validators\ValidatorSpring.class
 com\alejandro\animeninja\bussines\model\SetAccesorio_.class
 com\alejandro\animeninja\bussines\validators\ValidatorNinjaService.class
+com\alejandro\animeninja\bussines\model\Constantes.class
 com\alejandro\animeninja\bussines\services\impl\ParteAccesorioServiceImpl.class
 com\alejandro\animeninja\bussines\validators\ValidatorUserService.class
 com\alejandro\animeninja\bussines\mappers\NinjaAwakeningStatMapper.class
@@ -99,6 +104,7 @@ com\alejandro\animeninja\bussines\model\Equipo.class
 com\alejandro\animeninja\bussines\mappers\SkillAttributeMapperImpl.class
 com\alejandro\animeninja\bussines\model\NinjaAwakeningStatKey.class
 com\alejandro\animeninja\bussines\services\impl\BonusAccesorioServiceImpl.class
+com\alejandro\animeninja\integration\repositories\UserSetRepository.class
 com\alejandro\animeninja\bussines\mappers\NinjaMapper.class
 com\alejandro\animeninja\AnimeninjaApplication.class
 com\alejandro\animeninja\bussines\model\NinjaAwakeningStat.class
@@ -106,6 +112,7 @@ com\alejandro\animeninja\bussines\model\dto\ParteDTO.class
 com\alejandro\animeninja\bussines\model\SkillAttribute.class
 com\alejandro\animeninja\bussines\services\AccesorioServices.class
 com\alejandro\animeninja\presentation\controllers\BonusController.class
+com\alejandro\animeninja\bussines\model\dto\CreateAccesorieSetDTO.class
 com\alejandro\animeninja\bussines\mappers\DummyMapperImpl.class
 com\alejandro\animeninja\bussines\model\AttributeStat_.class
 com\alejandro\animeninja\bussines\model\Ninja_.class

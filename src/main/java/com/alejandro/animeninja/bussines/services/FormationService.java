@@ -14,7 +14,7 @@ import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
 public interface FormationService {
 
 	FormationNinjaDTO createFormation( HashMap<String,SkillType> request,boolean awakenings) throws InterruptedException, ExecutionException;
-	UserFormation createUserFormation(CreateUserFormationDTO dto) throws InterruptedException, ExecutionException;
+	UserFormation createUserFormation(CreateUserFormationDTO dto,String user) throws InterruptedException, ExecutionException;
 	UserFormation getUserFormationById(Long id);
 	
 	@Transactional

@@ -1,6 +1,9 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,8 @@ import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.ClaveBonus;
+import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
+import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.integration.repositories.BonusRepository;
 
@@ -56,4 +61,31 @@ public class BonusServicesImpl implements BonusServices {
 		return bonusRepository.findBySets(valor);
 	}
 
+	@Override
+	public BonusDTO mergeBonuses(List<BonusDTO> bonuses) {
+		
+		
+		Map <BonusAtributoDTO, Long> mapa = new HashMap<>();
+		
+		for(BonusDTO bonus: bonuses) {
+			for(BonusAtributoDTO b : bonus.getListaBonus()) {
+				
+				if(mapa.containsKey(b)) {
+					mapa.put(b, mapa.get(b) + b.getValor());
+				}else {
+					mapa.put(b, b.getValor());
+				}
+			
+			}
+			
+		}
+
+		BonusDTO bonus = new BonusDTO();
+		for(Map.Entry <BonusAtributoDTO, Long> entry : mapa.entrySet()) {
+			entry.getKey().setValor(entry.getValue());
+		}
+		bonus.setListaBonus(new ArrayList <> (mapa.keySet()));
+		
+		return bonus;
+	}
 }

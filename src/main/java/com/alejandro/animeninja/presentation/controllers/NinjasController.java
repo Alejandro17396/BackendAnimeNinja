@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -195,6 +196,23 @@ public class NinjasController {
 		
 		List <NinjaUserFormation> list = repository1.findAll();
 		return list;
+	}
+	
+	@GetMapping("/findById/{name}")
+	public ResponseEntity <NinjaDTO> getNinjaByName(@PathVariable(name="name") String name) {
+		
+		Ninja ninja = ninjaService.getNinja(name);
+		
+		ResponseEntity <NinjaDTO> response = null;
+		NinjaDTO dto = null;
+		if(ninja != null) {
+			dto = ninjaMapper.toDTO(ninja);
+			response = new ResponseEntity <>(dto,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return response;
 	}
 	
 	public void showHeapMemory() {

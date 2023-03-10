@@ -8,10 +8,13 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Equipo;
+import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 
 public interface EquipoServices {
 
@@ -37,7 +40,12 @@ public interface EquipoServices {
 	
 	List <SetDTO> generateCombinationSetsByBonus(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable);
 	
-	SetDTO createSet(String nombre);
+	UserSet createSet(CreateSetDTO dto,String user);
 	
 	Equipo createSet(List<String> equipment,String name);
+	
+	UserSetDTO mergeBonus(UserSet entity);
+	
+	UserSet saveUserSet(UserSet set);
+	
 }

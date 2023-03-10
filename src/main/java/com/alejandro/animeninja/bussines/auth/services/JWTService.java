@@ -16,6 +16,7 @@ import io.jsonwebtoken.security.Keys;
 public interface JWTService {
 
 	public static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+	public static final String HEADER_STRING = "Authorization";
 	public String create(Authentication auth) throws IOException;
 	public boolean validate(String token);
 	public Claims getClaims(String token);

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.ClaveBonus;
+import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.Atributo;
 
 public interface BonusServices {
@@ -21,4 +22,6 @@ public interface BonusServices {
 	Bonus getBonusById(ClaveBonus clave);
 
 	List<Bonus> getBonusBySetStats(String parte,Long valor);
+	
+	BonusDTO mergeBonuses(List<BonusDTO> bonuses);
 }

@@ -11,7 +11,11 @@ import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
+import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 
 public interface AccesorioServices {
 
@@ -36,5 +40,11 @@ public interface AccesorioServices {
 	SetAccesorio getSetByNombre(String nombre);
 	
 	SetAccesorio createAccesorieSet(List<String> accesories);
+
+	UserAccesories saveUserSet(UserAccesories accesories);
+	
+	UserAccesoriesDTO mergeBonus(UserAccesories accesories);
+
+	UserAccesories createAccesorieSet(CreateAccesorieSetDTO dto, String string);
 
 }

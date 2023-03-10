@@ -8,10 +8,14 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.alejandro.animeninja.bussines.auth.filter.JWTAuthenticationFilter;
 import com.alejandro.animeninja.bussines.exceptions.UserFormationException;
 import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
 import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
@@ -41,6 +45,7 @@ import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
 import com.alejandro.animeninja.bussines.model.utils.BonusAtributoUtilsDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
+import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.services.FormationService;
 import com.alejandro.animeninja.bussines.services.NinjaService;
@@ -82,7 +87,13 @@ public class FormationServiceImpl implements FormationService{
 	@Autowired
 	private UserFormationMapper userFormationMapper;
 	
-	@Autowired BonusAtributoMapper bonusMapper;
+	@Autowired 
+	private BonusAtributoMapper bonusMapper;
+	
+	@Autowired
+	private BonusServices bonusService;
+	
+	private Logger logger = LoggerFactory.getLogger(FormationServiceImpl.class);
 	
 	@Override
 	public FormationNinjaDTO createFormation(HashMap<String, SkillType> request, boolean awakenings) throws InterruptedException, ExecutionException {
@@ -123,10 +134,9 @@ public class FormationServiceImpl implements FormationService{
 	}
 
 	@Override
-	public UserFormation createUserFormation(CreateUserFormationDTO dto) throws InterruptedException, ExecutionException {
+	public UserFormation createUserFormation(CreateUserFormationDTO dto,String user) throws InterruptedException, ExecutionException {
 
 		HashMap<String, SkillType> ninjas = new HashMap<>();
-		String user = "kirotodo";
 		for(CreateNinjaEquipmentDTO ninja : dto.getNinjas()) {
 			if(ninja.getType()!= null){
 				ninjas.put(ninja.getNinja(), ninja.getType());
@@ -142,34 +152,36 @@ public class FormationServiceImpl implements FormationService{
 			if(ninja == null) {
 				continue;
 			}
+			
 			NinjaUserFormation ninjaUser = new NinjaUserFormation();
+			
 			if(ninja.getChakraNature()!= null) {
 				ninjaUser.setChakraNature(ninja.getChakraNature());
 			}else {
-				ninjaUser.setChakraNature(ChakraNature.NONE);
+				ninjaUser.setChakraNature(ChakraNature.UNACTIVATED);
 			}
 			ninjaUser.setNombre(ninja.getName());
 			ninjaUser.setUsername(user);
 			ninjaUser.setSkill(ninja.getType());
 			
-			UserSet set = getUserSet(ninja.getSetName());
-			if(set == null && ninja.getSetName() != null) {
-				set = setMapper.toUserSet(setService.createSet(ninja.getEquipment(),ninja.getSetName()));
-				set.setNombre(ninja.getSetName());
+			
+			UserSet set = null;//getUserSet(ninja.getSet().getSetName());
+			if(ninja.getSet() != null 
+					&& ninja.getSet().getSetName() != null
+					&& ninja.getSet().getEquipment() != null) {
+				set = setMapper.toUserSet(setService.createSet(ninja.getSet().getEquipment(),ninja.getSet().getSetName()));
+				set.setNombre(ninja.getSet().getSetName());
 				set.setUsername(user);
-				ninjaUser.setEquipment(set);
-			}else {
 				ninjaUser.setEquipment(set);
 			}
 			
-			UserAccesories accesories  = getUserAccesorieSet(ninja.getAccesorieSetName());
-			if(accesories == null && ninja.getAccesorieSetName() != null) {
-				accesories = accesorieMapper.toUserAccesories(accesorieService.createAccesorieSet(ninja.getAccesories()));
-				accesories.setNombre(ninja.getAccesorieSetName());
+			UserAccesories accesories  = null;//getUserAccesorieSet(ninja.getAccesories().getAccesorieSetName());
+			if( ninja.getAccesories() != null 
+					&& ninja.getAccesories().getAccesorieSetName() != null
+					&& ninja.getAccesories().getAccesories() != null) {
+				accesories = accesorieMapper.toUserAccesories(accesorieService.createAccesorieSet(ninja.getAccesories().getAccesories()));
+				accesories.setNombre(ninja.getAccesories().getAccesorieSetName());
 				accesories.setUsername(user);
-				accesories.setUsername(user);
-				ninjaUser.setAccesories(accesories);
-			}else {
 				ninjaUser.setAccesories(accesories);
 			}
 			
@@ -256,21 +268,21 @@ public class FormationServiceImpl implements FormationService{
 		}
 		
 		List <BonusDTO> result = new ArrayList<>();
-		result.add(mergeFormationAndNinjaBonuses(bonuses,ninja));
+		result.addAll(mergeFormationAndNinjaBonuses(bonuses,ninja));
 		return result;
 	}
 
-	private BonusDTO mergeFormationAndNinjaBonuses(List<BonusDTO> bonuses, NinjaUserFormationDTO ninja) {
-		int a = 5;
-		int h=9+8;
-		int c = a +9;
+	private List <BonusDTO> mergeFormationAndNinjaBonuses(List<BonusDTO> bonuses, NinjaUserFormationDTO ninja) {
+		
 		Map <BonusAtributoUtilsDTO, Long> mapa = new HashMap<>();
 		Map <BonusAtributoUtilsDTO, Long> mapa2 = new HashMap<>();
 		for(BonusDTO bonus: bonuses) {
 			List <BonusAtributoUtilsDTO> list = bonusMapper.toBonusAtributoUtilsDTOList(bonus.getListaBonus());
 			for(BonusAtributoUtilsDTO b : list) {
-				
+				String aux2 = b.getImpact();
 				if(impactOnNinja(b,ninja)) {
+					
+					System.out.printf("Soy el ninja %s con chakra %s posicion %s y me afecta el bonus %s \n",ninja.getNinja().getName(),ninja.getChakraNature().toString(),ninja.getFormation().toString(),b.getImpact());
 					BonusAtributoUtilsDTO aux = b.deepCopy();
 					aux.setImpact(Constantes.IMPACT_SELF);
 					if(mapa.containsKey(b) ) {
@@ -279,7 +291,7 @@ public class FormationServiceImpl implements FormationService{
 						mapa.put(b, b.getValor());
 					}
 				}else if(mapa2.containsKey(b) ) {
-					mapa2.put(b, mapa.get(b) + b.getValor());
+					mapa2.put(b, mapa2.get(b) + b.getValor());
 				}else {
 					mapa2.put(b, b.getValor());	
 				}
@@ -293,22 +305,51 @@ public class FormationServiceImpl implements FormationService{
 			entry.getKey().setValor(entry.getValue());
 		}
 		
-		bonus.setListaBonus(null);
-		//aqui hay que seguir  que bno esta terminado
-		//aqui hay que seguir  que bno esta terminado
-		//aqui hay que seguir  que bno esta terminado
-		//aqui hay que seguir  que bno esta terminado
-		return null;
-		//aqui hay que seguir  que bno esta terminado
-		//aqui hay que seguir  que bno esta terminado
-		//aqui hay que seguir  que bno esta terminado
-		//aqui hay que seguir  que bno esta terminado
+		List <BonusAtributoDTO> bonusSelf = bonusMapper.toBonusDTOList3(new ArrayList <> (mapa.keySet()));
+		bonus.setNombre("Totally bonus on ninja");
+		bonus.setListaBonus(bonusSelf);
+		
+		BonusDTO bonus1 = new BonusDTO();
+		for(Map.Entry <BonusAtributoUtilsDTO, Long> entry : mapa2.entrySet()) {
+			entry.getKey().setValor(entry.getValue());
+		}
+		
+		List <BonusAtributoDTO> bonusNotSelf = bonusMapper.toBonusDTOList3(new ArrayList <> (mapa2.keySet()));
+		bonus1.setNombre("Totally bonus that impact on other ninjas");
+		bonus1.setListaBonus(bonusNotSelf);
+		
+		List <BonusDTO> totallyBonuses = new ArrayList<>();
+		totallyBonuses.add(bonus);
+		totallyBonuses.add(bonus1);
+		return totallyBonuses;
 	}
 
 	private boolean impactOnNinja(BonusAtributoUtilsDTO b, NinjaUserFormationDTO ninja) {
 		if(b.getImpact().equals(Constantes.IMPACT_ALL_ALLIES) || b.getImpact().equals(Constantes.IMPACT_SELF)) {
 			return true;
 		}
+		
+		if(b.getImpact().contains(Constantes.IMPACT_NO_SELF)) {
+			return false;
+		}
+		
+		if(b.getImpact().contains(Constantes.IMPACT_ALLY) 
+			&& (StringUtils.containsIgnoreCase(b.getImpact(),ninja.getFormation().formation()) 
+			||  StringUtils.containsIgnoreCase(b.getImpact(),ninja.getChakraNature().toString()))
+			) 
+		{
+			return true;
+		}
+		
+		if(b.getImpact().contains(Constantes.IMPACT_ALLIES) 
+				&& (StringUtils.containsIgnoreCase(b.getImpact(),ninja.getFormation().formation()) 
+				||  StringUtils.containsIgnoreCase(b.getImpact(),ninja.getChakraNature().toString()))
+				) 
+		{
+			return true;
+		}
+		
+		
 		return false;
 	}
 
@@ -324,21 +365,21 @@ public class FormationServiceImpl implements FormationService{
 		List <BonusDTO> bonuses = new ArrayList<>();
 		
 		if(ninja.getEquipment()!=null) {
-		bonuses.add(mergeBonuses(ninja.getEquipment().getBonuses()));
+		bonuses.add(bonusService.mergeBonuses(ninja.getEquipment().getBonuses()));
 		}
 		if(ninja.getAccesories() != null) {
-		bonuses.add(mergeBonuses(bonusMapper.toBonusDTOList(ninja.getAccesories().getBonuses())));
+		bonuses.add(bonusService.mergeBonuses(bonusMapper.toBonusDTOList(ninja.getAccesories().getBonuses())));
 		}
 		if(ninja.getNinja() != null) {
 		bonuses.add(mergeBonusesNinja(bonusMapper.toBonusDTOList2(ninja.getNinja().getSkills())));
 		}
 		
 		List <BonusDTO> result = new ArrayList<>();
-		result.add(mergeBonuses(bonuses));
+		result.add(bonusService.mergeBonuses(bonuses));
 		return result;
 	}
 	
-	private BonusDTO mergeBonuses(List<BonusDTO> bonuses) {
+	/*private BonusDTO mergeBonuses(List<BonusDTO> bonuses) {
 		
 		
 		Map <BonusAtributoDTO, Long> mapa = new HashMap<>();
@@ -363,7 +404,7 @@ public class FormationServiceImpl implements FormationService{
 		bonus.setListaBonus(new ArrayList <> (mapa.keySet()));
 		
 		return bonus;
-	}
+	}*/
 	
 	private BonusDTO mergeBonusesNinja(List<BonusDTO> bonuses) {
 		
@@ -371,7 +412,7 @@ public class FormationServiceImpl implements FormationService{
 		
 		for(BonusDTO bonus: bonuses) {
 			for(BonusAtributoDTO b : bonus.getListaBonus()) {
-				if(b.getImpact().equals("self")) {
+				if(!b.getImpact().contains(Constantes.IMPACT_NO_SELF) && b.getImpact().equals(Constantes.IMPACT_SELF)) {
 					if(mapa.containsKey(b)) {
 						mapa.put(b, mapa.get(b) + b.getValor());
 					}else {

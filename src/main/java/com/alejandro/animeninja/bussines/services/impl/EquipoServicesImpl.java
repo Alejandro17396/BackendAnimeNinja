@@ -28,7 +28,10 @@ import com.alejandro.animeninja.bussines.model.CreateComboSet;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Parte;
 import com.alejandro.animeninja.bussines.model.UserSet;
+import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.services.ParteServices;
@@ -37,6 +40,7 @@ import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusBySetStat;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
 import com.alejandro.animeninja.bussines.utils.BonusAtributoUtils;
 import com.alejandro.animeninja.integration.repositories.EquipoRepository;
+import com.alejandro.animeninja.integration.repositories.UserSetRepository;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 import com.alejandro.animeninja.integration.specifications.EquipoSpecification;
 import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
@@ -47,6 +51,9 @@ public class EquipoServicesImpl implements EquipoServices {
 
 	@Autowired
 	private EquipoRepository equipoRepository;
+	
+	@Autowired
+	private UserSetRepository userSetRepository;
 
 	@Autowired
 	private BonusServices bonusService;
@@ -439,14 +446,6 @@ public class EquipoServicesImpl implements EquipoServices {
 	}
 
 	@Override
-	public SetDTO createSet(String nombre) {
-	
-		
-		return null;
-	}
-	
-
-	@Override
 	public Equipo createSet(List<String> equipment,String name) {
 		
 		if(equipment == null || equipment.isEmpty()) {
@@ -556,4 +555,36 @@ public class EquipoServicesImpl implements EquipoServices {
 		return entry;
 	}
 
+	@Override
+	public UserSet createSet(CreateSetDTO dto, String user) {
+		UserSet set = getUserSet(dto.getSetName());
+		if(set == null) {
+			set = setMapper.toUserSet(createSet(dto.getEquipment(),dto.getSetName()));
+			set.setNombre(dto.getSetName());
+			set.setUsername(user);
+		}
+		
+		return set;
+	}
+
+	private UserSet getUserSet(String setName) {
+		
+		return null;
+	}
+
+	@Override
+	public UserSetDTO mergeBonus(UserSet entity) {
+
+		UserSetDTO set = setMapper.toUserSetDTO(entity);
+		BonusDTO bonus = bonusService.mergeBonuses(set.getBonuses());
+		set.getBonuses().clear();
+		set.getBonuses().add(bonus);
+		return set;
+	}
+	
+	@Override
+	public UserSet saveUserSet(UserSet set) {
+		
+		return userSetRepository.save(set);
+	}
 }

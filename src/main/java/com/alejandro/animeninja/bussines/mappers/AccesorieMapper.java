@@ -11,6 +11,7 @@ import org.mapstruct.factory.Mappers;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 
 @Mapper(componentModel = "spring")
 public interface AccesorieMapper {
@@ -25,6 +26,17 @@ public interface AccesorieMapper {
 	@Mapping(target="partes", source="accesorios.partes")
 	@Mapping(target="bonuses", source="accesorios.bonuses")
 	UserAccesories toUserAccesories(SetAccesorio accesorios);
+	
+	
+	UserAccesoriesDTO toUserAccesoriesDTO(UserAccesories accesories);
+	
+	default List<UserAccesoriesDTO> toUserAccesoriesDTOList(List<UserAccesories> ninjaList){
+		if(ninjaList == null) {
+			return new ArrayList<>();
+		}
+		return ninjaList.stream().map(this::toUserAccesoriesDTO).collect(Collectors.toList());
+	}
+	
 	
 	default List<SetAccesorioDTO> toDtoList(List<SetAccesorio> ninjaList){
 		if(ninjaList == null) {

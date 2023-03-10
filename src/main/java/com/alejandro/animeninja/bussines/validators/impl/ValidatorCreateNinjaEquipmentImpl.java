@@ -28,12 +28,12 @@ public class ValidatorCreateNinjaEquipmentImpl implements ValidatorCreateNinjaEq
 			throw new CreateNinjaException("400","ninja name cant be null",HttpStatus.BAD_REQUEST);
 		}
 		
-		if(ninja.getEquipment() != null) {
-			validateSet(ninja.getEquipment(),ninja.getName());
+		if(ninja.getSet() != null) {
+			validateSet(ninja.getSet().getEquipment(),ninja.getName());
 		}
 		
 		if(ninja.getAccesories() != null) {
-			validateAccesories(ninja.getAccesories(),ninja.getSetName());
+			validateAccesories(ninja.getAccesories().getAccesories(),ninja.getAccesories().getAccesorieSetName());
 		}
 		
 	}

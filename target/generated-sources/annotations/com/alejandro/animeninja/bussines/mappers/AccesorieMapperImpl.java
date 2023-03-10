@@ -9,6 +9,7 @@ import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.ParteAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Generated;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-08T01:17:51+0100",
+    date = "2023-03-10T01:31:07+0100",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
@@ -71,6 +72,23 @@ public class AccesorieMapperImpl implements AccesorieMapper {
         }
 
         return userAccesories;
+    }
+
+    @Override
+    public UserAccesoriesDTO toUserAccesoriesDTO(UserAccesories accesories) {
+        if ( accesories == null ) {
+            return null;
+        }
+
+        UserAccesoriesDTO userAccesoriesDTO = new UserAccesoriesDTO();
+
+        userAccesoriesDTO.setId( accesories.getId() );
+        userAccesoriesDTO.setNombre( accesories.getNombre() );
+        userAccesoriesDTO.setUsername( accesories.getUsername() );
+        userAccesoriesDTO.setPartes( parteAccesorioListToParteAccesorioDTOList( accesories.getPartes() ) );
+        userAccesoriesDTO.setBonuses( bonusAccesorioListToBonusAccesorioDTOList( accesories.getBonuses() ) );
+
+        return userAccesoriesDTO;
     }
 
     protected ParteAccesorioDTO parteAccesorioToParteAccesorioDTO(ParteAccesorio parteAccesorio) {
