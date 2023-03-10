@@ -449,7 +449,6 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		List<BonusDTO> bonuses = bonusMapper.toBonusDTOList(result.getBonuses());
 		BonusDTO bonus = bonusService2.mergeBonuses(bonuses);
 		result.getBonuses().clear();
-		BonusAccesorioDTO bonusA = bonusMapper.toBonusAccesorioDTO(bonus);
 		result.getBonuses().add(bonusMapper.toBonusAccesorioDTO(bonus));
 		
 		return result;
