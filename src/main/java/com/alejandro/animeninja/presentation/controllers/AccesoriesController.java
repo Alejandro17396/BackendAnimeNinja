@@ -117,14 +117,13 @@ public class AccesoriesController {
 			@RequestBody CreateAccesorieSetDTO dto
 			/*@RequestHeader (name="Authorization") String token*/){
 		
-		UserAccesories accesories = accesorioServices.createAccesorieSet(dto, "kirotodo");
+		UserAccesories accesories = accesorioServices.createOrUpdateAccesorieSetByNameAndUsername(dto, "kirotodo");
 		UserAccesoriesDTO response = null;
 		boolean merge = true;
 		if(merge) {
-			accesories = accesorioServices.saveUserSet(accesories);
 			response = accesorioServices.mergeBonus(accesories);
 		}else {
-			response = accesorieMapper.toUserAccesoriesDTO(accesorioServices.saveUserSet(accesories));
+			response = accesorieMapper.toUserAccesoriesDTO(accesories);
 		}
 		
 		ResponseEntity <UserAccesoriesDTO> responseDTO = null;

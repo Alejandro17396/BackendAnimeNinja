@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,12 +32,17 @@ import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.SkillType;
+import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
 import com.alejandro.animeninja.bussines.model.dto.FinalSkillsAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationsNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import com.alejandro.animeninja.bussines.services.FormationService;
 import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
@@ -214,6 +220,31 @@ public class NinjasController {
 		
 		return response;
 	}
+	
+	@PostMapping("/create")
+	public ResponseEntity <NinjaUserFormationDTO> createSet(
+			@RequestBody CreateNinjaEquipmentDTO dto
+			/*@RequestHeader (name="Authorization") String token*/){
+		
+		NinjaUserFormation accesories = ninjaService.createNinjaFormationByNameAndUsername(dto, "kirotodo");
+		NinjaUserFormationDTO response = null;
+		boolean merge = true;
+		if(merge) {
+			response = ninjaService.mergeBonus(accesories);
+		}else {
+			response =  ninjaMapper.toNinjaUserFormationDTO(accesories);
+		}
+		
+		ResponseEntity <NinjaUserFormationDTO> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		return responseDTO;
+	}
+	
 	
 	public void showHeapMemory() {
 		 int dataSize = 1024 * 1024;

@@ -1,19 +1,37 @@
 package com.alejandro.animeninja.bussines.mappers;
 
 import com.alejandro.animeninja.bussines.model.AttributeStat;
+import com.alejandro.animeninja.bussines.model.Bonus;
+import com.alejandro.animeninja.bussines.model.BonusAccesorio;
+import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
+import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaAwakening;
 import com.alejandro.animeninja.bussines.model.NinjaAwakeningStat;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.NinjaStats;
+import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
+import com.alejandro.animeninja.bussines.model.Parte;
+import com.alejandro.animeninja.bussines.model.ParteAccesorio;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
+import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.AttributeStatDTO;
+import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
+import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
+import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaAwakeningDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaAwakeningStatDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaSkillDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaStatsDTO;
+import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
+import com.alejandro.animeninja.bussines.model.dto.ParteAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.ParteDTO;
 import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Generated;
@@ -21,8 +39,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-10T01:31:07+0100",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2023-03-11T18:44:13+0100",
+    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 1.8.0_111 (Oracle Corporation)"
 )
 @Component
 public class NinjaMapperImpl implements NinjaMapper {
@@ -63,6 +81,48 @@ public class NinjaMapperImpl implements NinjaMapper {
         ninja1.setAwakenings( ninjaAwakeningDTOListToNinjaAwakeningList( ninja.getAwakenings() ) );
 
         return ninja1;
+    }
+
+    @Override
+    public NinjaUserFormationDTO toNinjaUserFormationDTO(NinjaUserFormation ninja) {
+        if ( ninja == null ) {
+            return null;
+        }
+
+        NinjaUserFormationDTO ninjaUserFormationDTO = new NinjaUserFormationDTO();
+
+        ninjaUserFormationDTO.setFormation( ninja.getFormation() );
+        ninjaUserFormationDTO.setChakraNature( ninja.getChakraNature() );
+        ninjaUserFormationDTO.setId( ninja.getId() );
+        ninjaUserFormationDTO.setNombre( ninja.getNombre() );
+        ninjaUserFormationDTO.setAccesories( userAccesoriesToUserAccesoriesDTO( ninja.getAccesories() ) );
+        ninjaUserFormationDTO.setEquipment( userSetToUserSetDTO( ninja.getEquipment() ) );
+        ninjaUserFormationDTO.setNinja( toDTO( ninja.getNinja() ) );
+        ninjaUserFormationDTO.setUsername( ninja.getUsername() );
+        ninjaUserFormationDTO.setSkill( ninja.getSkill() );
+
+        return ninjaUserFormationDTO;
+    }
+
+    @Override
+    public NinjaUserFormation toNinjaUserFormation(NinjaUserFormationDTO ninja) {
+        if ( ninja == null ) {
+            return null;
+        }
+
+        NinjaUserFormation ninjaUserFormation = new NinjaUserFormation();
+
+        ninjaUserFormation.setFormation( ninja.getFormation() );
+        ninjaUserFormation.setChakraNature( ninja.getChakraNature() );
+        ninjaUserFormation.setId( ninja.getId() );
+        ninjaUserFormation.setNombre( ninja.getNombre() );
+        ninjaUserFormation.setAccesories( userAccesoriesDTOToUserAccesories( ninja.getAccesories() ) );
+        ninjaUserFormation.setEquipment( userSetDTOToUserSet( ninja.getEquipment() ) );
+        ninjaUserFormation.setSkill( ninja.getSkill() );
+        ninjaUserFormation.setNinja( toEntity( ninja.getNinja() ) );
+        ninjaUserFormation.setUsername( ninja.getUsername() );
+
+        return ninjaUserFormation;
     }
 
     protected AttributeStatDTO attributeStatToAttributeStatDTO(AttributeStat attributeStat) {
@@ -409,5 +469,401 @@ public class NinjaMapperImpl implements NinjaMapper {
         }
 
         return list1;
+    }
+
+    protected ParteAccesorioDTO parteAccesorioToParteAccesorioDTO(ParteAccesorio parteAccesorio) {
+        if ( parteAccesorio == null ) {
+            return null;
+        }
+
+        ParteAccesorioDTO parteAccesorioDTO = new ParteAccesorioDTO();
+
+        parteAccesorioDTO.setNombre( parteAccesorio.getNombre() );
+        parteAccesorioDTO.setValor( parteAccesorio.getValor() );
+        parteAccesorioDTO.setTipo( parteAccesorio.getTipo() );
+
+        return parteAccesorioDTO;
+    }
+
+    protected List<ParteAccesorioDTO> parteAccesorioListToParteAccesorioDTOList(List<ParteAccesorio> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<ParteAccesorioDTO> list1 = new ArrayList<ParteAccesorioDTO>( list.size() );
+        for ( ParteAccesorio parteAccesorio : list ) {
+            list1.add( parteAccesorioToParteAccesorioDTO( parteAccesorio ) );
+        }
+
+        return list1;
+    }
+
+    protected BonusAccesorioAtributoDTO bonusAccesorioAtributoToBonusAccesorioAtributoDTO(BonusAccesorioAtributo bonusAccesorioAtributo) {
+        if ( bonusAccesorioAtributo == null ) {
+            return null;
+        }
+
+        BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO = new BonusAccesorioAtributoDTO();
+
+        bonusAccesorioAtributoDTO.setAction( bonusAccesorioAtributo.getAction() );
+        bonusAccesorioAtributoDTO.setImpact( bonusAccesorioAtributo.getImpact() );
+        bonusAccesorioAtributoDTO.setCondition( bonusAccesorioAtributo.getCondition() );
+        bonusAccesorioAtributoDTO.setTime( bonusAccesorioAtributo.getTime() );
+        bonusAccesorioAtributoDTO.setNombreAtributo( bonusAccesorioAtributo.getNombreAtributo() );
+        bonusAccesorioAtributoDTO.setValor( bonusAccesorioAtributo.getValor() );
+
+        return bonusAccesorioAtributoDTO;
+    }
+
+    protected List<BonusAccesorioAtributoDTO> bonusAccesorioAtributoListToBonusAccesorioAtributoDTOList(List<BonusAccesorioAtributo> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<BonusAccesorioAtributoDTO> list1 = new ArrayList<BonusAccesorioAtributoDTO>( list.size() );
+        for ( BonusAccesorioAtributo bonusAccesorioAtributo : list ) {
+            list1.add( bonusAccesorioAtributoToBonusAccesorioAtributoDTO( bonusAccesorioAtributo ) );
+        }
+
+        return list1;
+    }
+
+    protected BonusAccesorioDTO bonusAccesorioToBonusAccesorioDTO(BonusAccesorio bonusAccesorio) {
+        if ( bonusAccesorio == null ) {
+            return null;
+        }
+
+        BonusAccesorioDTO bonusAccesorioDTO = new BonusAccesorioDTO();
+
+        bonusAccesorioDTO.setTipo( bonusAccesorio.getTipo() );
+        bonusAccesorioDTO.setBonuses( bonusAccesorioAtributoListToBonusAccesorioAtributoDTOList( bonusAccesorio.getBonuses() ) );
+
+        return bonusAccesorioDTO;
+    }
+
+    protected List<BonusAccesorioDTO> bonusAccesorioListToBonusAccesorioDTOList(List<BonusAccesorio> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<BonusAccesorioDTO> list1 = new ArrayList<BonusAccesorioDTO>( list.size() );
+        for ( BonusAccesorio bonusAccesorio : list ) {
+            list1.add( bonusAccesorioToBonusAccesorioDTO( bonusAccesorio ) );
+        }
+
+        return list1;
+    }
+
+    protected UserAccesoriesDTO userAccesoriesToUserAccesoriesDTO(UserAccesories userAccesories) {
+        if ( userAccesories == null ) {
+            return null;
+        }
+
+        UserAccesoriesDTO userAccesoriesDTO = new UserAccesoriesDTO();
+
+        userAccesoriesDTO.setId( userAccesories.getId() );
+        userAccesoriesDTO.setNombre( userAccesories.getNombre() );
+        userAccesoriesDTO.setUsername( userAccesories.getUsername() );
+        userAccesoriesDTO.setPartes( parteAccesorioListToParteAccesorioDTOList( userAccesories.getPartes() ) );
+        userAccesoriesDTO.setBonuses( bonusAccesorioListToBonusAccesorioDTOList( userAccesories.getBonuses() ) );
+
+        return userAccesoriesDTO;
+    }
+
+    protected ParteDTO parteToParteDTO(Parte parte) {
+        if ( parte == null ) {
+            return null;
+        }
+
+        ParteDTO parteDTO = new ParteDTO();
+
+        parteDTO.setNombre( parte.getNombre() );
+        parteDTO.setAtributo( parte.getAtributo() );
+        parteDTO.setValor( parte.getValor() );
+
+        return parteDTO;
+    }
+
+    protected List<ParteDTO> parteListToParteDTOList(List<Parte> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<ParteDTO> list1 = new ArrayList<ParteDTO>( list.size() );
+        for ( Parte parte : list ) {
+            list1.add( parteToParteDTO( parte ) );
+        }
+
+        return list1;
+    }
+
+    protected BonusAtributoDTO bonusAtributoToBonusAtributoDTO(BonusAtributo bonusAtributo) {
+        if ( bonusAtributo == null ) {
+            return null;
+        }
+
+        BonusAtributoDTO bonusAtributoDTO = new BonusAtributoDTO();
+
+        bonusAtributoDTO.setNombreAtributo( bonusAtributo.getNombreAtributo() );
+        bonusAtributoDTO.setValor( bonusAtributo.getValor() );
+        bonusAtributoDTO.setAction( bonusAtributo.getAction() );
+        bonusAtributoDTO.setImpact( bonusAtributo.getImpact() );
+        bonusAtributoDTO.setCondition( bonusAtributo.getCondition() );
+        bonusAtributoDTO.setTime( bonusAtributo.getTime() );
+
+        return bonusAtributoDTO;
+    }
+
+    protected List<BonusAtributoDTO> bonusAtributoListToBonusAtributoDTOList(List<BonusAtributo> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<BonusAtributoDTO> list1 = new ArrayList<BonusAtributoDTO>( list.size() );
+        for ( BonusAtributo bonusAtributo : list ) {
+            list1.add( bonusAtributoToBonusAtributoDTO( bonusAtributo ) );
+        }
+
+        return list1;
+    }
+
+    protected BonusDTO bonusToBonusDTO(Bonus bonus) {
+        if ( bonus == null ) {
+            return null;
+        }
+
+        BonusDTO bonusDTO = new BonusDTO();
+
+        bonusDTO.setNombre( bonus.getNombre() );
+        bonusDTO.setListaBonus( bonusAtributoListToBonusAtributoDTOList( bonus.getListaBonus() ) );
+
+        return bonusDTO;
+    }
+
+    protected List<BonusDTO> bonusListToBonusDTOList(List<Bonus> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<BonusDTO> list1 = new ArrayList<BonusDTO>( list.size() );
+        for ( Bonus bonus : list ) {
+            list1.add( bonusToBonusDTO( bonus ) );
+        }
+
+        return list1;
+    }
+
+    protected UserSetDTO userSetToUserSetDTO(UserSet userSet) {
+        if ( userSet == null ) {
+            return null;
+        }
+
+        UserSetDTO userSetDTO = new UserSetDTO();
+
+        userSetDTO.setId( userSet.getId() );
+        userSetDTO.setNombre( userSet.getNombre() );
+        userSetDTO.setUsername( userSet.getUsername() );
+        userSetDTO.setPartes( parteListToParteDTOList( userSet.getPartes() ) );
+        userSetDTO.setBonuses( bonusListToBonusDTOList( userSet.getBonuses() ) );
+
+        return userSetDTO;
+    }
+
+    protected ParteAccesorio parteAccesorioDTOToParteAccesorio(ParteAccesorioDTO parteAccesorioDTO) {
+        if ( parteAccesorioDTO == null ) {
+            return null;
+        }
+
+        ParteAccesorio parteAccesorio = new ParteAccesorio();
+
+        parteAccesorio.setTipo( parteAccesorioDTO.getTipo() );
+        parteAccesorio.setNombre( parteAccesorioDTO.getNombre() );
+        parteAccesorio.setValor( parteAccesorioDTO.getValor() );
+
+        return parteAccesorio;
+    }
+
+    protected List<ParteAccesorio> parteAccesorioDTOListToParteAccesorioList(List<ParteAccesorioDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<ParteAccesorio> list1 = new ArrayList<ParteAccesorio>( list.size() );
+        for ( ParteAccesorioDTO parteAccesorioDTO : list ) {
+            list1.add( parteAccesorioDTOToParteAccesorio( parteAccesorioDTO ) );
+        }
+
+        return list1;
+    }
+
+    protected BonusAccesorioAtributo bonusAccesorioAtributoDTOToBonusAccesorioAtributo(BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO) {
+        if ( bonusAccesorioAtributoDTO == null ) {
+            return null;
+        }
+
+        BonusAccesorioAtributo bonusAccesorioAtributo = new BonusAccesorioAtributo();
+
+        bonusAccesorioAtributo.setNombreAtributo( bonusAccesorioAtributoDTO.getNombreAtributo() );
+        bonusAccesorioAtributo.setValor( bonusAccesorioAtributoDTO.getValor() );
+        bonusAccesorioAtributo.setAction( bonusAccesorioAtributoDTO.getAction() );
+        bonusAccesorioAtributo.setImpact( bonusAccesorioAtributoDTO.getImpact() );
+        bonusAccesorioAtributo.setCondition( bonusAccesorioAtributoDTO.getCondition() );
+        bonusAccesorioAtributo.setTime( bonusAccesorioAtributoDTO.getTime() );
+
+        return bonusAccesorioAtributo;
+    }
+
+    protected List<BonusAccesorioAtributo> bonusAccesorioAtributoDTOListToBonusAccesorioAtributoList(List<BonusAccesorioAtributoDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<BonusAccesorioAtributo> list1 = new ArrayList<BonusAccesorioAtributo>( list.size() );
+        for ( BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO : list ) {
+            list1.add( bonusAccesorioAtributoDTOToBonusAccesorioAtributo( bonusAccesorioAtributoDTO ) );
+        }
+
+        return list1;
+    }
+
+    protected BonusAccesorio bonusAccesorioDTOToBonusAccesorio(BonusAccesorioDTO bonusAccesorioDTO) {
+        if ( bonusAccesorioDTO == null ) {
+            return null;
+        }
+
+        BonusAccesorio bonusAccesorio = new BonusAccesorio();
+
+        bonusAccesorio.setTipo( bonusAccesorioDTO.getTipo() );
+        bonusAccesorio.setBonuses( bonusAccesorioAtributoDTOListToBonusAccesorioAtributoList( bonusAccesorioDTO.getBonuses() ) );
+
+        return bonusAccesorio;
+    }
+
+    protected List<BonusAccesorio> bonusAccesorioDTOListToBonusAccesorioList(List<BonusAccesorioDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<BonusAccesorio> list1 = new ArrayList<BonusAccesorio>( list.size() );
+        for ( BonusAccesorioDTO bonusAccesorioDTO : list ) {
+            list1.add( bonusAccesorioDTOToBonusAccesorio( bonusAccesorioDTO ) );
+        }
+
+        return list1;
+    }
+
+    protected UserAccesories userAccesoriesDTOToUserAccesories(UserAccesoriesDTO userAccesoriesDTO) {
+        if ( userAccesoriesDTO == null ) {
+            return null;
+        }
+
+        UserAccesories userAccesories = new UserAccesories();
+
+        userAccesories.setId( userAccesoriesDTO.getId() );
+        userAccesories.setNombre( userAccesoriesDTO.getNombre() );
+        userAccesories.setPartes( parteAccesorioDTOListToParteAccesorioList( userAccesoriesDTO.getPartes() ) );
+        userAccesories.setBonuses( bonusAccesorioDTOListToBonusAccesorioList( userAccesoriesDTO.getBonuses() ) );
+        userAccesories.setUsername( userAccesoriesDTO.getUsername() );
+
+        return userAccesories;
+    }
+
+    protected Parte parteDTOToParte(ParteDTO parteDTO) {
+        if ( parteDTO == null ) {
+            return null;
+        }
+
+        Parte parte = new Parte();
+
+        parte.setNombre( parteDTO.getNombre() );
+        parte.setAtributo( parteDTO.getAtributo() );
+        parte.setValor( parteDTO.getValor() );
+
+        return parte;
+    }
+
+    protected List<Parte> parteDTOListToParteList(List<ParteDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<Parte> list1 = new ArrayList<Parte>( list.size() );
+        for ( ParteDTO parteDTO : list ) {
+            list1.add( parteDTOToParte( parteDTO ) );
+        }
+
+        return list1;
+    }
+
+    protected BonusAtributo bonusAtributoDTOToBonusAtributo(BonusAtributoDTO bonusAtributoDTO) {
+        if ( bonusAtributoDTO == null ) {
+            return null;
+        }
+
+        BonusAtributo bonusAtributo = new BonusAtributo();
+
+        bonusAtributo.setNombreAtributo( bonusAtributoDTO.getNombreAtributo() );
+        bonusAtributo.setValor( bonusAtributoDTO.getValor() );
+        bonusAtributo.setAction( bonusAtributoDTO.getAction() );
+        bonusAtributo.setImpact( bonusAtributoDTO.getImpact() );
+        bonusAtributo.setCondition( bonusAtributoDTO.getCondition() );
+        bonusAtributo.setTime( bonusAtributoDTO.getTime() );
+
+        return bonusAtributo;
+    }
+
+    protected List<BonusAtributo> bonusAtributoDTOListToBonusAtributoList(List<BonusAtributoDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<BonusAtributo> list1 = new ArrayList<BonusAtributo>( list.size() );
+        for ( BonusAtributoDTO bonusAtributoDTO : list ) {
+            list1.add( bonusAtributoDTOToBonusAtributo( bonusAtributoDTO ) );
+        }
+
+        return list1;
+    }
+
+    protected Bonus bonusDTOToBonus(BonusDTO bonusDTO) {
+        if ( bonusDTO == null ) {
+            return null;
+        }
+
+        Bonus bonus = new Bonus();
+
+        bonus.setNombre( bonusDTO.getNombre() );
+        bonus.setListaBonus( bonusAtributoDTOListToBonusAtributoList( bonusDTO.getListaBonus() ) );
+
+        return bonus;
+    }
+
+    protected List<Bonus> bonusDTOListToBonusList(List<BonusDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<Bonus> list1 = new ArrayList<Bonus>( list.size() );
+        for ( BonusDTO bonusDTO : list ) {
+            list1.add( bonusDTOToBonus( bonusDTO ) );
+        }
+
+        return list1;
+    }
+
+    protected UserSet userSetDTOToUserSet(UserSetDTO userSetDTO) {
+        if ( userSetDTO == null ) {
+            return null;
+        }
+
+        UserSet userSet = new UserSet();
+
+        userSet.setNombre( userSetDTO.getNombre() );
+        userSet.setUsername( userSetDTO.getUsername() );
+        userSet.setPartes( parteDTOListToParteList( userSetDTO.getPartes() ) );
+        userSet.setBonuses( bonusDTOListToBonusList( userSetDTO.getBonuses() ) );
+        userSet.setId( userSetDTO.getId() );
+
+        return userSet;
     }
 }

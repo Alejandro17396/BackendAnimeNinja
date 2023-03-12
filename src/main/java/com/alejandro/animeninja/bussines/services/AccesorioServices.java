@@ -45,6 +45,8 @@ public interface AccesorioServices {
 	
 	UserAccesoriesDTO mergeBonus(UserAccesories accesories);
 
-	UserAccesories createAccesorieSet(CreateAccesorieSetDTO dto, String string);
+	UserAccesories createOrUpdateAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String username);
+	
+	UserAccesories createOrUpdateAccesorieSetById(CreateAccesorieSetDTO dto, String user);
 
 }

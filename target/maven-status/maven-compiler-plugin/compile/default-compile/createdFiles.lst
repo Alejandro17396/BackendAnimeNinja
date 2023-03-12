@@ -235,6 +235,7 @@ com\alejandro\animeninja\bussines\model\SetAccesorioUtils.class
 com\alejandro\animeninja\bussines\model\UserSet_.class
 com\alejandro\animeninja\bussines\model\Ninja.class
 com\alejandro\animeninja\bussines\mappers\AccesorieMapper.class
+com\alejandro\animeninja\integration\repositories\NinjaUserFormationRepository.class
 com\alejandro\animeninja\bussines\model\dto\BonusAccesorioAtributoDTO.class
 com\alejandro\animeninja\bussines\model\UserAccesories.class
 com\alejandro\animeninja\presentation\controllers\ParteController.class

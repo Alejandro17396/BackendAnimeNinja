@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alejandro.animeninja.bussines.auth.services.JWTService;
 import com.alejandro.animeninja.bussines.mappers.SetMapper;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
+import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.UserFormation;
@@ -129,14 +130,13 @@ public class SetsController {
 			@RequestBody CreateSetDTO dto
 			/*@RequestHeader (name="Authorization") String token*/){
 		
-		UserSet set = equipoServices.createSet(dto, "kirotodo");
+		UserSet set = equipoServices.createOrUpdateSetByName(dto, "kirotodo");
 		UserSetDTO response = null;
 		boolean merge = true;
 		if(merge) {
-			set = equipoServices.saveUserSet(set);
 			response = equipoServices.mergeBonus(set);
 		}else {
-			response = setMapper.toUserSetDTO(equipoServices.saveUserSet(set));
+			response = setMapper.toUserSetDTO(set);
 		}
 		
 		ResponseEntity <UserSetDTO> responseDTO = null;
@@ -148,6 +148,14 @@ public class SetsController {
 		}
 		
 		return responseDTO;
+	}
+	
+	@GetMapping("/chatgpt")
+	public List<Equipo> createSet(){
+		
+		
+		
+		return equipoServices.getAll();
 	}
 	
 	/*@Autowired

@@ -27,7 +27,7 @@ public class NinjaUserFormation implements Serializable{
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 	
-	@Column(name="nombre",insertable=false, updatable=false)
+	@Column(name="nombre")
 	private String nombre;
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

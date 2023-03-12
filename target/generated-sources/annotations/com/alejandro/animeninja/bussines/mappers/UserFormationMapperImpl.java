@@ -41,8 +41,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-10T01:31:07+0100",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2023-03-11T18:44:13+0100",
+    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 1.8.0_111 (Oracle Corporation)"
 )
 @Component
 public class UserFormationMapperImpl implements UserFormationMapper {
@@ -268,6 +268,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         UserSetDTO userSetDTO = new UserSetDTO();
 
+        userSetDTO.setId( userSet.getId() );
         userSetDTO.setNombre( userSet.getNombre() );
         userSetDTO.setUsername( userSet.getUsername() );
         userSetDTO.setPartes( parteListToParteDTOList( userSet.getPartes() ) );
@@ -693,6 +694,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
         userSet.setUsername( userSetDTO.getUsername() );
         userSet.setPartes( parteDTOListToParteList( userSetDTO.getPartes() ) );
         userSet.setBonuses( bonusDTOListToBonusList( userSetDTO.getBonuses() ) );
+        userSet.setId( userSetDTO.getId() );
 
         return userSet;
     }

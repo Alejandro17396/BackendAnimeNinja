@@ -40,12 +40,16 @@ public interface EquipoServices {
 	
 	List <SetDTO> generateCombinationSetsByBonus(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable);
 	
-	UserSet createSet(CreateSetDTO dto,String user);
+	UserSet createOrUpdateSetByName(CreateSetDTO dto,String user);
+	
+	UserSet createOrUpdateSetById(CreateSetDTO dto, String user);
 	
 	Equipo createSet(List<String> equipment,String name);
 	
 	UserSetDTO mergeBonus(UserSet entity);
 	
 	UserSet saveUserSet(UserSet set);
+	
+	List <SetDTO> generateCombos();
 	
 }

@@ -21,12 +21,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alejandro.animeninja.bussines.exceptions.CreateNinjaException;
+import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
+import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
 import com.alejandro.animeninja.bussines.mappers.FormationNinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
+import com.alejandro.animeninja.bussines.mappers.SetMapper;
+import com.alejandro.animeninja.bussines.model.ChakraNature;
+import com.alejandro.animeninja.bussines.model.Constantes;
 import com.alejandro.animeninja.bussines.model.FinalSkillsAttributes;
 import com.alejandro.animeninja.bussines.model.Formation;
 import com.alejandro.animeninja.bussines.model.FormationNinja;
@@ -34,19 +41,30 @@ import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaAwakening;
 import com.alejandro.animeninja.bussines.model.NinjaAwakeningStat;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
+import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.SkillAttributeKey;
 import com.alejandro.animeninja.bussines.model.SkillType;
+import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.UserSet;
+import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
+import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaFilterDTO;
+import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
+import com.alejandro.animeninja.bussines.services.AccesorioServices;
+import com.alejandro.animeninja.bussines.services.BonusServices;
+import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortFinalSkillAttribute;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortFormationsByMergedAttributes;
 import com.alejandro.animeninja.bussines.utils.FormationFilterUtils;
 import com.alejandro.animeninja.bussines.utils.PruebasReflection;
 import com.alejandro.animeninja.integration.repositories.NinjaRepository;
+import com.alejandro.animeninja.integration.repositories.NinjaUserFormationRepository;
 import com.alejandro.animeninja.integration.specifications.NinjaSpecification;
 
 
@@ -62,6 +80,27 @@ public class NinjaServiceImpl implements NinjaService {
 
 	@Autowired
 	private FormationNinjaMapper formationMapper;
+	
+	@Autowired
+	private EquipoServices setService;
+	
+	@Autowired
+	private AccesorioServices accesorieService;
+	
+	@Autowired
+	private SetMapper setMapper;
+	
+	@Autowired
+	private AccesorieMapper accesorieMapper;
+	
+	@Autowired
+	private NinjaUserFormationRepository ninjaUserFormationRepository;
+	
+	@Autowired
+	private BonusServices bonusService;
+	
+	@Autowired 
+	private BonusAtributoMapper bonusMapper;
 
 	@Override
 	public List<Ninja> getAll() {
@@ -959,8 +998,120 @@ public class NinjaServiceImpl implements NinjaService {
 			formations.add(formation);
 		}
 	}
+	
+	@Override
+	public NinjaUserFormation createNinjaFormationById(CreateNinjaEquipmentDTO ninja, String user) {
+		if(ninja == null) {
+			return null;
+		}
+		
+		NinjaUserFormation ninjaUser = new NinjaUserFormation();
+		if(ninja.getId() != null && !hasAccess(ninja.getId(),user)) {
+			throw new CreateNinjaException("400", String.format("Ninja %s doesnt exist or you dont have access to tthat ninja",ninja.getName()), HttpStatus.BAD_REQUEST);
+		}
+		
+		if(ninja.getChakraNature()!= null) {
+			ninjaUser.setChakraNature(ninja.getChakraNature());
+		}else {
+			ninjaUser.setChakraNature(ChakraNature.UNACTIVATED);
+		}
+		if(ninja.getSkillType() != null) {
+			ninjaUser.setSkill(ninja.getSkillType());
+		}else {
+			ninjaUser.setSkill(SkillType.SKILL);
+		}
+		
+		ninjaUser.setNombre(ninja.getName());
+		ninjaUser.setUsername(user);
+		ninjaUser.setSkill(ninja.getSkillType());
+		ninjaUser.setId(ninja.getId());
+		
+		
+		
+		Ninja ninjaEntity = getNinja(ninja.getNinja());
+		if(ninjaEntity != null) {
+			ninjaUser.setNinja(ninjaEntity);
+			ninjaUser.setFormation(ninjaEntity.getFormation());
+		}else {
+			ninjaUser.setNinja(ninjaEntity);
+		}
+		
+		ninjaUser.setEquipment(setService.createOrUpdateSetById(ninja.getSet(), user));
+		ninjaUser.setAccesories(accesorieService.createOrUpdateAccesorieSetById(ninja.getAccesories(), user));
+		
+		return saveUserSet(ninjaUser);
+	}
+	
+	@Override
+	public NinjaUserFormation createNinjaFormationByNameAndUsername(CreateNinjaEquipmentDTO ninja, String user) {
+		if(ninja == null) {
+			return null;
+		}
+		
+		NinjaUserFormation ninjaUser2 = getNinjaFormationByNameAndUsername(ninja.getName(),user); 
+		NinjaUserFormation ninjaUser = new NinjaUserFormation();
+		
+		if(ninja.getChakraNature()!= null) {
+			ninjaUser.setChakraNature(ninja.getChakraNature());
+		}else {
+			ninjaUser.setChakraNature(ChakraNature.UNACTIVATED);
+		}
+		if(ninja.getSkillType() != null) {
+			ninjaUser.setSkill(ninja.getSkillType());
+		}else {
+			ninjaUser.setSkill(SkillType.SKILL);
+		}
+		ninjaUser.setNombre(ninja.getName());
+		ninjaUser.setUsername(user);
+		
+		if(ninjaUser2 != null) {
+			ninjaUser.setId(ninjaUser2.getId());
+		}
+		
+		Ninja ninjaEntity = getNinja(ninja.getNinja());
+		if(ninjaEntity != null) {
+			ninjaUser.setNinja(ninjaEntity);
+			ninjaUser.setFormation(ninjaEntity.getFormation());
+		}else {
+			ninjaUser.setNinja(ninjaEntity);
+		}
+		
+		ninjaUser.setEquipment(setService.createOrUpdateSetByName(ninja.getSet(), user));
+		ninjaUser.setAccesories(accesorieService.createOrUpdateAccesorieSetByNameAndUsername(ninja.getAccesories(), user));
+		
+		return saveUserSet(ninjaUser);
+	}
+	
+	private NinjaUserFormation getNinjaFormationByNameAndUsername(String name, String user) {
+		if(name == null || user == null) {
+			throw new CreateNinjaException("400","cant create or find a ninja without name or username",HttpStatus.BAD_REQUEST);
+		}
+		
+		Optional <NinjaUserFormation> optional = ninjaUserFormationRepository.findByNombreAndUsername(name, user);
+		return optional.isPresent()? optional.get():null;
+	}
 
+	private boolean hasAccess(Long id, String username ) {
+		if(id == null || username == null) {
+			return false;
+		}
+		
+		Optional <NinjaUserFormation> optional = ninjaUserFormationRepository.findByIdAndUsername(id, username);
+		return optional.isPresent() ? true : false;
+	}
+
+	@Override
+	public NinjaUserFormationDTO mergeBonus(NinjaUserFormation ninja) {
+		NinjaUserFormationDTO ninjaDTO = ninjaMapper.toNinjaUserFormationDTO(ninja);
+		ninjaDTO.setSelfBonusWithItems(bonusService.mergeNinjaSetAndAccesorieBonuses(ninjaDTO));
+		return ninjaDTO;
+	}
+	
+	@Override
+	public NinjaUserFormation saveUserSet(NinjaUserFormation accesories) {
+		return ninjaUserFormationRepository.save(accesories);
+	}
 	
 	
-
+	
 }

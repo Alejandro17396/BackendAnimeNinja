@@ -18,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
@@ -43,6 +45,8 @@ import com.alejandro.animeninja.integration.repositories.EquipoRepository;
 import com.alejandro.animeninja.integration.repositories.UserSetRepository;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 import com.alejandro.animeninja.integration.specifications.EquipoSpecification;
+import com.alejandro.animeninja.bussines.exceptions.CreateSetException;
+import com.alejandro.animeninja.bussines.exceptions.SetException;
 import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
 import com.alejandro.animeninja.bussines.mappers.SetMapper;
 
@@ -556,20 +560,75 @@ public class EquipoServicesImpl implements EquipoServices {
 	}
 
 	@Override
-	public UserSet createSet(CreateSetDTO dto, String user) {
-		UserSet set = getUserSet(dto.getSetName());
-		if(set == null) {
-			set = setMapper.toUserSet(createSet(dto.getEquipment(),dto.getSetName()));
-			set.setNombre(dto.getSetName());
-			set.setUsername(user);
+	public UserSet createOrUpdateSetByName(CreateSetDTO dto, String user) {
+		
+		if(dto== null) {
+			return null;
 		}
 		
-		return set;
+		UserSet set2 = getUserSetByNameAndUser(dto.getSetName(), user); // getUserSet(dto.getSetName());
+		UserSet set = null;
+		set = setMapper.toUserSet(createSet(dto.getEquipment(),dto.getSetName()));
+		set.setNombre(dto.getSetName());
+		set.setUsername(user);
+		
+		if(set2 != null) {
+			set.setId(set2.getId());
+		}
+		
+		
+		
+		return saveUserSet(set);
+	}
+	
+	@Override
+	@Transactional
+	public UserSet createOrUpdateSetById(CreateSetDTO dto, String user) {
+		
+		if(dto== null) {
+			return null;
+		}
+		
+		if(dto.getId()!= null && !hasAcces(dto,user)) {
+			throw new CreateSetException("400","You dont have access to that set or it doesnt exists",HttpStatus.BAD_REQUEST);
+		}
+		UserSet set = null;
+	
+		set = setMapper.toUserSet(createSet(dto.getEquipment(),dto.getSetName()));
+		set.setNombre(dto.getSetName());
+		set.setUsername(user);
+		set.setId(dto.getId());
+		
+		
+		return saveUserSet(set);
 	}
 
-	private UserSet getUserSet(String setName) {
+	private boolean hasAcces(CreateSetDTO dto, String user) {
+		if(dto.getId() == null) {
+			return false;
+		}
+		Optional <UserSet> set =  userSetRepository.findByIdAndUsername(dto.getId(), user);
+		return set.isPresent() ? true : false;
 		
-		return null;
+	}
+
+	
+	private UserSet getUserSet(Long id) {
+		if(id == null) {
+			return null;
+		}
+		
+		Optional <UserSet> optional = userSetRepository.findById(id);
+		return optional.isPresent()? optional.get(): null;
+	}
+	
+	private UserSet getUserSetByNameAndUser(String setName,String username) {
+		if(setName == null || username == null) {
+			throw new CreateSetException("400","cant create or find a set without name or username",HttpStatus.BAD_REQUEST);
+		}
+		
+		Optional <UserSet> optional = userSetRepository.findByNombreAndUsername(setName, username);
+		return optional.isPresent()? optional.get(): null;
 	}
 
 	@Override
@@ -587,4 +646,21 @@ public class EquipoServicesImpl implements EquipoServices {
 		
 		return userSetRepository.save(set);
 	}
+
+	@Override
+	public List<SetDTO> generateCombos() {
+
+		List <Equipo> sets = equipoRepository.findAll();
+		List <Equipo> setsCombolist = createCombinations(sets);
+		
+		
+		return null;
+	}
+
+	private List<Equipo> createCombinations(List<Equipo> sets) {
+		
+		return null;
+	}
+
+	
 }

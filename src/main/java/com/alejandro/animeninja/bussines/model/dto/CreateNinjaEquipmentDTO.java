@@ -1,19 +1,26 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
-import java.util.List;
-
 import com.alejandro.animeninja.bussines.model.ChakraNature;
 import com.alejandro.animeninja.bussines.model.SkillType;
 
 public class CreateNinjaEquipmentDTO {
 
+	private Long id;
 	private String name;
 	private String ninja;
-	private SkillType type;
+	private SkillType skilltype;
 	private	ChakraNature chakraNature;
 	private CreateSetDTO set;
 	private CreateAccesorieSetDTO accesories;
-	
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public CreateAccesorieSetDTO getAccesories() {
 		return accesories;
 	}
@@ -46,12 +53,12 @@ public class CreateNinjaEquipmentDTO {
 		this.ninja = ninja;
 	}
 
-	public SkillType getType() {
-		return type;
+	public SkillType getSkillType() {
+		return skilltype;
 	}
 
-	public void setType(SkillType type) {
-		this.type = type;
+	public void setSkillType(SkillType skilltype) {
+		this.skilltype = skilltype;
 	}
 
 	public CreateNinjaEquipmentDTO(String name, String ninja) {

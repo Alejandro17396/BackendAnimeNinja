@@ -15,8 +15,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.alejandro.animeninja.bussines.exceptions.CreateAccesoriesException;
+import com.alejandro.animeninja.bussines.exceptions.SetException;
 import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
 import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
@@ -53,52 +56,51 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 	@Autowired
 	private BonusAccesorioService bonusService;
-	
+
 	@Autowired
 	private BonusServices bonusService2;
 
 	@Autowired
 	private ParteAccesorioService parteAccesorioService;
-	
+
 	@Autowired(required = false)
 	private AccesorieMapper accesorieMapper;
-	
-	@Autowired 
+
+	@Autowired
 	private BonusAtributoMapper bonusMapper;
-	
+
 	@Autowired
 	private UserAccesoriesRepository userAccesoriesRepository;
 
 	@Override
-	public Page <SetAccesorioDTO> getAll(Pageable pageable) {
-		Page <SetAccesorio> page = accesorioRepository.findAll(pageable);
-		return new PageImpl<SetAccesorioDTO>(accesorieMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
+	public Page<SetAccesorioDTO> getAll(Pageable pageable) {
+		Page<SetAccesorio> page = accesorioRepository.findAll(pageable);
+		return new PageImpl<SetAccesorioDTO>(accesorieMapper.toDtoList(page.getContent()), pageable,
+				page.getTotalElements());
 	}
 
 	@Override
-	public Page <SetAccesorioDTO> getBySpecification(List<Atributo> attributes,Pageable pageable) {
+	public Page<SetAccesorioDTO> getBySpecification(List<Atributo> attributes, Pageable pageable) {
 		Specification<SetAccesorio> specification = Specification.where(null);
 		for (Atributo a : attributes) {
 			specification = specification.and(AccesorioSpecification.existsBonusAtributo(a));
 		}
-		Page <SetAccesorio> page = accesorioRepository.findAll(specification,pageable);
-		return new PageImpl<SetAccesorioDTO>(accesorieMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
+		Page<SetAccesorio> page = accesorioRepository.findAll(specification, pageable);
+		return new PageImpl<SetAccesorioDTO>(accesorieMapper.toDtoList(page.getContent()), pageable,
+				page.getTotalElements());
 	}
 
-	/*private ParteAccesorio getAmulet(SetAccesorio  a) {
-		
-		for(ParteAccesorio p:a.getPartes()) {
-			if(p.getNombre().contains("amulet")) {
-				return p;
-			}
-		}
-		return null;
-	}*/
-	
-	@Override 
-	public List<SetAccesorioDTO> getComboAccesoriosBySpecification(CreateComboSetAccesorio attributes,
-			boolean sorted,boolean filtred, boolean hardSearch,Pageable pageable){
-		
+	/*
+	 * private ParteAccesorio getAmulet(SetAccesorio a) {
+	 * 
+	 * for(ParteAccesorio p:a.getPartes()) { if(p.getNombre().contains("amulet")) {
+	 * return p; } } return null; }
+	 */
+
+	@Override
+	public List<SetAccesorioDTO> getComboAccesoriosBySpecification(CreateComboSetAccesorio attributes, boolean sorted,
+			boolean filtred, boolean hardSearch, Pageable pageable) {
+
 		List<SetAccesorio> sets = accesorioRepository.findAll();
 		List<BonusAccesorio> bonuses;
 
@@ -106,19 +108,18 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		for (Atributo a : attributes.getAttributes()) {
 			specification = specification.or(BonusAccesorioSpecification.existBonusAtributoByAttribute(a));
 		}
-		String nombre =attributes.getSetFilter().replace("accessories", "");
-		nombre=nombre.trim();
-		nombre=nombre.trim();
-		nombre+=" amulet";
-		ParteAccesorio p =parteAccesorioService.getById(nombre);
-		if(p!=null) {
+		String nombre = attributes.getSetFilter().replace("accessories", "");
+		nombre = nombre.trim();
+		nombre = nombre.trim();
+		nombre += " amulet";
+		ParteAccesorio p = parteAccesorioService.getById(nombre);
+		if (p != null) {
 			bonuses = bonusService.getBonusByParteBonus(p.getValor());
-		}else if (hardSearch) {
+		} else if (hardSearch) {
 			bonuses = bonusService.getAll();
 		} else {
 			bonuses = bonusService.getBonusBySpecification(specification);
 		}
-		
 
 		List<BonusAccesorio> bonusesForce = bonuses.stream().parallel().filter(x -> x.getTipo().equals("force"))
 				.collect(Collectors.toList());
@@ -130,12 +131,11 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 		removeCombosFull(sets);
 		removeCombosNotMatchAttributes(sets, attributes.getAttributes());
-		
-		
+
 		addPartes(sets);
 
 		mergeSetBonus(sets);
-		
+
 		if (filtred) {
 			filterSetByStats(sets, attributes.getAttributesFilter());
 		}
@@ -147,32 +147,30 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		}
 		return accesorieMapper.toDtoList(sets);
 	}
-	
-	
-	@Override 
+
+	@Override
 	public List<SetAccesorio> getComboAccesoriosBySpecification2(Specification<BonusAccesorio> specification,
-			List<Atributo> attributes, boolean hardSearch,String setName) {
+			List<Atributo> attributes, boolean hardSearch, String setName) {
 		List<SetAccesorio> setAccesorios = accesorioRepository.findAll();
 		List<BonusAccesorio> bonuses;
 
-		/*SetAccesorio aux=accesorioRepository.getById(setName);*/
-		String nombre =setName.replace("accessories", "");
-		nombre=nombre.trim();
-		nombre=nombre.trim();
-		nombre+=" amulet";
-		ParteAccesorio p =parteAccesorioService.getById(nombre);
-		System.out.println("Hemos dicho de buscar "+nombre);
-		if(p!=null) {
+		/* SetAccesorio aux=accesorioRepository.getById(setName); */
+		String nombre = setName.replace("accessories", "");
+		nombre = nombre.trim();
+		nombre = nombre.trim();
+		nombre += " amulet";
+		ParteAccesorio p = parteAccesorioService.getById(nombre);
+		System.out.println("Hemos dicho de buscar " + nombre);
+		if (p != null) {
 			System.out.println("Por valor");
 			bonuses = bonusService.getBonusByParteBonus(p.getValor());
-		}else if (hardSearch) {
+		} else if (hardSearch) {
 			System.out.println("Todos");
 			bonuses = bonusService.getAll();
 		} else {
 			System.out.println("por especificacion");
 			bonuses = bonusService.getBonusBySpecification(specification);
 		}
-		
 
 		List<BonusAccesorio> bonusesForce = bonuses.stream().parallel().filter(x -> x.getTipo().equals("force"))
 				.collect(Collectors.toList());
@@ -184,10 +182,10 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 		System.out.println("Antes" + setAccesorios.size());
 		removeCombosFull(setAccesorios);
-		System.out.println("mdio"+setAccesorios.size());
+		System.out.println("mdio" + setAccesorios.size());
 		removeCombosNotMatchAttributes(setAccesorios, attributes);
 		System.out.println("Despues---" + setAccesorios.size());
-		
+
 		return setAccesorios;
 	}
 
@@ -253,33 +251,34 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	@Override
 	public void addPartes(List<SetAccesorio> sets) {
 
-		
-		List <ParteAccesorio> partes=parteAccesorioService.getAll();
+		List<ParteAccesorio> partes = parteAccesorioService.getAll();
 		sets.parallelStream().forEach(set -> {
 			set.setPartes(new ArrayList<>());
 			set.getBonuses().parallelStream().forEach(bonus -> {
-				List<ParteAccesorio> aux= new ArrayList<>();
-				aux=partes.parallelStream().filter(parte ->filtrarPartes(parte,bonus)).collect(Collectors.toList());
+				List<ParteAccesorio> aux = new ArrayList<>();
+				aux = partes.parallelStream().filter(parte -> filtrarPartes(parte, bonus)).collect(Collectors.toList());
 				set.getPartes().addAll(aux);
 			});
 		});
-	
 
 	}
-	private boolean filtrarPartes(ParteAccesorio parte,BonusAccesorio bonus) {
-		
-		return (parte.getNombreSet().equals(bonus.getNombreAccesorioSet()) && parte.getTipo().equals(bonus.getTipo())) ? true:false;
+
+	private boolean filtrarPartes(ParteAccesorio parte, BonusAccesorio bonus) {
+
+		return (parte.getNombreSet().equals(bonus.getNombreAccesorioSet()) && parte.getTipo().equals(bonus.getTipo()))
+				? true
+				: false;
 	}
-	
+
 	@Override
 	public SetAccesorioDTO getByNombre(String nombre) {
-		Optional <SetAccesorio> miSet= accesorioRepository.findById(nombre);
+		Optional<SetAccesorio> miSet = accesorioRepository.findById(nombre);
 		return miSet.isPresent() ? accesorieMapper.toDTO(miSet.get()) : null;
 	}
-	
+
 	@Override
 	public SetAccesorio getSetByNombre(String nombre) {
-		Optional <SetAccesorio> miSet= accesorioRepository.findById(nombre);
+		Optional<SetAccesorio> miSet = accesorioRepository.findById(nombre);
 		return miSet.isPresent() ? miSet.get() : null;
 	}
 
@@ -287,7 +286,6 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	// PRIVATEMETHODS
 	// ==========================================================================
 
-	
 	private void removeCombosFull(List<SetAccesorio> setAccesorios) {
 		setAccesorios.removeIf(set -> {
 			if (SetAccesorioUtils.sameBonusSet(set)) {
@@ -345,15 +343,15 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	@Override
 	public SetAccesorio createAccesorieSet(List<String> accesories) {
 		// TODO Auto-generated method stub
-		if(accesories == null || accesories.isEmpty()) {
+		if (accesories == null || accesories.isEmpty()) {
 			return null;
 		}
-		Map <ParteAccesorio,SetAccesorio> map = new HashMap <>();
-		for(String part : accesories) {
+		Map<ParteAccesorio, SetAccesorio> map = new HashMap<>();
+		for (String part : accesories) {
 			Map.Entry<ParteAccesorio, SetAccesorio> entry = findSetAccesorieByPart(part);
 			map.put(entry.getKey(), entry.getValue());
 		}
-		
+
 		SetAccesorio set = createAccesorieSetByParts(map);
 		return set;
 	}
@@ -362,97 +360,139 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		SetAccesorio set = new SetAccesorio();
 		set.setBonuses(new ArrayList<>());
 		set.setPartes(new ArrayList<>());
-		
-		List <BonusAccesorio> bonuses = new ArrayList<>();
-		List <ParteAccesorio> partes = new ArrayList<>();
-		
-		Map<String,Long> mapaTipo = new HashMap<>();
-		Map<SetAccesorio,Map<String,Long>> mapaSetAccesorios = new HashMap<>();
-		for(Map.Entry<ParteAccesorio, SetAccesorio> entry : map.entrySet()) {
-			if(mapaSetAccesorios.containsKey(entry.getValue())){
-				Map<String,Long> mapaAux = mapaSetAccesorios.get(entry.getValue());
+
+		List<BonusAccesorio> bonuses = new ArrayList<>();
+		List<ParteAccesorio> partes = new ArrayList<>();
+
+		Map<String, Long> mapaTipo = new HashMap<>();
+		Map<SetAccesorio, Map<String, Long>> mapaSetAccesorios = new HashMap<>();
+		for (Map.Entry<ParteAccesorio, SetAccesorio> entry : map.entrySet()) {
+			if (mapaSetAccesorios.containsKey(entry.getValue())) {
+				Map<String, Long> mapaAux = mapaSetAccesorios.get(entry.getValue());
 				ParteAccesorio part = entry.getKey();
-				if(mapaAux.containsKey(part.getTipo())) {
-					mapaAux.put(part.getTipo(), mapaAux.get(part.getTipo())+1L);
-				}else {
+				if (mapaAux.containsKey(part.getTipo())) {
+					mapaAux.put(part.getTipo(), mapaAux.get(part.getTipo()) + 1L);
+				} else {
 					mapaAux.put(part.getTipo(), 1L);
 				}
-			}else {
-				Map<String,Long> mapaAux = new HashMap<>();
+			} else {
+				Map<String, Long> mapaAux = new HashMap<>();
 				mapaAux.put(entry.getKey().getTipo(), 1L);
-				mapaSetAccesorios.put(entry.getValue(),mapaAux);
+				mapaSetAccesorios.put(entry.getValue(), mapaAux);
 			}
-			
+
 			partes.add(entry.getKey());
 		}
-		
+
 		bonuses = addBonusToAccesorieSet(mapaSetAccesorios);
 		set.setPartes(partes);
 		set.setBonuses(bonuses);
 		return set;
 	}
 
-	private List<BonusAccesorio> addBonusToAccesorieSet(Map <SetAccesorio, Map<String, Long>> mapaSetAccesorios) {
+	private List<BonusAccesorio> addBonusToAccesorieSet(Map<SetAccesorio, Map<String, Long>> mapaSetAccesorios) {
 
 		List<BonusAccesorio> bonuses = new ArrayList<>();
-		
-		for(Map.Entry <SetAccesorio, Map<String, Long>> entry : mapaSetAccesorios.entrySet()) {
-			//Map<String, Long> mapa = entry.getValue();
-			for(Map.Entry<String, Long> entry2 : entry.getValue().entrySet()) {
-				if(entry2.getValue() == 2) {
+
+		for (Map.Entry<SetAccesorio, Map<String, Long>> entry : mapaSetAccesorios.entrySet()) {
+			// Map<String, Long> mapa = entry.getValue();
+			for (Map.Entry<String, Long> entry2 : entry.getValue().entrySet()) {
+				if (entry2.getValue() == 2) {
 					ClaveBonusAccesorio clave = new ClaveBonusAccesorio();
 					clave.setTipo(entry2.getKey());
 					clave.setNombreAccesorioSet(entry.getKey().getNombre());
 					bonuses.add(bonusService.getBonusById(clave));
-				}	
+				}
 			}
 		}
-		
+
 		return bonuses;
 	}
 
 	private Entry<ParteAccesorio, SetAccesorio> findSetAccesorieByPart(String part) {
-		
+
 		ParteAccesorio p = parteAccesorioService.getById(part);
 		SetAccesorio eq = getSetByNombre(p.getNombreSet());
-		Map.Entry<ParteAccesorio, SetAccesorio> entry =  new AbstractMap.SimpleEntry<ParteAccesorio, SetAccesorio>(p,eq);
+		Map.Entry<ParteAccesorio, SetAccesorio> entry = new AbstractMap.SimpleEntry<ParteAccesorio, SetAccesorio>(p,
+				eq);
 		return entry;
 	}
-	
-	@Override
-	public UserAccesories createAccesorieSet(CreateAccesorieSetDTO dto, String user) {
 
-		UserAccesories accesories  = getUserAccesorieSet(dto.getAccesorieSetName());
-		if(accesories == null && dto.getAccesorieSetName() != null) {
-			accesories = accesorieMapper.toUserAccesories(createAccesorieSet(dto.getAccesories()));
-			accesories.setNombre(dto.getAccesorieSetName());
-			accesories.setUsername(user);
+	@Override
+	public UserAccesories createOrUpdateAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String user) {
+
+		if (dto == null) {
+			return null;
 		}
-		return accesories;
-	}
+		
+		UserAccesories accesories2 = getUserAccesorieSetByNameAndUsername(dto.getAccesorieSetName(),user);
+		UserAccesories accesories = null;
+		
+		accesories = accesorieMapper.toUserAccesories(createAccesorieSet(dto.getAccesories()));
+		accesories.setNombre(dto.getAccesorieSetName());
+		accesories.setUsername(user);
 	
-	private UserAccesories getUserAccesorieSet(String accesorieSetName) {
-		// TODO Auto-generated method stub
-		return null;
+		if(accesories2 != null) {
+			accesories.setId(accesories2.getId());
+		}
+		
+		return saveUserSet(accesories);
+	}
+
+	@Override
+	public UserAccesories createOrUpdateAccesorieSetById(CreateAccesorieSetDTO dto, String user) {
+
+		if (dto == null) {
+			return null;
+		}
+
+		if (dto.getId()!= null && !hasAcces(dto, user)) {
+			throw new CreateAccesoriesException("400","You dont have access to that set or it doesnt exists",HttpStatus.BAD_REQUEST);
+		}
+
+		UserAccesories accesories = null;
+		accesories = accesorieMapper.toUserAccesories(createAccesorieSet(dto.getAccesories()));
+		accesories.setNombre(dto.getAccesorieSetName());
+		accesories.setUsername(user);
+		accesories.setId(dto.getId());
+		
+		return saveUserSet(accesories);
+	}
+
+	private boolean hasAcces(CreateAccesorieSetDTO dto, String user) {
+		if (dto.getId() == null) {
+			return false;
+		}
+
+		Optional<UserAccesories> optional = userAccesoriesRepository.findByIdAndUsername(dto.getId(), user);
+		return optional.isPresent() ? true : false;
+	}
+
+	private UserAccesories getUserAccesorieSetByNameAndUsername(String accesorieSetName,String username) {
+		if(accesorieSetName == null || username == null) {
+			throw new CreateAccesoriesException("400", "You dont have access to that accesorie set or it doesnt exists", HttpStatus.BAD_REQUEST);
+		}
+		
+		Optional<UserAccesories> optional = userAccesoriesRepository.findByNombreAndUsername(accesorieSetName, username);
+		return optional.isPresent()? optional.get():null;
 	}
 
 	@Override
 	public UserAccesories saveUserSet(UserAccesories accesories) {
 		return userAccesoriesRepository.save(accesories);
 	}
-	
+
 	@Override
 	public UserAccesoriesDTO mergeBonus(UserAccesories accesories) {
 
 		UserAccesoriesDTO result = accesorieMapper.toUserAccesoriesDTO(accesories);
-		
+
 		List<BonusDTO> bonuses = bonusMapper.toBonusDTOList(result.getBonuses());
 		BonusDTO bonus = bonusService2.mergeBonuses(bonuses);
 		result.getBonuses().clear();
 		result.getBonuses().add(bonusMapper.toBonusAccesorioDTO(bonus));
-		
+
 		return result;
 	}
-	
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 public class CreateAccesorieSetDTO {
 
+	private Long id;
 	private List<String> accesories;
 	private String accesorieSetName;
 
@@ -21,6 +22,14 @@ public class CreateAccesorieSetDTO {
 
 	public void setAccesorieSetName(String accesorieSetName) {
 		this.accesorieSetName = accesorieSetName;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public CreateAccesorieSetDTO() {
