@@ -41,8 +41,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-11T18:44:13+0100",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 1.8.0_111 (Oracle Corporation)"
+    date = "2023-03-26T16:58:43+0200",
+    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
 public class UserFormationMapperImpl implements UserFormationMapper {
@@ -113,6 +113,8 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO = new BonusAccesorioAtributoDTO();
 
+        bonusAccesorioAtributoDTO.setTipoBonus( bonusAccesorioAtributo.getTipoBonus() );
+        bonusAccesorioAtributoDTO.setNombreSet( bonusAccesorioAtributo.getNombreSet() );
         bonusAccesorioAtributoDTO.setAction( bonusAccesorioAtributo.getAction() );
         bonusAccesorioAtributoDTO.setImpact( bonusAccesorioAtributo.getImpact() );
         bonusAccesorioAtributoDTO.setCondition( bonusAccesorioAtributo.getCondition() );
@@ -457,6 +459,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         NinjaDTO ninjaDTO = new NinjaDTO();
 
+        ninjaDTO.setSex( ninja.getSex() );
         ninjaDTO.setName( ninja.getName() );
         ninjaDTO.setChakraNature( ninja.getChakraNature() );
         ninjaDTO.setType( ninja.getType() );
@@ -475,6 +478,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         NinjaUserFormationDTO ninjaUserFormationDTO = new NinjaUserFormationDTO();
 
+        ninjaUserFormationDTO.setSex( ninjaUserFormation.getSex() );
         ninjaUserFormationDTO.setFormation( ninjaUserFormation.getFormation() );
         ninjaUserFormationDTO.setChakraNature( ninjaUserFormation.getChakraNature() );
         ninjaUserFormationDTO.setId( ninjaUserFormation.getId() );
@@ -535,6 +539,8 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         BonusAccesorioAtributo bonusAccesorioAtributo = new BonusAccesorioAtributo();
 
+        bonusAccesorioAtributo.setTipoBonus( bonusAccesorioAtributoDTO.getTipoBonus() );
+        bonusAccesorioAtributo.setNombreSet( bonusAccesorioAtributoDTO.getNombreSet() );
         bonusAccesorioAtributo.setNombreAtributo( bonusAccesorioAtributoDTO.getNombreAtributo() );
         bonusAccesorioAtributo.setValor( bonusAccesorioAtributoDTO.getValor() );
         bonusAccesorioAtributo.setAction( bonusAccesorioAtributoDTO.getAction() );
@@ -880,6 +886,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
         Ninja ninja = new Ninja();
 
         ninja.setName( ninjaDTO.getName() );
+        ninja.setSex( ninjaDTO.getSex() );
         ninja.setChakraNature( ninjaDTO.getChakraNature() );
         ninja.setType( ninjaDTO.getType() );
         ninja.setFormation( ninjaDTO.getFormation() );
@@ -897,6 +904,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         NinjaUserFormation ninjaUserFormation = new NinjaUserFormation();
 
+        ninjaUserFormation.setSex( ninjaUserFormationDTO.getSex() );
         ninjaUserFormation.setFormation( ninjaUserFormationDTO.getFormation() );
         ninjaUserFormation.setChakraNature( ninjaUserFormationDTO.getChakraNature() );
         ninjaUserFormation.setId( ninjaUserFormationDTO.getId() );

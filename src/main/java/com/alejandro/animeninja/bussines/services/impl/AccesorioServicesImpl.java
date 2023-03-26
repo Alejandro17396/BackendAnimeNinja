@@ -18,14 +18,17 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.alejandro.animeninja.bussines.exceptions.AccesoriesException;
 import com.alejandro.animeninja.bussines.exceptions.CreateAccesoriesException;
 import com.alejandro.animeninja.bussines.exceptions.SetException;
 import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
 import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
+import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
 import com.alejandro.animeninja.bussines.model.ClaveBonusAccesorio;
+import com.alejandro.animeninja.bussines.model.Constantes;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Parte;
@@ -33,16 +36,19 @@ import com.alejandro.animeninja.bussines.model.ParteAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorioUtils;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
+import com.alejandro.animeninja.bussines.model.utils.Elemento;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.BonusAccesorioService;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.ParteAccesorioService;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosByAttributes;
+import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosDtoByAttributes;
 import com.alejandro.animeninja.integration.repositories.AccesorioRepository;
 import com.alejandro.animeninja.integration.repositories.UserAccesoriesRepository;
 import com.alejandro.animeninja.integration.specifications.AccesorioSpecification;
@@ -55,7 +61,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	private AccesorioRepository accesorioRepository;
 
 	@Autowired
-	private BonusAccesorioService bonusService;
+	private BonusAccesorioService bonusAccesorioService;
 
 	@Autowired
 	private BonusServices bonusService2;
@@ -100,7 +106,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	@Override
 	public List<SetAccesorioDTO> getComboAccesoriosBySpecification(CreateComboSetAccesorio attributes, boolean sorted,
 			boolean filtred, boolean hardSearch, Pageable pageable) {
-
+		
 		List<SetAccesorio> sets = accesorioRepository.findAll();
 		List<BonusAccesorio> bonuses;
 
@@ -114,13 +120,13 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		nombre += " amulet";
 		ParteAccesorio p = parteAccesorioService.getById(nombre);
 		if (p != null) {
-			bonuses = bonusService.getBonusByParteBonus(p.getValor());
+			bonuses = bonusAccesorioService.getBonusByParteBonus(p.getValor());
 		} else if (hardSearch) {
-			bonuses = bonusService.getAll();
+			bonuses = bonusAccesorioService.getAll();
 		} else {
-			bonuses = bonusService.getBonusBySpecification(specification);
+			bonuses = bonusAccesorioService.getBonusBySpecification(specification);
 		}
-
+		
 		List<BonusAccesorio> bonusesForce = bonuses.stream().parallel().filter(x -> x.getTipo().equals("force"))
 				.collect(Collectors.toList());
 		bonuses.removeAll(bonusesForce);
@@ -131,20 +137,34 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 		removeCombosFull(sets);
 		removeCombosNotMatchAttributes(sets, attributes.getAttributes());
-
+		
 		addPartes(sets);
 
-		mergeSetBonus(sets);
+		//mergeSetBonus(sets);
+		for(SetAccesorio set : sets) {
+			BonusAccesorio aux = bonusAccesorioService.mergeBonusesEntity(set.getBonuses());
+			//aux.setNombreAccesorioSet(set.getNombre());
+			//aux.setTipo("Merge");
+			set.getBonuses().clear();
+			set.getBonuses().add(aux);
+			
+			
+		}
 
 		if (filtred) {
 			filterSetByStats(sets, attributes.getAttributesFilter());
 		}
+		
+		
+		
 		if (sorted) {
 			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
 				Collections.sort(sets,
 						new SortSetAccesoriosByAttributes(attributes.getAttributes().get(i).getNombre()).reversed());
 			}
 		}
+		
+		
 		return accesorieMapper.toDtoList(sets);
 	}
 
@@ -163,13 +183,13 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		System.out.println("Hemos dicho de buscar " + nombre);
 		if (p != null) {
 			System.out.println("Por valor");
-			bonuses = bonusService.getBonusByParteBonus(p.getValor());
+			bonuses = bonusAccesorioService.getBonusByParteBonus(p.getValor());
 		} else if (hardSearch) {
 			System.out.println("Todos");
-			bonuses = bonusService.getAll();
+			bonuses = bonusAccesorioService.getAll();
 		} else {
 			System.out.println("por especificacion");
-			bonuses = bonusService.getBonusBySpecification(specification);
+			bonuses = bonusAccesorioService.getBonusBySpecification(specification);
 		}
 
 		List<BonusAccesorio> bonusesForce = bonuses.stream().parallel().filter(x -> x.getTipo().equals("force"))
@@ -263,12 +283,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 	}
 
-	private boolean filtrarPartes(ParteAccesorio parte, BonusAccesorio bonus) {
-
-		return (parte.getNombreSet().equals(bonus.getNombreAccesorioSet()) && parte.getTipo().equals(bonus.getTipo()))
-				? true
-				: false;
-	}
+	
 
 	@Override
 	public SetAccesorioDTO getByNombre(String nombre) {
@@ -401,7 +416,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 					ClaveBonusAccesorio clave = new ClaveBonusAccesorio();
 					clave.setTipo(entry2.getKey());
 					clave.setNombreAccesorioSet(entry.getKey().getNombre());
-					bonuses.add(bonusService.getBonusById(clave));
+					bonuses.add(bonusAccesorioService.getBonusById(clave));
 				}
 			}
 		}
@@ -438,7 +453,61 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		
 		return saveUserSet(accesories);
 	}
+	
+	@Override
+	public UserAccesories createAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String user) {
 
+		if (dto == null) {
+			return null;
+		}
+		
+		UserAccesories accesories2 = getUserAccesorieSetByNameAndUsername(dto.getAccesorieSetName(),user);
+		if(accesories2 != null) {
+			throw new AccesoriesException("400",String.format("there is already a set with name %s linked to your account", accesories2.getNombre()), HttpStatus.BAD_REQUEST);
+		}
+		
+		UserAccesories accesories = null;
+		
+		accesories = accesorieMapper.toUserAccesories(createAccesorieSet(dto.getAccesories()));
+		accesories.setNombre(dto.getAccesorieSetName());
+		accesories.setUsername(user);
+	
+		
+		return saveUserSet(accesories);
+	}
+	
+	@Override
+	public UserAccesories updateAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String user) {
+
+		if (dto == null) {
+			return null;
+		}
+		
+		UserAccesories accesories2 = getUserAccesorieSetByNameAndUsername(dto.getAccesorieSetName(),user);
+		
+		if(accesories2 == null) {
+			throw new SetException("400","Error that set doesnt exists or you has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		UserAccesories accesories = null;
+		
+		accesories = accesorieMapper.toUserAccesories(createAccesorieSet(dto.getAccesories()));
+		accesories.setNombre(dto.getAccesorieSetName());
+		accesories.setUsername(user);
+	
+		if(accesories2 != null) {
+			accesories.setId(accesories2.getId());
+		}
+		
+		return saveUserSet(accesories);
+	}
+
+	@Override
+	public UserAccesories getUserAccesorieByName(String name, String user) {
+		Optional <UserAccesories> optional = userAccesoriesRepository.findByNombreAndUsername(name, user);
+		return optional.isPresent()? optional.get():null;
+	}
+	
 	@Override
 	public UserAccesories createOrUpdateAccesorieSetById(CreateAccesorieSetDTO dto, String user) {
 
@@ -488,11 +557,217 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		UserAccesoriesDTO result = accesorieMapper.toUserAccesoriesDTO(accesories);
 
 		List<BonusDTO> bonuses = bonusMapper.toBonusDTOList(result.getBonuses());
-		BonusDTO bonus = bonusService2.mergeBonuses(bonuses);
+		BonusDTO bonus = bonusService2.mergeBonuses(bonuses,null);
 		result.getBonuses().clear();
 		result.getBonuses().add(bonusMapper.toBonusAccesorioDTO(bonus));
 
 		return result;
 	}
+	
+	@Override
+	public List<SetAccesorioDTO> createComboAccesories(CreateComboSetAccesorio attributes,
+			boolean sorted,boolean filtred, boolean hardSearch, Pageable pageable) {
+		
+		//List <SetAccesorio> accesorios = accesorioRepository.findAll();
+		ParteAccesorio p = null;
+		if(attributes.getSetFilter() != null && !attributes.getSetFilter().isEmpty()) {
+			String nombre = attributes.getSetFilter().replace("accessories", "");
+			nombre = nombre.trim();
+			nombre = nombre.trim();
+			nombre += " amulet";
+			p = parteAccesorioService.getById(nombre);
+		}
+		
+		List <BonusAccesorio> bonuses = new ArrayList<>();
+		
+		
+		if (p != null) {
+			bonuses = bonusAccesorioService.getBonusByParteBonus(p.getValor());
+		} else if(attributes.getSets() != null && !attributes.getSets().isEmpty()){
+			for(String s : attributes.getSets()) {
+				if(s!=null) {
+					bonuses.addAll(bonusAccesorioService.getBonusesBySetName(s));
+				}
+			}
+		}else{
+			bonuses = bonusAccesorioService.getAll();
+		}
+
+		
+		bonuses.removeIf(bonus -> bonus.getTipo().equals(Constantes.FULL_SET_BONUS));
+		List <List <BonusAccesorio>> lista = new ArrayList<>();
+		Map <BonusAccesorio,List<ParteAccesorio>> mapa = new HashMap<>();
+		for(BonusAccesorio bonus :bonuses) {
+			mapa.put(bonus, parteAccesorioService.getParteAccesorioByBonus(bonus));
+		}
+		
+		List <SetAccesorio> sets = new ArrayList<>();
+		generarCombinaciones(bonuses, lista, new ArrayList<>(), 0, attributes,sets,mapa,filtred);
+	
+		
+		/*for(List <BonusAccesorio> b : lista) {
+			SetAccesorio set = new SetAccesorio();
+			set.setBonuses(b);
+			set.setNombre(generateNameByBonuses(b));
+			set.setPartes(new ArrayList<>());
+			sets.add(set);
+			
+		}
+		
+		//removeCombosNotMatchAttributes(sets, attributes.getAttributes());
+		
+		/*addPartes(sets);
+		
+		for(SetAccesorio set : sets) {
+			BonusAccesorio aux = bonusService.mergeBonusesEntity(set.getBonuses());
+			aux.setNombreAccesorioSet(set.getNombre());
+			aux.setTipo("Merge");
+			set.getBonuses().clear();
+			set.getBonuses().add(aux);
+			
+			
+		}
+		
+		//removeCombosNotMatchAttributes(sets, attributes.getAttributes());
+		*/
+		/*if (filtred) {
+			filterSetByStats(sets, attributes.getAttributesFilter());
+		}*/
+		//List<SetAccesorioDTO>  setsDto= accesorieMapper.toDtoList(sets)
+		if (sorted) {
+			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
+				Collections.sort(sets,
+						new SortSetAccesoriosByAttributes(attributes.getAttributes().get(i).getNombre()));
+			}
+		}
+		
+		return accesorieMapper.toDtoList(sets);
+	}
+	
+	private String generateNameByBonuses(List<BonusAccesorio> bonuses) {
+		StringBuilder sb = new StringBuilder();
+	      for (BonusAccesorio elem : bonuses) {
+	          sb.append(elem.getNombreAccesorioSet())
+	          .append(" (")
+	          .append(elem.getTipo())
+	          .append(") ");
+	      }
+	      return sb.toString();
+	}
+
+	private void generarCombinaciones(List<BonusAccesorio> elementos, List<List<BonusAccesorio>> combinaciones,
+			List<BonusAccesorio> combinacionActual,int indiceActual,CreateComboSetAccesorio attributes,
+			List<SetAccesorio> sets,Map <BonusAccesorio,List<ParteAccesorio>> mapa,boolean filtred) {
+        if (combinacionActual.size() == 4) { // Se han agregado los cuatro elementos
+            // Verificar si la combinación contiene los cuatro tipos
+            boolean tipo1 = false, tipo2 = false, tipo3 = false, tipo4 = false;
+            for (BonusAccesorio elemento : combinacionActual) {
+                if (elemento.getTipo().equals(Constantes.AGILITY)) {
+                    tipo1 = true;
+                } else if (elemento.getTipo().equals(Constantes.CHAKRA)) {
+                    tipo2 = true;
+                } else if (elemento.getTipo().equals(Constantes.FORCE)) {
+                    tipo3 = true;
+                } else if (elemento.getTipo().equals(Constantes.POWER)) {
+                    tipo4 = true;
+                }
+            }
+            // Si la combinación tiene los cuatro tipos, se agrega a la lista de combinaciones válidas
+            if (tipo1 && tipo2 && tipo3 && tipo4) {
+            	
+            	SetAccesorio set = new SetAccesorio();
+    			set.setBonuses(combinacionActual);
+    			set.setNombre(generateNameByBonuses(combinacionActual));
+    			set.setPartes(new ArrayList<>());
+            	if(isValid(set,  (List<Atributo>) ((ArrayList<Atributo>) attributes.getAttributes()).clone())) {
+            		BonusAccesorio bonus = bonusAccesorioService.mergeBonusesEntity(combinacionActual);
+            		if(filtred && !filterSet(bonus,attributes.getAttributesFilter())) {	
+                		addPartes(set, mapa, combinacionActual);
+                		bonus.setNombreAccesorioSet(set.getNombre());
+                		bonus.setTipo("Merge");
+            			set.setBonuses(new ArrayList<>());
+            			set.getBonuses().add(bonus);
+                		sets.add(set);
+            			//combinaciones.add(new ArrayList<>(combinacionActual));
+            			return;
+                	}
+            		if(!filtred){
+                		addPartes(set, mapa, combinacionActual);
+                		bonus.setNombreAccesorioSet(set.getNombre());
+                		bonus.setTipo("Merge");
+            			set.setBonuses(new ArrayList<>());
+            			set.getBonuses().add(bonus);
+                		sets.add(set);
+            			//combinaciones.add(new ArrayList<>(combinacionActual));
+            		}
+            		//
+            	}
+            }
+            return;
+        }
+
+        // Seleccionar un elemento de la lista de elementos y agregarlo a la combinación actual
+        for (int i = indiceActual; i < elementos.size(); i++) {
+        	BonusAccesorio elemento = elementos.get(i);
+            combinacionActual.add(elemento);
+            generarCombinaciones(elementos, combinaciones, combinacionActual, i + 1,attributes,sets,mapa,filtred);
+            combinacionActual.remove(combinacionActual.size() - 1);
+        }
+	}
+
+	private void addPartes(SetAccesorio set,Map <BonusAccesorio,List<ParteAccesorio>> mapa,List<BonusAccesorio> bonuses) {
+
+		set.setPartes(new ArrayList<>());
+		for(BonusAccesorio b : bonuses) {
+			set.getPartes().addAll(mapa.get(b));
+		}
+		/*set.setPartes(new ArrayList<>());
+		bonuses.parallelStream().forEach(bonus -> {
+			List<ParteAccesorio> aux = new ArrayList<>();
+			aux = partes.parallelStream().filter(parte -> filtrarPartes(parte, bonus)).collect(Collectors.toList());
+			set.getPartes().addAll(aux);
+		});*/
+	
+
+	}
+	
+	private boolean filtrarPartes(ParteAccesorio parte, BonusAccesorio bonus) {
+
+		return (parte.getNombreSet().equals(bonus.getNombreAccesorioSet()) && parte.getTipo().equals(bonus.getTipo()))
+				? true
+				: false;
+	}
+	
+	private boolean evaluateCombo(List<BonusAccesorio> combinacionActual, CreateComboSetAccesorio attributes) {
+	
+		BonusAccesorio bonus = bonusAccesorioService.mergeBonusesEntity(combinacionActual);
+		return filterSet(bonus,attributes.getAttributesFilter());
+	}
+
+	private boolean filterSet(BonusAccesorio bonus, List<BonusAccesorioAtributo> attributesFilter) {
+		Map<String, Long> mapa = new HashMap<String, Long>();
+		for (BonusAccesorioAtributo a : bonus.getBonuses()) {
+			mapa.put(a.getNombreAtributo(), a.getValor());
+		}
+		for (BonusAccesorioAtributo a : attributesFilter) {
+			Long aux = mapa.get(a.getNombreAtributo());
+			if (aux != null && aux < a.getValor()) {
+				return true;
+			}
+		}
+		return false;
+		
+	}
+	
+	@Override
+	public List<UserAccesoriesDTO> getNinjasByUser(String user) {
+		List <UserAccesories> accesories = userAccesoriesRepository.findByUsername(user);
+		if(accesories != null && !accesories.isEmpty()) {
+			return accesorieMapper.toUserAccesoriesDTOList(accesories);
+		}
+		return null;
+	}
+	
+	
 
 }

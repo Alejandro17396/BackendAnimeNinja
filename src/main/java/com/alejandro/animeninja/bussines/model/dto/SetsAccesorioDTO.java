@@ -5,7 +5,16 @@ import java.util.List;
 public class SetsAccesorioDTO {
 
 	private int number;
+	private int total;
 	private List <SetAccesorioDTO> sets;
+
+	
+	public int getTotal() {
+		return total;
+	}
+	public void setTotal(int total) {
+		this.total = total;
+	}
 	public int getNumber() {
 		return number;
 	}

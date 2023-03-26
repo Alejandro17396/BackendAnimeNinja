@@ -1,5 +1,6 @@
 package com.alejandro.animeninja.bussines.mappers;
 
+import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
@@ -16,8 +17,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-11T18:44:13+0100",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 1.8.0_111 (Oracle Corporation)"
+    date = "2023-03-26T16:58:43+0200",
+    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
 public class BonusAtributoMapperImpl implements BonusAtributoMapper {
@@ -154,6 +155,26 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
         bonusAtributoDTO.setTime( bonus.getTime() );
 
         return bonusAtributoDTO;
+    }
+
+    @Override
+    public BonusAccesorioAtributo cloneBonusAccesorioAtributo(BonusAccesorioAtributo b) {
+        if ( b == null ) {
+            return null;
+        }
+
+        BonusAccesorioAtributo bonusAccesorioAtributo = new BonusAccesorioAtributo();
+
+        bonusAccesorioAtributo.setTipoBonus( b.getTipoBonus() );
+        bonusAccesorioAtributo.setNombreSet( b.getNombreSet() );
+        bonusAccesorioAtributo.setNombreAtributo( b.getNombreAtributo() );
+        bonusAccesorioAtributo.setValor( b.getValor() );
+        bonusAccesorioAtributo.setAction( b.getAction() );
+        bonusAccesorioAtributo.setImpact( b.getImpact() );
+        bonusAccesorioAtributo.setCondition( b.getCondition() );
+        bonusAccesorioAtributo.setTime( b.getTime() );
+
+        return bonusAccesorioAtributo;
     }
 
     protected BonusAccesorioAtributoDTO bonusAtributoDTOToBonusAccesorioAtributoDTO(BonusAtributoDTO bonusAtributoDTO) {

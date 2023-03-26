@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.auth.services.JWTService;
+import com.alejandro.animeninja.bussines.exceptions.SetException;
+import com.alejandro.animeninja.bussines.exceptions.UserException;
 import com.alejandro.animeninja.bussines.mappers.SetMapper;
+import com.alejandro.animeninja.bussines.model.Constantes;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
@@ -28,6 +32,7 @@ import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.UserFormation;
 import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
+import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetsDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
@@ -108,6 +113,8 @@ public class SetsController {
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
 			Pageable pageable) {
 
+		Long ini,fin;
+		ini = System.currentTimeMillis();
 		validator.validateCreateComboSet(attributes);
 		Pagination <SetDTO> pagination =  new Pagination <SetDTO> (equipoServices.generateCombinationSetsByBonus(attributes,
 				sorted, filtred, null, pageable),pageable.getPageNumber(),pageable.getPageSize());
@@ -121,16 +128,61 @@ public class SetsController {
 		}else {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
 		}
+		
+		fin = System.currentTimeMillis();
+		System.out.println("Tarde "+(fin-ini));
 		return response;
 		
 	}
 	
 	@PostMapping("/create")
 	public ResponseEntity <UserSetDTO> createSet(
-			@RequestBody CreateSetDTO dto
-			/*@RequestHeader (name="Authorization") String token*/){
+			@RequestBody CreateSetDTO dto,
+			@RequestHeader (name="Authorization") String token){
 		
-		UserSet set = equipoServices.createOrUpdateSetByName(dto, "kirotodo");
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400", "Invalid token", HttpStatus.BAD_REQUEST);
+		}
+		
+		ResponseEntity <List <UserSetDTO>> sets = getNinjasByUser(token);
+		if(sets.getBody().size() >= Constantes.MAX_SETS) {
+			throw new SetException("400","you cant create more sets update or delete 1", HttpStatus.FORBIDDEN);
+		}
+		
+		UserSet set = equipoServices.createSetByName(dto,user);
+		UserSetDTO response = null;
+		boolean merge = true;
+		if(merge) {
+			response = equipoServices.mergeBonus(set);
+		}else {
+			response = setMapper.toUserSetDTO(set);
+		}
+		
+		ResponseEntity <UserSetDTO> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
+	}
+	
+	@PutMapping("/update")
+	public ResponseEntity <UserSetDTO> updateSet(
+			@RequestBody CreateSetDTO dto,
+			@RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400", "Invalid token", HttpStatus.BAD_REQUEST);
+		}
+		
+		UserSet set = equipoServices.UpdateSetByName(dto, user);
 		UserSetDTO response = null;
 		boolean merge = true;
 		if(merge) {
@@ -151,12 +203,77 @@ public class SetsController {
 	}
 	
 	@GetMapping("/chatgpt")
-	public List<Equipo> createSet(){
+	public ResponseEntity <SetsDTO> createSet(@RequestBody(required = false) CreateComboSet attributes,
+			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
+			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
+			Pageable pageable){
+		Long ini,fin;
+		ini = System.currentTimeMillis();
+		validator.validateCreateComboSet(attributes);
+		Pagination <SetDTO> pagination =  new Pagination <SetDTO> (equipoServices.generateCombos(attributes,
+				sorted, filtred, null, pageable),pageable.getPageNumber(),pageable.getPageSize());
+		SetsDTO responseDTO = new SetsDTO();
+		responseDTO.setSets(pagination.getPagedList());
+		responseDTO.setNumber(pagination.getPagedList().size());
+		ResponseEntity <SetsDTO> response = null;
 		
+		if(responseDTO.getSets().size() > 0) {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
+		}
 		
-		
-		return equipoServices.getAll();
+		fin = System.currentTimeMillis();
+		System.out.println("Tarde "+(fin-ini));
+		return response;
 	}
+	
+	@GetMapping("/findByUser")
+	public ResponseEntity <List<UserSetDTO>> getNinjasByUser(@RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		List <UserSetDTO> response = equipoServices.getNinjasByUser(user);
+		
+		ResponseEntity <List <UserSetDTO>> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
+	}
+	
+	
+	@GetMapping("/findBy/{name}")
+	public ResponseEntity <UserSetDTO> getSetByName(@PathVariable String name, @RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		UserSet response = equipoServices.getUserSetByName(user, name);
+		
+		ResponseEntity <UserSetDTO> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(setMapper.toUserSetDTO(response),HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
+	}
+	
+	
 	
 	/*@Autowired
 	private NinjaEquipmentRepository repository1;

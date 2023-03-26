@@ -80,6 +80,9 @@ public class JWTServiceImpl implements JWTService {
 
 	@Override
 	public String getUsername(String token) {
+		if(token == null) {
+			return null;
+		}
 		return getClaims(token).getSubject();
 	}
 

@@ -19,12 +19,16 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.annotation.PageableConstraint;
+import com.alejandro.animeninja.bussines.auth.services.JWTService;
+import com.alejandro.animeninja.bussines.exceptions.UserException;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.SkillAttributeMapper;
 import com.alejandro.animeninja.bussines.model.Ninja;
@@ -43,6 +47,7 @@ import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
 import com.alejandro.animeninja.bussines.services.FormationService;
 import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
@@ -71,6 +76,9 @@ public class NinjasController {
 	
 	@Autowired
 	private FormationService formationService;
+	
+	@Autowired
+	private JWTService jwtService;
 	
 	
 	@GetMapping
@@ -127,7 +135,7 @@ public class NinjasController {
 	
 	@GetMapping("/createComboFormations")
 	public ResponseEntity <FormationsNinjaDTO> getNinjaComboFormations(
-			@RequestBody(required = false) CreateComboNinjaDTO externFilter,
+			@RequestBody(required = false) CreateComboNinjaDTO dto,
 			@RequestParam(value = "merge", required = false, defaultValue = "true") boolean merge,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
@@ -135,11 +143,13 @@ public class NinjasController {
 			@RequestParam(value = "awakenings", required = false, defaultValue = "true") boolean awakenings,
 			Pageable pageable) {
  
-		validator.validateCreateComboNinjaDTO(externFilter);
-		
+		validator.validateCreateComboNinjaDTO(dto);
+		Long ini,fin;
+		ini = System.currentTimeMillis();
 		ResponseEntity <FormationsNinjaDTO> response = null;
 		FormationsNinjaDTO responseDTO = new FormationsNinjaDTO();
-		List <FormationNinjaDTO> list = ninjaService.getNinjaComboFormations(externFilter, merge, sorted, filtred, or, awakenings);
+		List <FormationNinjaDTO> list = ninjaService.getNinjaComboFormations(dto, 
+				merge, sorted, filtred, or, awakenings);
 		Pagination <FormationNinjaDTO> pagination =  new Pagination <FormationNinjaDTO> 
 		(list,pageable.getPageNumber(),pageable.getPageSize());
 		responseDTO.setFormations(pagination.getPagedList());
@@ -151,6 +161,8 @@ public class NinjasController {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
 		}
 
+		fin = System.currentTimeMillis();
+		System.out.println("Tarde "+(fin-ini));
 		return response;
 	}	
 	
@@ -223,10 +235,15 @@ public class NinjasController {
 	
 	@PostMapping("/create")
 	public ResponseEntity <NinjaUserFormationDTO> createSet(
-			@RequestBody CreateNinjaEquipmentDTO dto
-			/*@RequestHeader (name="Authorization") String token*/){
+			@RequestBody CreateNinjaEquipmentDTO dto,
+			@RequestHeader (name="Authorization") String token){
 		
-		NinjaUserFormation accesories = ninjaService.createNinjaFormationByNameAndUsername(dto, "kirotodo");
+		String user = jwtService.getUsername(token);
+		if(user == null) {
+			throw new UserException("400", "Invalid token", HttpStatus.BAD_REQUEST);
+		}
+		
+		NinjaUserFormation accesories = ninjaService.createNinjaFormationByNameAndUsername(dto, user);
 		NinjaUserFormationDTO response = null;
 		boolean merge = true;
 		if(merge) {
@@ -242,6 +259,80 @@ public class NinjasController {
 		}else {
 			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
 		}
+		return responseDTO;
+	}
+	
+	@PutMapping("/update")
+	public ResponseEntity <NinjaUserFormationDTO> updateNinja(
+			@RequestBody CreateNinjaEquipmentDTO dto,
+			@RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		if(user == null) {
+			throw new UserException("400", "Invalid token", HttpStatus.BAD_REQUEST);
+		}
+		
+		NinjaUserFormation accesories = ninjaService.updateNinjaFormationByNameAndUsername(dto, user);
+		NinjaUserFormationDTO response = null;
+		boolean merge = true;
+		if(merge) {
+			response = ninjaService.mergeBonus(accesories);
+		}else {
+			response =  ninjaMapper.toNinjaUserFormationDTO(accesories);
+		}
+		
+		ResponseEntity <NinjaUserFormationDTO> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		return responseDTO;
+	}
+	
+	
+	@GetMapping("/findByUser")
+	public ResponseEntity <List<NinjaUserFormationDTO>> getNinjasByUser(@RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		List <NinjaUserFormationDTO> response = ninjaService.getNinjasByUser(user);
+		
+		ResponseEntity <List <NinjaUserFormationDTO>> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
+	}
+	
+	@GetMapping("/findByName/{name}")
+	public ResponseEntity <NinjaUserFormationDTO> getNinjasByName(@PathVariable String name,@RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		NinjaUserFormation response = ninjaService.getNinjaByName(name,user);
+		
+		ResponseEntity <NinjaUserFormationDTO> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(ninjaMapper.toNinjaUserFormationDTO(response),HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
 		return responseDTO;
 	}
 	

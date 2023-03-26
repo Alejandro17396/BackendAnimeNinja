@@ -39,6 +39,10 @@ public class Ninja implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private Formation formation;
 	
+	@Column(name="sexo")
+	@Enumerated(EnumType.STRING)
+	private Sex sex;
+	
 	@OneToMany
 	@JoinColumns( {
 	    @JoinColumn(name="ninja", nullable = false)} )
@@ -69,7 +73,13 @@ public class Ninja implements Serializable{
 		this.name = name;
 	}
 
-	
+	public Sex getSex() {
+		return sex;
+	}
+
+	public void setSex(Sex sex) {
+		this.sex = sex;
+	}
 
 	public ChakraNature getChakraNature() {
 		return chakraNature;
@@ -92,7 +102,7 @@ public class Ninja implements Serializable{
 	}
 
 	public void setFormation(Formation formation) {
-		formation = formation;
+		this.formation = formation;
 	}
 	
 	public List<NinjaStats> getStats() {
@@ -147,6 +157,14 @@ public class Ninja implements Serializable{
 		
 		return n;
 	}
+
+	public Ninja(String name, Formation formation) {
+		super();
+		this.name = name;
+		this.formation = formation;
+	}
+	
+	
 	
 	
 }

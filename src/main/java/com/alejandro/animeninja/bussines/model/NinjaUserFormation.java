@@ -56,9 +56,21 @@ public class NinjaUserFormation implements Serializable{
 	@Column(name="formation")
 	@Enumerated(EnumType.STRING)
 	private Formation formation;
+	
+	@Column(name="sex")
+	@Enumerated(EnumType.STRING)
+	private Sex sex;
 
 	public Formation getFormation() {
 		return formation;
+	}
+
+	public Sex getSex() {
+		return sex;
+	}
+
+	public void setSex(Sex sex) {
+		this.sex = sex;
 	}
 
 	public void setFormation(Formation formation) {
@@ -105,8 +117,6 @@ public class NinjaUserFormation implements Serializable{
 		this.equipment = equipment;
 	}
 
-	
-	
 	public SkillType getSkill() {
 		return skill;
 	}
@@ -141,9 +151,21 @@ public class NinjaUserFormation implements Serializable{
 		this.ninja = ninja;
 		this.username = username;
 	}
-
+	
+	public NinjaUserFormation(UserAccesories accesories, 
+			UserSet equipment) {
+		super();
+		this.accesories = accesories;
+		this.equipment = equipment;
+	}
+	
 	public NinjaUserFormation() {
 		super();
+	}
+
+	@Override
+	public String toString() {
+		return "NinjaUserFormation [accesories=" + accesories.getNombre() + ", equipment=" + equipment.getNombre() + ", ninja=" + ninja.getName() + "]";
 	}
 	
 	

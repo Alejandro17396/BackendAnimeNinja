@@ -12,6 +12,7 @@ public abstract class NinjaUserFormation_ {
 	public static volatile SingularAttribute<NinjaUserFormation, UserAccesories> accesories;
 	public static volatile SingularAttribute<NinjaUserFormation, ChakraNature> chakraNature;
 	public static volatile SingularAttribute<NinjaUserFormation, SkillType> skill;
+	public static volatile SingularAttribute<NinjaUserFormation, Sex> sex;
 	public static volatile SingularAttribute<NinjaUserFormation, UserSet> equipment;
 	public static volatile SingularAttribute<NinjaUserFormation, Long> id;
 	public static volatile SingularAttribute<NinjaUserFormation, Formation> formation;
@@ -22,6 +23,7 @@ public abstract class NinjaUserFormation_ {
 	public static final String ACCESORIES = "accesories";
 	public static final String CHAKRA_NATURE = "chakraNature";
 	public static final String SKILL = "skill";
+	public static final String SEX = "sex";
 	public static final String EQUIPMENT = "equipment";
 	public static final String ID = "id";
 	public static final String FORMATION = "formation";

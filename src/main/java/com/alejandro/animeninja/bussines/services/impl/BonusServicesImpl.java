@@ -71,14 +71,13 @@ public class BonusServicesImpl implements BonusServices {
 	}
 
 	@Override
-	public BonusDTO mergeBonuses(List<BonusDTO> bonuses) {
+	public BonusDTO mergeBonuses(List<BonusDTO> bonuses,String name) {
 		
 		
 		Map <BonusAtributoDTO, Long> mapa = new HashMap<>();
 		
 		for(BonusDTO bonus: bonuses) {
 			for(BonusAtributoDTO b : bonus.getListaBonus()) {
-				
 				if(mapa.containsKey(b)) {
 					mapa.put(b, mapa.get(b) + b.getValor());
 				}else {
@@ -90,7 +89,42 @@ public class BonusServicesImpl implements BonusServices {
 		}
 
 		BonusDTO bonus = new BonusDTO();
+		
 		for(Map.Entry <BonusAtributoDTO, Long> entry : mapa.entrySet()) {
+			entry.getKey().setValor(entry.getValue());
+			
+		}
+		bonus.setListaBonus(new ArrayList <> (mapa.keySet()));
+		return bonus;
+	}
+	
+	@Override
+	public List<Bonus> getBonusBySet(String name) {
+	
+		return bonusRepository.findByEquipo(name);
+	}
+	
+	@Override
+	public Bonus mergeBonusesEntity(List<Bonus> bonuses) {
+		
+		
+		Map <BonusAtributo, Long> mapa = new HashMap<>();
+		
+		for(Bonus bonus: bonuses) {
+			for(BonusAtributo b : bonus.getListaBonus()) {
+				
+				if(mapa.containsKey(b)) {
+					mapa.put(b, mapa.get(b) + b.getValor());
+				}else {
+					mapa.put(b, b.getValor());
+				}
+			
+			}
+			
+		}
+
+		Bonus bonus = new Bonus();
+		for(Map.Entry <BonusAtributo, Long> entry : mapa.entrySet()) {
 			entry.getKey().setValor(entry.getValue());
 		}
 		bonus.setListaBonus(new ArrayList <> (mapa.keySet()));
@@ -103,17 +137,17 @@ public class BonusServicesImpl implements BonusServices {
 		List <BonusDTO> bonuses = new ArrayList<>();
 		
 		if(ninja.getEquipment()!=null) {
-		bonuses.add(mergeBonuses(ninja.getEquipment().getBonuses()));
+		bonuses.add(mergeBonuses(ninja.getEquipment().getBonuses(),null));
 		}
 		if(ninja.getAccesories() != null) {
-		bonuses.add(mergeBonuses(bonusMapper.toBonusDTOList(ninja.getAccesories().getBonuses())));
+		bonuses.add(mergeBonuses(bonusMapper.toBonusDTOList(ninja.getAccesories().getBonuses()),null));
 		}
 		if(ninja.getNinja() != null) {
 		bonuses.add(mergeBonusesNinja(bonusMapper.toBonusDTOList2(ninja.getNinja().getSkills())));
 		}
 		
 		List <BonusDTO> result = new ArrayList<>();
-		result.add(mergeBonuses(bonuses));
+		result.add(mergeBonuses(bonuses,null));
 		return result;
 	}
 	
@@ -197,7 +231,7 @@ public class BonusServicesImpl implements BonusServices {
 			}
 			
 		}
-			//aqui hay que seguir  que bno esta terminado
+
 		BonusDTO bonus = new BonusDTO();
 		for(Map.Entry <BonusAtributoUtilsDTO, Long> entry : mapa.entrySet()) {
 			entry.getKey().setValor(entry.getValue());
@@ -234,7 +268,8 @@ public class BonusServicesImpl implements BonusServices {
 		
 		if(b.getImpact().contains(Constantes.IMPACT_ALLY) 
 			&& (StringUtils.containsIgnoreCase(b.getImpact(),ninja.getFormation().formation()) 
-			||  StringUtils.containsIgnoreCase(b.getImpact(),ninja.getChakraNature().toString()))
+			||  StringUtils.containsIgnoreCase(b.getImpact(),ninja.getChakraNature().toString())
+			||	StringUtils.containsIgnoreCase(b.getImpact(),ninja.getSex().toString()))
 			) 
 		{
 			return true;
@@ -242,7 +277,8 @@ public class BonusServicesImpl implements BonusServices {
 		
 		if(b.getImpact().contains(Constantes.IMPACT_ALLIES) 
 				&& (StringUtils.containsIgnoreCase(b.getImpact(),ninja.getFormation().formation()) 
-				||  StringUtils.containsIgnoreCase(b.getImpact(),ninja.getChakraNature().toString()))
+				||  StringUtils.containsIgnoreCase(b.getImpact(),ninja.getChakraNature().toString())
+				||  StringUtils.containsIgnoreCase(b.getImpact(),ninja.getSex().toString()))
 				) 
 		{
 			return true;

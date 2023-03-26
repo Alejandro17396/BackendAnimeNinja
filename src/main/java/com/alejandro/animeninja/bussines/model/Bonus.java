@@ -95,4 +95,8 @@ public class Bonus implements Serializable {
 		return Objects.equals(equipo, other.equipo) && Objects.equals(id, other.id);
 	}
 
+	public Bonus getThis()
+	{
+		return this;
+	}
 }

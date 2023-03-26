@@ -1,5 +1,6 @@
 package com.alejandro.animeninja.integration.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,5 @@ public interface UserAccesoriesRepository extends JpaRepository<UserAccesories, 
 	
 	Optional <UserAccesories> findByIdAndUsername(Long id,String username);
 	Optional <UserAccesories> findByNombreAndUsername(String nombre,String username);
+	List <UserAccesories> findByUsername(String user);
 }

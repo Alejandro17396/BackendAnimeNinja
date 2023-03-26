@@ -47,6 +47,17 @@ public interface AccesorioServices {
 
 	UserAccesories createOrUpdateAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String username);
 	
+	UserAccesories createAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String username);
+	
+	UserAccesories updateAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String username);
+	
+	UserAccesories getUserAccesorieByName(String name , String user);
+	
 	UserAccesories createOrUpdateAccesorieSetById(CreateAccesorieSetDTO dto, String user);
+	
+	List<SetAccesorioDTO> createComboAccesories(CreateComboSetAccesorio attributes,
+			boolean sorted,boolean filtred, boolean hardSearch,Pageable pageable);
+
+	List<UserAccesoriesDTO> getNinjasByUser(String user);
 
 }

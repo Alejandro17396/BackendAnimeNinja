@@ -2,9 +2,11 @@ package com.alejandro.animeninja.bussines.services.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -38,6 +40,7 @@ import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationCombosDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.FinalSkillsAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
@@ -53,7 +56,12 @@ import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
 import com.alejandro.animeninja.bussines.utils.BonusAtributoUtils;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
+import com.alejandro.animeninja.integration.repositories.UserAccesoriesRepository;
 import com.alejandro.animeninja.integration.repositories.UserFormationRepository;
+import com.alejandro.animeninja.integration.repositories.UserSetRepository;
+
+import io.jsonwebtoken.lang.Collections;
+
 
 @Service
 public class FormationServiceImpl implements FormationService {
@@ -78,9 +86,13 @@ public class FormationServiceImpl implements FormationService {
 
 	@Autowired
 	private BonusServices bonusService;
-
 	
-
+	@Autowired
+	private UserSetRepository userSetRepository;
+	
+	@Autowired
+	private UserAccesoriesRepository userAccesoriesRepository;
+	
 	@Override
 	public FormationNinjaDTO createFormation(HashMap<String, SkillType> request, boolean awakenings)
 			throws InterruptedException, ExecutionException {
@@ -137,13 +149,97 @@ public class FormationServiceImpl implements FormationService {
 
 		UserFormation result2 = getUserFormationByNameAndUser(dto.getName(), user);
 
+		if(result2 != null) {
+			throw new UserFormationException("400", String.format("There is already a formation with name %s", dto.getName()), HttpStatus.BAD_REQUEST);
+		}
+		
 		List<NinjaUserFormation> ninjasFormation = new ArrayList<>();
 		for (CreateNinjaEquipmentDTO ninja : dto.getNinjas()) {
 			if (ninja == null) {
 				continue;
 			}
 
-			NinjaUserFormation ninjaUser = ninjaService.createNinjaFormationByNameAndUsername(ninja, user);
+			NinjaUserFormation ninjaUser = ninjaService.createOrUpdateNinjaFormationByNameAndUsername(ninja, user);
+
+			ninjasFormation.add(ninjaUser);
+		}
+
+		UserFormation result = new UserFormation();
+		result.setName(dto.getName());
+		result.setUser(user);
+		result.setNinjas(ninjasFormation);
+
+		return saveUserFormation(result);
+	}
+	
+	@Override
+	public UserFormation updateUserFormation(CreateUserFormationDTO dto, String user)
+			throws InterruptedException, ExecutionException {
+
+		/*HashMap<String, SkillType> ninjas = new HashMap<>();
+		for (CreateNinjaEquipmentDTO ninja : dto.getNinjas()) {
+			if (ninja.getSkillType() != null) {
+				ninjas.put(ninja.getNinja(), ninja.getSkillType());
+			} else {
+				ninjas.put(ninja.getNinja(), SkillType.SKILL);
+			}
+		}
+
+		// FormationNinjaDTO formation = createFormation(ninjas,true);*/
+
+		UserFormation result2 = getUserFormationByNameAndUser(dto.getName(), user);
+		if(result2 == null) {
+			throw new UserFormationException("400", String.format("Formation %s doesnt exists or you has no access", dto.getName()), HttpStatus.BAD_REQUEST);
+		}
+
+		List<NinjaUserFormation> ninjasFormation = new ArrayList<>();
+		for (CreateNinjaEquipmentDTO ninja : dto.getNinjas()) {
+			if (ninja == null) {
+				continue;
+			}
+
+			NinjaUserFormation ninjaUser = ninjaService.createOrUpdateNinjaFormationByNameAndUsername(ninja, user);
+
+			ninjasFormation.add(ninjaUser);
+		}
+
+		UserFormation result = new UserFormation();
+		result.setName(dto.getName());
+		result.setUser(user);
+		result.setNinjas(ninjasFormation);
+		
+		if(result2!=null) {
+			result.setId(result2.getId());
+		}
+
+		return saveUserFormation(result);
+	}
+	
+	
+	@Override
+	public UserFormation createOrUpdateUserFormation(CreateUserFormationDTO dto, String user)
+			throws InterruptedException, ExecutionException {
+
+		/*HashMap<String, SkillType> ninjas = new HashMap<>();
+		for (CreateNinjaEquipmentDTO ninja : dto.getNinjas()) {
+			if (ninja.getSkillType() != null) {
+				ninjas.put(ninja.getNinja(), ninja.getSkillType());
+			} else {
+				ninjas.put(ninja.getNinja(), SkillType.SKILL);
+			}
+		}
+
+		// FormationNinjaDTO formation = createFormation(ninjas,true);*/
+
+		UserFormation result2 = getUserFormationByNameAndUser(dto.getName(), user);
+
+		List<NinjaUserFormation> ninjasFormation = new ArrayList<>();
+		for (CreateNinjaEquipmentDTO ninja : dto.getNinjas()) {
+			if (ninja == null) {
+				continue;
+			}
+
+			NinjaUserFormation ninjaUser = ninjaService.createOrUpdateNinjaFormationByNameAndUsername(ninja, user);
 
 			ninjasFormation.add(ninjaUser);
 		}
@@ -182,6 +278,14 @@ public class FormationServiceImpl implements FormationService {
 	}
 
 	@Override
+	public List<UserFormationDTO> getFormationsByUser(String user) {
+		List<UserFormation> formations = userFormationRepository.findByUser(user);
+		if(formations != null && !formations.isEmpty()) {
+		return userFormationMapper.toDtoList(formations);
+		}
+		return null;
+	}
+	@Override
 	public UserFormationDTO mergeBonus(UserFormation entity) throws InterruptedException, ExecutionException {
 
 		HashMap<String, SkillType> ninjas = new HashMap<>();
@@ -193,7 +297,7 @@ public class FormationServiceImpl implements FormationService {
 			}
 		}
 
-		FormationNinjaDTO formation = createFormation(ninjas, true);
+		FormationNinjaDTO formation = createFormationFaster(entity.getNinjas(), true);
 
 		UserFormationDTO dto = userFormationMapper.toDTO(entity);
 
@@ -212,5 +316,186 @@ public class FormationServiceImpl implements FormationService {
 
 		return dto;
 	}
+	
+	
+	private FormationNinjaDTO createFormationFaster(List <NinjaUserFormation> ninjasUser,boolean awakenings) {
+		
+		List<Ninja> ninjas = new ArrayList<>();
+		List<NinjaSkill> skills  = new ArrayList<>();
+		
+		for(NinjaUserFormation ninja : ninjasUser) {
+			Ninja ninjaAux = ninja.getNinja();
+			if(ninjaAux != null) {
+				ninjas.add(ninjaAux);
+				NinjaSkill aux = null;
+				
+				for(NinjaSkill skill : ninjaAux.getSkills()) {
+					if(skill.getType().equals(ninja.getSkill())) {
+						aux = skill;
+						break;
+					}
+				}
+				
+				skills.add(aux);
+			}
+			
+		}
+		
+		FormationNinjaDTO formation = ninjaService.createFormationWithNinjas(ninjas, awakenings);
+		FinalSkillsAttributesDTO finalSkill = new FinalSkillsAttributesDTO();
+		finalSkill.setAttributes(skillMapper.toDTOList(skillService.createFinalSkill(skills)));
+		finalSkill.setNinjaFormation(formation.getFormationNinjas());
+		formation.getFinalSkillsAttributes().add(finalSkill);
+		return formation;
+	}
+	
+	@Override
+	public UserFormation getUserFormationByName(String name, String user) {
+		Optional <UserFormation> optional = userFormationRepository.findByNameAndUser(name, user);
+		return optional.isPresent()? optional.get():null;
+	}
+	
+	@Override
+	public List<UserFormationDTO> createUserComboFormation(CreateUserFormationCombosDTO dto, String username) {
+		
+		username = "kirotodo";
+		List <UserSet> sets = new ArrayList<>();
+		for(String name : dto.getSetNames()) {
+			Optional <UserSet> optional = userSetRepository.findByNombreAndUsername(name, username);
+			if(optional.isPresent()) {
+				sets.add(optional.get());
+			}
+		}
+		
+		List <UserAccesories> setsAccesories = new ArrayList<>();
+		for(String name : dto.getSetAccesoriesNames()) {
+			Optional <UserAccesories> optional = userAccesoriesRepository.findByNombreAndUsername(name, username);
+			if(optional.isPresent()) {
+				setsAccesories.add(optional.get());
+			}
+		}
+		
+		List <UserFormation> formations = new ArrayList<>();
+		for(String name : dto.getFormationNames()) {
+			Optional <UserFormation> optional = userFormationRepository.findByNameAndUser(name, username);
+			if(optional.isPresent()) {
+				formations.add(optional.get());
+			}
+		}
+		
+		List<NinjaUserFormation> ninjas = new ArrayList<>();
+		for(UserFormation formation: formations) {
+			for(NinjaUserFormation ninja : formation.getNinjas()) {
+				ninjas.add(ninja);
+			}
+		}
+		
+		Map<NinjaUserFormation, List<NinjaUserFormation>> ninjaEquipoSetCombinaciones =
+				generarCombinacionesNinjaEquipoSet(ninjas,setsAccesories,sets);
+		
+		List<UserFormation> todasLasSoluciones = new ArrayList<>();
+		for(UserFormation formation :formations) {
+			List<NinjaUserFormation> solucionParcial = new ArrayList<>();
+            List<UserFormation> soluciones = new ArrayList<>();
+            Set<String> solucionesHash = new HashSet<>(); // Almacenar las soluciones en un HashSet para evitar duplicados
+            soluciones = backtrackingMemo(formation, ninjaEquipoSetCombinaciones,solucionParcial,
+            		0,soluciones,solucionesHash,0);
+            todasLasSoluciones.addAll(soluciones);
+		}
+		
+		List<UserFormationDTO> result = new ArrayList<>();
+		for(UserFormation formation : todasLasSoluciones) {
+			try {
+				result.add(mergeBonus(formation));
+			}catch(Exception e) {
+				
+			}
+		}
+		
+		boolean filter = true;
+		boolean sort = true;
+		if(filter) {
+			result.removeIf(form-> !isValid(form,dto.getFilter()));
+		}
+		
+		
+		return result;
+	}
+	
+	private boolean isValid(UserFormationDTO formation, List<BonusAtributoDTO> filter) {
 
+		if(Collections.isEmpty(filter)) {
+			return true;
+		}
+		Map<String ,BonusAtributoDTO> map = new HashMap<>();
+		for(BonusAtributoDTO bonus : filter) {
+			map.put(bonus.getNombreAtributo(), bonus);
+		}
+		
+		for(NinjaUserFormationDTO ninja : formation.getNinjas()) {
+			for(BonusDTO bonus :ninja.getTotallyBonus()) {
+				for(BonusAtributoDTO bonusAtributte : bonus.getListaBonus()) {
+					BonusAtributoDTO aux = map.get(bonusAtributte.getNombreAtributo());
+					if(aux.getValor() > bonusAtributte.getValor() ) {
+						return false;
+					}
+				}
+			}
+		}
+		
+		return true;
+	}
+
+	List<UserFormation> backtrackingMemo(UserFormation formacion, Map<NinjaUserFormation, List<NinjaUserFormation>> ninjaEquipoSetCombinaciones, List<NinjaUserFormation> solucionParcial, int indice, List<UserFormation> soluciones, Set<String> solucionesHash,int cont) {
+        if (indice == formacion.getNinjas().size()) {
+            String solucionStr = solucionParcial.toString();
+            if (!solucionesHash.contains(solucionStr)) {
+                List<NinjaUserFormation> solucionFinal = new ArrayList<>(solucionParcial);
+                UserFormation formation = new UserFormation();
+                formation.setNinjas(solucionFinal);
+                formation.setName(formacion.getName() + cont);
+                soluciones.add(formation);
+                solucionesHash.add(solucionStr);
+                cont++;
+            }
+            return soluciones;
+        }
+
+        NinjaUserFormation ninjaActual = formacion.getNinjas().get(indice);
+        List<NinjaUserFormation> combinacionesNinjaActual = ninjaEquipoSetCombinaciones.get(ninjaActual);
+
+        for (NinjaUserFormation combinacion : combinacionesNinjaActual) {
+            solucionParcial.add(combinacion);
+            backtrackingMemo(formacion, ninjaEquipoSetCombinaciones, solucionParcial, indice + 1, soluciones, solucionesHash,cont);
+            solucionParcial.remove(solucionParcial.size() - 1);
+        }
+
+        return soluciones;
+    }
+	
+	private Map<NinjaUserFormation, List<NinjaUserFormation>> generarCombinacionesNinjaEquipoSet
+	(List<NinjaUserFormation> ninjas,List <UserAccesories> setsAccesories, List <UserSet> sets) {
+		Map<NinjaUserFormation, List<NinjaUserFormation>> ninjaEquipoSetCombinaciones = new HashMap<>();
+
+        for (NinjaUserFormation ninja : ninjas) {
+            List<NinjaUserFormation> combinaciones = new ArrayList<>();
+            for (UserSet set : sets) {
+                for (UserAccesories accesorieSet : setsAccesories) {
+                	NinjaUserFormation combinacion = new NinjaUserFormation(accesorieSet,set);
+                	combinacion.setNinja(ninja.getNinja());
+                	combinacion.setNombre(ninja.getNombre());
+                	combinacion.setSkill(ninja.getSkill());
+                	combinacion.setChakraNature(ninja.getChakraNature());
+                	combinacion.setFormation(ninja.getFormation());
+                    combinaciones.add(combinacion);
+                }
+            }
+            ninjaEquipoSetCombinaciones.put(ninja, combinaciones);
+        }
+
+        return ninjaEquipoSetCombinaciones;
+    }
+	
+	
+	
 }

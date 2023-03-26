@@ -6,6 +6,7 @@ import java.util.List;
 import com.alejandro.animeninja.bussines.model.ChakraNature;
 import com.alejandro.animeninja.bussines.model.Formation;
 import com.alejandro.animeninja.bussines.model.NinjaType;
+import com.alejandro.animeninja.bussines.model.Sex;
 
 public class NinjaDTO {
 
@@ -19,11 +20,21 @@ private String name;
 
 	private Formation Formation;
 	
+	private Sex sex;
+	
 	private List <NinjaStatsDTO> stats;
 	
 	private List <NinjaSkillDTO> skills;
 	
 	private List <NinjaAwakeningDTO> awakenings;
+
+	public Sex getSex() {
+		return sex;
+	}
+
+	public void setSex(Sex sex) {
+		this.sex = sex;
+	}
 
 	public String getName() {
 		return name;

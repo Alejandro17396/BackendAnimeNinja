@@ -16,4 +16,6 @@ public interface BonusAccesorioRepository extends JpaRepository<BonusAccesorio,C
 	@Query(value = "select * from bonusaccesorios join set_accesorios on set_accesorios.nombre=bonusaccesorios.nombre_set_accesorios right join partes_accesorios on set_accesorios.nombre=partes_accesorios.nombre_set where partes_accesorios.valor>=:valor and partes_accesorios.nombre like '%amulet%';",
 			nativeQuery = true)
 	List<BonusAccesorio> findBySets(@Param("valor") Long valor);
+	
+	List<BonusAccesorio> findByNombreAccesorioSet(String name);
 }

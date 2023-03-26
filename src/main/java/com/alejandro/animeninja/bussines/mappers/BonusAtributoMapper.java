@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
@@ -54,6 +55,8 @@ public interface BonusAtributoMapper {
 	
 	BonusAtributoUtilsDTO toBonusAtributoUtilsDTO (BonusAtributoDTO bonus);
 	BonusAtributoDTO toBonusDTO (BonusAtributoUtilsDTO bonus);
+	
+	BonusAccesorioAtributo cloneBonusAccesorioAtributo(BonusAccesorioAtributo b);
 	
 	default List<BonusAtributoDTO> toBonusDTOList3(List<BonusAtributoUtilsDTO> bonuses){
 		if(bonuses == null) {

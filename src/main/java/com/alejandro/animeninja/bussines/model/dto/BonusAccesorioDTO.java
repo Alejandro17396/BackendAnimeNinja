@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
 import java.util.List;
+import java.util.Objects;
 
 public class BonusAccesorioDTO {
 
@@ -33,4 +34,22 @@ public class BonusAccesorioDTO {
 		super();
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(bonuses, tipo);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BonusAccesorioDTO other = (BonusAccesorioDTO) obj;
+		return Objects.equals(bonuses, other.bonuses) && Objects.equals(tipo, other.tipo);
+	}
+
+	
 }

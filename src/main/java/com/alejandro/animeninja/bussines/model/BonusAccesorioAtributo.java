@@ -43,8 +43,28 @@ public class BonusAccesorioAtributo implements Serializable {
 	
 	@Column(name="tiempo")
 	private String time;
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(condition, nombreAtributo, action,impact);
+	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BonusAccesorioAtributo other = (BonusAccesorioAtributo) obj;
+		return  Objects.equals(nombreAtributo, other.getNombreAtributo())
+				&& Objects.equals(action, other.getAction())
+				&& Objects.equals(condition, other.getCondition())
+				&& Objects.equals(impact, other.getImpact()		);
+	}
+
+	/*@Override
 	public int hashCode() {
 		return Objects.hash(nombreAtributo, nombreSet, tipoBonus);
 	}
@@ -60,7 +80,7 @@ public class BonusAccesorioAtributo implements Serializable {
 		BonusAccesorioAtributo other = (BonusAccesorioAtributo) obj;
 		return Objects.equals(nombreAtributo, other.nombreAtributo) && Objects.equals(nombreSet, other.nombreSet)
 				&& Objects.equals(tipoBonus, other.tipoBonus);
-	}
+	}*/
 
 	@Override
 	public String toString() {

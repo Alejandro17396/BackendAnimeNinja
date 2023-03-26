@@ -11,6 +11,15 @@ public class CreateComboSetAccesorio implements Serializable {
 	List<BonusAccesorioAtributo> attributesFilter;
 	List<Atributo> order;
 	String setFilter;
+	List <String> sets;
+
+	public List<String> getSets() {
+		return sets;
+	}
+
+	public void setSets(List<String> sets) {
+		this.sets = sets;
+	}
 
 	public String getSetFilter() {
 		return setFilter;

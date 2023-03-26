@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alejandro.animeninja.bussines.model.ChakraNature;
 import com.alejandro.animeninja.bussines.model.Formation;
+import com.alejandro.animeninja.bussines.model.Sex;
 import com.alejandro.animeninja.bussines.model.SkillType;
 
 public class NinjaUserFormationDTO {
@@ -16,11 +17,20 @@ public class NinjaUserFormationDTO {
 	private SkillType skill;
 	private Formation formation;
 	private	ChakraNature chakraNature;
+	private Sex sex;
 	private String username;
 	private List <BonusDTO> selfBonusWithItems;
 	private List <BonusDTO> formationBonuses;
 	private List <BonusDTO> totallyBonus;
 	
+	public Sex getSex() {
+		return sex;
+	}
+
+	public void setSex(Sex sex) {
+		this.sex = sex;
+	}
+
 	public Formation getFormation() {
 		return formation;
 	}

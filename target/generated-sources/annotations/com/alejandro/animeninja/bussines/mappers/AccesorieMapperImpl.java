@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-11T18:44:13+0100",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 1.8.0_111 (Oracle Corporation)"
+    date = "2023-03-26T16:58:43+0200",
+    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
 public class AccesorieMapperImpl implements AccesorieMapper {
@@ -125,6 +125,8 @@ public class AccesorieMapperImpl implements AccesorieMapper {
 
         BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO = new BonusAccesorioAtributoDTO();
 
+        bonusAccesorioAtributoDTO.setTipoBonus( bonusAccesorioAtributo.getTipoBonus() );
+        bonusAccesorioAtributoDTO.setNombreSet( bonusAccesorioAtributo.getNombreSet() );
         bonusAccesorioAtributoDTO.setAction( bonusAccesorioAtributo.getAction() );
         bonusAccesorioAtributoDTO.setImpact( bonusAccesorioAtributo.getImpact() );
         bonusAccesorioAtributoDTO.setCondition( bonusAccesorioAtributo.getCondition() );
@@ -208,6 +210,8 @@ public class AccesorieMapperImpl implements AccesorieMapper {
 
         BonusAccesorioAtributo bonusAccesorioAtributo = new BonusAccesorioAtributo();
 
+        bonusAccesorioAtributo.setTipoBonus( bonusAccesorioAtributoDTO.getTipoBonus() );
+        bonusAccesorioAtributo.setNombreSet( bonusAccesorioAtributoDTO.getNombreSet() );
         bonusAccesorioAtributo.setNombreAtributo( bonusAccesorioAtributoDTO.getNombreAtributo() );
         bonusAccesorioAtributo.setValor( bonusAccesorioAtributoDTO.getValor() );
         bonusAccesorioAtributo.setAction( bonusAccesorioAtributoDTO.getAction() );

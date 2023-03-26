@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SetDTO {
 
@@ -42,5 +43,25 @@ public class SetDTO {
 	public SetDTO() {
 		super();
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(bonuses, nombre, partes);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SetDTO other = (SetDTO) obj;
+		return Objects.equals(bonuses, other.bonuses) && Objects.equals(nombre, other.nombre)
+				&& Objects.equals(partes, other.partes);
+	}
+	
+	
 
 }

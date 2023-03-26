@@ -1,5 +1,7 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
+import java.util.Objects;
+
 public class BonusAccesorioAtributoDTO {
 
 	private String nombreAtributo;
@@ -8,6 +10,24 @@ public class BonusAccesorioAtributoDTO {
 	private String impact;
 	private String condition;
 	private String time;
+	private String tipoBonus;
+	private String nombreSet;
+	
+	public String getTipoBonus() {
+		return tipoBonus;
+	}
+
+	public void setTipoBonus(String tipoBonus) {
+		this.tipoBonus = tipoBonus;
+	}
+
+	public String getNombreSet() {
+		return nombreSet;
+	}
+
+	public void setNombreSet(String nombreSet) {
+		this.nombreSet = nombreSet;
+	}
 
 	public String getAction() {
 		return action;
@@ -67,4 +87,26 @@ public class BonusAccesorioAtributoDTO {
 		super();
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(nombreAtributo, nombreSet, tipoBonus);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BonusAccesorioAtributoDTO other = (BonusAccesorioAtributoDTO) obj;
+		return Objects.equals(nombreAtributo, other.nombreAtributo) && Objects.equals(nombreSet, other.nombreSet)
+				&& Objects.equals(tipoBonus, other.tipoBonus);
+	}
+
+	
+
+	
+	
 }

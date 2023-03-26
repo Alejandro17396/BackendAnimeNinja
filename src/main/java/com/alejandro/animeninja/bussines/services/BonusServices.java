@@ -21,11 +21,15 @@ public interface BonusServices {
 
 	List<Bonus> getBonusCombination(Specification<Bonus> specification);
 	
+	List<Bonus> getBonusBySet(String name);
+	
 	Bonus getBonusById(ClaveBonus clave);
 
 	List<Bonus> getBonusBySetStats(String parte,Long valor);
 	
-	BonusDTO mergeBonuses(List<BonusDTO> bonuses);
+	BonusDTO mergeBonuses(List<BonusDTO> bonuses,String name);
+	
+	Bonus mergeBonusesEntity(List<Bonus> bonuses);
 	
 	List <BonusDTO> mergeNinjaSetAndAccesorieBonuses(NinjaUserFormationDTO ninja);
 	

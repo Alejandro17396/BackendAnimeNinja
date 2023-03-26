@@ -4,6 +4,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,16 +31,19 @@ import com.alejandro.animeninja.bussines.model.CreateComboSet;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Parte;
 import com.alejandro.animeninja.bussines.model.UserSet;
+import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
+import com.alejandro.animeninja.bussines.model.utils.CombinacionesSetUtils;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.services.ParteServices;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusById;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusBySetStat;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttributes;
+import com.alejandro.animeninja.bussines.sort.services.impl.SortSetDTOByAttributes;
 import com.alejandro.animeninja.bussines.utils.BonusAtributoUtils;
 import com.alejandro.animeninja.integration.repositories.EquipoRepository;
 import com.alejandro.animeninja.integration.repositories.UserSetRepository;
@@ -269,7 +273,6 @@ public class EquipoServicesImpl implements EquipoServices {
 
 	@Override
 	public void filterSetByStats(List<Equipo> equipos, List<BonusAtributo> attributesFilter) {
-
 		equipos.removeIf(x -> {
 			Map<String, Long> mapa = new HashMap<String, Long>();
 			for (BonusAtributo a : x.getBonuses().get(0).getListaBonus()) {
@@ -313,10 +316,6 @@ public class EquipoServicesImpl implements EquipoServices {
 			return false;
 		});
 
-		System.out.println("-----------------------------------------------------");
-		equip.forEach(x -> System.out.println(x.toString()));
-
-		System.out.println("-----------------------------------------------------");
 		equipos.forEach(equipo -> {
 
 			ArrayList<Parte> partes2 = new ArrayList<>();
@@ -582,6 +581,50 @@ public class EquipoServicesImpl implements EquipoServices {
 	}
 	
 	@Override
+	public UserSet UpdateSetByName(CreateSetDTO dto, String user) {
+		if(dto== null) {
+			return null;
+		}
+		
+		UserSet set2 = getUserSetByNameAndUser(dto.getSetName(), user);
+		if(set2 == null) {
+			throw new SetException("400","Error that set doesnt exists",HttpStatus.BAD_REQUEST);
+		}
+		
+		UserSet set = null;
+		set = setMapper.toUserSet(createSet(dto.getEquipment(),dto.getSetName()));
+		set.setNombre(dto.getSetName());
+		set.setUsername(user);
+		
+		if(set2 != null) {
+			set.setId(set2.getId());
+		}
+
+		return saveUserSet(set);
+	}
+	
+	@Override
+	public UserSet createSetByName(CreateSetDTO dto, String user) {
+
+		if(dto== null) {
+			return null;
+		}
+		
+		UserSet set2 = getUserSetByNameAndUser(dto.getSetName(), user);
+		if(set2 != null) {
+			throw new SetException("400",String.format("there is already a set with name %s linked to your account",set2.getNombre()),HttpStatus.BAD_REQUEST);
+		}
+		
+		UserSet set = null;
+		set = setMapper.toUserSet(createSet(dto.getEquipment(),dto.getSetName()));
+		set.setNombre(dto.getSetName());
+		set.setUsername(user);
+
+		return saveUserSet(set);
+		
+	}
+	
+	@Override
 	@Transactional
 	public UserSet createOrUpdateSetById(CreateSetDTO dto, String user) {
 		
@@ -635,7 +678,7 @@ public class EquipoServicesImpl implements EquipoServices {
 	public UserSetDTO mergeBonus(UserSet entity) {
 
 		UserSetDTO set = setMapper.toUserSetDTO(entity);
-		BonusDTO bonus = bonusService.mergeBonuses(set.getBonuses());
+		BonusDTO bonus = bonusService.mergeBonuses(set.getBonuses(),null);
 		set.getBonuses().clear();
 		set.getBonuses().add(bonus);
 		return set;
@@ -648,19 +691,125 @@ public class EquipoServicesImpl implements EquipoServices {
 	}
 
 	@Override
-	public List<SetDTO> generateCombos() {
-
+	public List<SetDTO> generateCombos(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable) {
+		
 		List <Equipo> sets = equipoRepository.findAll();
-		List <Equipo> setsCombolist = createCombinations(sets);
+		List <Bonus> listaBonuses = new ArrayList <>();
+		String n = attributes.getSetName().replace(" set", "") + " kunai";
+		n = n.trim();
+		Parte miParte = parteService.getPartesByNombre(n);
+		if (miParte != null) {
+			listaBonuses = bonusService.getBonusBySetStats("", miParte.getValor());
+		} else if(attributes.getSets()!=null && !attributes.getSets().isEmpty()){
+			for(String s : attributes.getSets()) {
+				if(s!=null) {
+					listaBonuses.addAll(bonusService.getBonusBySet(s));
+				}
+			}
+		}else {
+			listaBonuses = bonusService.getAll();
+		}
+		/*for(Equipo e : sets) {
+			listaBonuses.addAll(e.getBonuses());
+		}*/
+		listaBonuses.removeIf(e-> e.getId()==6);
 		
+		CombinacionesSetUtils combinaciones = new CombinacionesSetUtils(listaBonuses);
+		Collections.sort(listaBonuses,Comparator.comparing(Bonus::getId));
+		List<List<Bonus>> listaCombinaciones = combinaciones.generarCombinaciones();
+		
+		
+	
+		Map<Bonus,Bonus> mapa = listaBonuses.stream()
+				.collect(Collectors.toMap(x->x, x->x));
+		List<Equipo> sets2 = new ArrayList<>();
+		for(List<Bonus> lista : listaCombinaciones) {
+			if(lista.size()==2) {
+				Bonus falta = null;
+				for(Bonus b : lista) {
+					if(b.getId() == 4) {
+						Bonus aux = new Bonus();
+						aux.setId(2L);
+						aux.setEquipo(b.getEquipo());
+						falta = mapa.get(aux);
+					}
+				}
+				lista.add(falta);
+			}
+			
+			Equipo e = new Equipo();
+			e.setNombre(generarCadenaCombinacion(lista));
+			e.setBonuses(lista);
+			sets2.add(e);
+		}
+		
+		sets2.addAll(sets);
+		
+		removeCombosNotMatchAttributes(sets2, (ArrayList<Atributo>) attributes.getAttributes());
+		
+		addPartes(sets2);
+		
+		List<SetDTO> setsDTO = setMapper.toDtoList(sets2);
+		for(SetDTO set : setsDTO) {
+			BonusDTO bonus = bonusService.mergeBonuses(set.getBonuses(),null);
+			set.getBonuses().clear();
+			set.getBonuses().add(bonus);
+			bonus.setNombre(set.getNombre());	
+		}
+		
+		if (filtred) {
+			filterSetDTOByStats(setsDTO, attributes.getAttributesFilter());
+		}
+		if (sorted) {
+			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
+				Collections.sort(setsDTO,new SortSetDTOByAttributes(attributes.getAttributes().get(i).getNombre()).reversed());
+			}
+		}
+		return setsDTO;
+		
+	}
+	
+	 private String generarCadenaCombinacion(List<Bonus> combinacion) {
+	      StringBuilder sb = new StringBuilder();
+	      for (Bonus elem : combinacion) {
+	          sb.append(elem.getEquipo()+" ");
+	      }
+	      return sb.toString();
+	  }
+
+	private void filterSetDTOByStats(List<SetDTO> equipos, List<BonusAtributo> attributesFilter) {
+
+		equipos.removeIf(x -> {
+			Map<String, Long> mapa = new HashMap<String, Long>();
+			for (BonusAtributoDTO a : x.getBonuses().get(0).getListaBonus()) {
+				mapa.put(a.getNombreAtributo(), a.getValor());
+			}
+			for (BonusAtributo a : attributesFilter) {
+				Long aux = mapa.get(a.getNombreAtributo());
+				if (aux != null && aux < a.getValor()) {
+					return true;
+				}
+			}
+			return false;
+		});
+
+	}
+	
+	@Override
+	public List<UserSetDTO> getNinjasByUser(String user) {
+
+		List<UserSet> sets = userSetRepository.findByUsername(user);
+		if(sets != null && !sets.isEmpty()) {
+			return setMapper.toUserSetDTO(sets);
+		}
 		
 		return null;
 	}
 
-	private List<Equipo> createCombinations(List<Equipo> sets) {
-		
-		return null;
+	@Override
+	public UserSet getUserSetByName(String username, String name) {
+		Optional<UserSet> optional  = userSetRepository.findByNombreAndUsername(name, username);
+		return optional.isPresent()? optional.get() : null;
 	}
-
 	
 }

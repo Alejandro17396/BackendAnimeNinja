@@ -19,35 +19,35 @@ public class BonusAtributo implements Serializable {
 	@Id
 	@Column(name="id_bonus")
 	@JsonIgnore
-	private long idBonus;
+	protected long idBonus;
 	
 	@Id
 	@Column(name="nombre_equipo")
 	@JsonIgnore
-	private String nombreEquipo;
+	protected String nombreEquipo;
 	
 	@Id
 	@Column(name="nombre_atributo")
-	private String nombreAtributo;
+	protected String nombreAtributo;
 	
 	@Column(name="valor")
-	private long valor;
+	protected long valor;
 	
 	@Column(name="accion")
-	private String action;
+	protected String action;
 	
 	@Column(name="afecta")
-	private String impact;
+	protected String impact;
 	
 	@Column(name="condicion")
-	private String condition;
+	protected String condition;
 	
 	@Column(name="tiempo")
-	private String time;
+	protected String time;
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(idBonus, nombreAtributo, nombreEquipo);
+		return Objects.hash(condition, nombreAtributo, action,impact);
 	}
 
 	@Override
@@ -59,8 +59,10 @@ public class BonusAtributo implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		BonusAtributo other = (BonusAtributo) obj;
-		return idBonus == other.idBonus && Objects.equals(nombreAtributo, other.nombreAtributo)
-				&& Objects.equals(nombreEquipo, other.nombreEquipo);
+		return  Objects.equals(nombreAtributo, other.getNombreAtributo())
+				&& Objects.equals(action, other.getAction())
+				&& Objects.equals(condition, other.getCondition())
+				&& Objects.equals(impact, other.getImpact()		);
 	}
 
 	@Override

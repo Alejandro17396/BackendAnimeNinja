@@ -42,14 +42,22 @@ public interface EquipoServices {
 	
 	UserSet createOrUpdateSetByName(CreateSetDTO dto,String user);
 	
+	UserSet UpdateSetByName(CreateSetDTO dto,String user);
+	
+	UserSet createSetByName(CreateSetDTO dto,String user);
+	
 	UserSet createOrUpdateSetById(CreateSetDTO dto, String user);
 	
 	Equipo createSet(List<String> equipment,String name);
 	
 	UserSetDTO mergeBonus(UserSet entity);
 	
+	UserSet getUserSetByName(String username,String name);
+	
 	UserSet saveUserSet(UserSet set);
 	
-	List <SetDTO> generateCombos();
+	List <SetDTO> generateCombos(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable);
+
+	List<UserSetDTO> getNinjasByUser(String user);
 	
 }

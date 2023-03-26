@@ -47,6 +47,14 @@ public interface NinjaService {
 
 	NinjaUserFormation createNinjaFormationById(CreateNinjaEquipmentDTO dto, String user);
 	
+	NinjaUserFormation createOrUpdateNinjaFormationByNameAndUsername(CreateNinjaEquipmentDTO dto, String user);
+	
 	NinjaUserFormation createNinjaFormationByNameAndUsername(CreateNinjaEquipmentDTO dto, String user);
+	
+	NinjaUserFormation updateNinjaFormationByNameAndUsername(CreateNinjaEquipmentDTO dto, String user);
+	
+	NinjaUserFormation getNinjaByName(String name,String user);
+	
+	List <NinjaUserFormationDTO> getNinjasByUser(String user);
 
 }

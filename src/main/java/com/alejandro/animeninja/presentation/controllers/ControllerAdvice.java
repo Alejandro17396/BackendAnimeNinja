@@ -13,6 +13,7 @@ import com.alejandro.animeninja.bussines.exceptions.CreateSetException;
 import com.alejandro.animeninja.bussines.exceptions.FormationException;
 import com.alejandro.animeninja.bussines.exceptions.NinjaFilterException;
 import com.alejandro.animeninja.bussines.exceptions.NinjaSkillException;
+import com.alejandro.animeninja.bussines.exceptions.NinjaUserException;
 import com.alejandro.animeninja.bussines.exceptions.SetException;
 import com.alejandro.animeninja.bussines.exceptions.UserException;
 import com.alejandro.animeninja.bussines.exceptions.UserFormationException;
@@ -109,6 +110,14 @@ public class ControllerAdvice {
 	
 	@ExceptionHandler(value = FormationException.class)
 	public ResponseEntity<ErrorDTO> setExceptionHandler(FormationException exception){
+		ErrorDTO error = new ErrorDTO();
+		error.setCode(exception.getCode());
+		error.setMessage(exception.getMessage());
+		return new ResponseEntity<ErrorDTO>(error,exception.getStatus());
+	}
+	
+	@ExceptionHandler(value = NinjaUserException.class)
+	public ResponseEntity<ErrorDTO> setExceptionHandler(NinjaUserException exception){
 		ErrorDTO error = new ErrorDTO();
 		error.setCode(exception.getCode());
 		error.setMessage(exception.getMessage());

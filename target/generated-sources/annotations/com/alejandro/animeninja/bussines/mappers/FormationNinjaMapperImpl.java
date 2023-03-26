@@ -28,8 +28,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-03-11T18:44:12+0100",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 1.8.0_111 (Oracle Corporation)"
+    date = "2023-03-26T16:58:43+0200",
+    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
 public class FormationNinjaMapperImpl implements FormationNinjaMapper {
@@ -280,6 +280,7 @@ public class FormationNinjaMapperImpl implements FormationNinjaMapper {
 
         NinjaDTO ninjaDTO = new NinjaDTO();
 
+        ninjaDTO.setSex( ninja.getSex() );
         ninjaDTO.setName( ninja.getName() );
         ninjaDTO.setChakraNature( ninja.getChakraNature() );
         ninjaDTO.setType( ninja.getType() );
@@ -515,6 +516,7 @@ public class FormationNinjaMapperImpl implements FormationNinjaMapper {
         Ninja ninja = new Ninja();
 
         ninja.setName( ninjaDTO.getName() );
+        ninja.setSex( ninjaDTO.getSex() );
         ninja.setChakraNature( ninjaDTO.getChakraNature() );
         ninja.setType( ninjaDTO.getType() );
         ninja.setFormation( ninjaDTO.getFormation() );
