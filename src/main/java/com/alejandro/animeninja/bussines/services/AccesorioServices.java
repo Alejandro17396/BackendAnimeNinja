@@ -53,6 +53,8 @@ public interface AccesorioServices {
 	
 	UserAccesories getUserAccesorieByName(String name , String user);
 	
+	boolean deleteUserAccesorieByName(String name,String user);
+	
 	UserAccesories createOrUpdateAccesorieSetById(CreateAccesorieSetDTO dto, String user);
 	
 	List<SetAccesorioDTO> createComboAccesories(CreateComboSetAccesorio attributes,

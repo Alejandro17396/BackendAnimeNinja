@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alejandro.animeninja.bussines.exceptions.AccesoriesException;
 import com.alejandro.animeninja.bussines.exceptions.CreateAccesoriesException;
@@ -768,6 +769,20 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		return null;
 	}
 	
+	@Override
+	@Transactional
+	public boolean deleteUserAccesorieByName(String name, String user) {
+		Optional <UserAccesories> optional = userAccesoriesRepository.findByNombreAndUsername(name, user);
+		if(optional.isPresent()) {
+			UserAccesories accesories = optional.get();
+			accesories.setBonuses(null);
+			accesories.setPartes(null);
+			accesories = userAccesoriesRepository.save(accesories);
+			userAccesoriesRepository.delete(accesories);
+			return true;
+		}
+		return false;
+	}
 	
 
 }

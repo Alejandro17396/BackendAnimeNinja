@@ -812,4 +812,19 @@ public class EquipoServicesImpl implements EquipoServices {
 		return optional.isPresent()? optional.get() : null;
 	}
 	
+	@Override
+	@Transactional
+	public boolean deleteUserSetByName(String name, String username) {
+		Optional<UserSet> optional  = userSetRepository.findByNombreAndUsername(name, username);
+		if(optional.isPresent()) {
+			UserSet set = optional.get();
+			set.setBonuses(null);
+			set.setPartes(null);
+			set = userSetRepository.save(set);
+			userSetRepository.delete(set);
+			return true;
+		}
+		return false;
+	}
+	
 }

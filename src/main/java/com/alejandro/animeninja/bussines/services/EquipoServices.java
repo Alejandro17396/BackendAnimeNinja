@@ -54,6 +54,8 @@ public interface EquipoServices {
 	
 	UserSet getUserSetByName(String username,String name);
 	
+	boolean deleteUserSetByName(String name,String username);
+	
 	UserSet saveUserSet(UserSet set);
 	
 	List <SetDTO> generateCombos(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable);

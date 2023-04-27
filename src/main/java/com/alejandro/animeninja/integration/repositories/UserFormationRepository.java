@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.alejandro.animeninja.bussines.model.UserFormation;
 
@@ -11,4 +12,5 @@ public interface UserFormationRepository extends JpaRepository<UserFormation,Lon
 
 	Optional <UserFormation> findByNameAndUser(String name,String user);
 	List <UserFormation> findByUser(String user);
+
 }

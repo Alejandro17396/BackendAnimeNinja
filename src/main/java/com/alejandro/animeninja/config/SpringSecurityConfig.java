@@ -1,13 +1,26 @@
 package com.alejandro.animeninja.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.alejandro.animeninja.bussines.auth.filter.JWTAuthenticationFilter;
 import com.alejandro.animeninja.bussines.auth.filter.JWTAuthorizationFilter;
@@ -34,18 +47,76 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new BCryptPasswordEncoder();
 	}
 
+	/*@Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");  // TODO: lock down before deploying
+        config.addAllowedHeader("*");
+        config.addExposedHeader(HttpHeaders.AUTHORIZATION);
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+	
+	 @Bean
+	    CorsConfigurationSource corsConfigurationSource() {
+	        CorsConfiguration configuration = new CorsConfiguration();
+	        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+	        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+	        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	        source.registerCorsConfiguration("/**", configuration);
+	        return source;
+	    }
+	*/
+	/* @Override
+	    public void addCorsMappings(CorsRegistry registry) {
+	        registry.addMapping("/**")
+	                .allowedMethods("*")
+	                .allowedOrigins("*");
+	    }*/
+	 
+	 /*@Override
+		public void addCorsMappings(CorsRegistry registry) {
+			registry.addMapping("/login")
+			.allowedOrigins("http://localhsot:4200")
+			.allowedMethods("GET","POST","PATCH","PUT","DELETE");
+		}*/
+	 
+	/*@Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }*/
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.authorizeRequests()
-				.antMatchers("/ninjas/*", "/accesorios/**", "/equipos/**", "/sets/**", "/skills/**", "/partes/**",
-						"/bonuses/**", "/atributos/**", "/accesories/**", "/users/**", "/formation/**", "/")
+		
+		/*http.cors().and().csrf().disable().authorizeRequests()
+				.antMatchers("/ninjas/**", "/accesorios/**", "/equipos/**", "/sets/**", "/skills/**", "/partes/**",
+						"/bonuses/**", "/atributos/**", "/accesories/**", "/users/**", "/formation/**", "/users/create")
 				.permitAll()
 				// .antMatchers("/ninjas/**").hasAnyRole("USER")
 				.anyRequest().authenticated().and()
 				.addFilter(new JWTAuthenticationFilter(authenticationManagerBean(), jwtService))
-				.addFilter(new JWTAuthorizationFilter(authenticationManagerBean(), jwtService)).csrf().disable()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+				.addFilter(new JWTAuthorizationFilter(authenticationManagerBean(), jwtService))
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
+		http.cors().and().csrf().disable()
+		.addFilter(new JWTAuthenticationFilter(authenticationManagerBean(), jwtService))
+		.addFilter(new JWTAuthorizationFilter(authenticationManagerBean(), jwtService))
+		.authorizeRequests()
+			.antMatchers("/ninjas/**", "/accesorios/**", "/equipos/**", "/sets/**", "/skills/**", "/partes/**",
+					"/bonuses/**", "/atributos/**", "/accesories/**", "/users/**", "/formation/**")
+				.permitAll()
+			.antMatchers("/sets/**")
+				.authenticated()
+			.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 }

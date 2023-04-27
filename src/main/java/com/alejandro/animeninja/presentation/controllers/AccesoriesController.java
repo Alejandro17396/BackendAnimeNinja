@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -236,7 +237,7 @@ public class AccesoriesController {
 		return responseDTO;
 	}
 
-	@GetMapping("/findBy/{name}")
+	@GetMapping("/findByName/{name}")
 	public ResponseEntity<UserAccesoriesDTO> getAccesorieUserByName(@PathVariable String name,
 			@RequestHeader(name = "Authorization") String token) {
 
@@ -252,6 +253,29 @@ public class AccesoriesController {
 
 		if (response != null) {
 			responseDTO = new ResponseEntity<>(accesorieMapper.toUserAccesoriesDTO(response), HttpStatus.OK);
+		} else {
+			responseDTO = new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		return responseDTO;
+	}
+	
+	@DeleteMapping("/deleteByName/{name}")
+	public ResponseEntity <String> deleteAccesorieUserByName(@PathVariable String name,
+			@RequestHeader(name = "Authorization") String token) {
+
+		String user = jwtService.getUsername(token);
+
+		if (user == null) {
+			throw new UserException("400", "has no access", HttpStatus.FORBIDDEN);
+		}
+
+		boolean response = accesorioServices.deleteUserAccesorieByName(name, user);
+
+		ResponseEntity<String> responseDTO = null;
+
+		if (response) {
+			responseDTO = new ResponseEntity<>(String.format("Accesorie set %s deleted succesfully", name), HttpStatus.OK);
 		} else {
 			responseDTO = new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}

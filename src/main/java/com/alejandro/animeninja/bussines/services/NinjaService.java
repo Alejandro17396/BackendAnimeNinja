@@ -55,6 +55,10 @@ public interface NinjaService {
 	
 	NinjaUserFormation getNinjaByName(String name,String user);
 	
+	boolean deleteNinjaByName(String name,String user);
+	
 	List <NinjaUserFormationDTO> getNinjasByUser(String user);
+	
+	
 
 }

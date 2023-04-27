@@ -21,6 +21,7 @@ public interface FormationService {
 	UserFormation createOrUpdateUserFormation(CreateUserFormationDTO dto,String user) throws InterruptedException, ExecutionException;
 	UserFormation getUserFormationById(Long id);
 	UserFormation getUserFormationByName(String name,String user);
+	boolean deleteUserFormationByName(String name,String user);
 	List <UserFormationDTO> getFormationsByUser(String user);
 	
 	@Transactional

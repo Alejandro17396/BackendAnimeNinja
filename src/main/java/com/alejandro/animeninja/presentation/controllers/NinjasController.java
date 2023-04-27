@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +41,7 @@ import com.alejandro.animeninja.bussines.model.UserAccesories;
 import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationCombosDTO;
 import com.alejandro.animeninja.bussines.model.dto.FinalSkillsAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationsNinjaDTO;
@@ -336,6 +338,52 @@ public class NinjasController {
 		return responseDTO;
 	}
 	
+	
+	@DeleteMapping("/deleteByName/{name}")
+	public ResponseEntity <String> deleteNinjasByName(@PathVariable String name,@RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		boolean response = ninjaService.deleteNinjaByName(name,user);
+		
+		ResponseEntity <String> responseDTO = null;
+		
+		if(response ) {
+			responseDTO = new ResponseEntity <>(String.format("Ninja %s deleted succesfully", name),HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
+	}
+	
+	
+	@GetMapping("/generateNinjaUserCombos")
+	public ResponseEntity <List <NinjaUserFormationDTO>> createFormationCombosForUser(
+			@RequestBody CreateUserFormationCombosDTO dto
+			/*@RequestHeader (name="Authorization") String token*/) throws InterruptedException, ExecutionException {
+		
+		ninjaService.getAll();
+		
+		/*List <NinjaUserFormationDTO> response = ninjaService.crea
+				formationService.createUserComboFormation(dto, null);
+		
+		ResponseEntity <List <NinjaUserFormationDTO>> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;*/
+		
+		return null;
+	}
 	
 	public void showHeapMemory() {
 		 int dataSize = 1024 * 1024;

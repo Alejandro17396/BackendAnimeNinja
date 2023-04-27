@@ -79,6 +79,7 @@ com\alejandro\animeninja\bussines\mappers\SetMapperImpl.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortEquiposByStats.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortFormationsByMergedAttributes.class
 com\alejandro\animeninja\bussines\model\UserAccesories_.class
+com\alejandro\animeninja\bussines\auth\filter\CorsFilter.class
 com\alejandro\animeninja\bussines\model\Formation.class
 com\alejandro\animeninja\integration\repositories\NinjaSkillRepository.class
 com\alejandro\animeninja\bussines\services\UserService.class
@@ -90,6 +91,7 @@ com\alejandro\animeninja\bussines\validators\impl\ValidatorCreateNinjaEquipmentI
 com\alejandro\animeninja\bussines\model\ClaveBonus.class
 com\alejandro\animeninja\bussines\services\impl\NinjaServiceImpl$1.class
 com\alejandro\animeninja\bussines\validators\ValidatorSetService.class
+com\alejandro\animeninja\config\WebMvcConfig.class
 com\alejandro\animeninja\bussines\mappers\UserFormationMapperImpl.class
 com\alejandro\animeninja\bussines\services\impl\AccesorioServicesImpl.class
 com\alejandro\animeninja\bussines\model\dto\UserAccesoriesDTO.class
@@ -188,6 +190,7 @@ com\alejandro\animeninja\integration\repositories\AtributoRepository.class
 com\alejandro\animeninja\bussines\model\utils\CombinacionesSetUtils.class
 com\alejandro\animeninja\bussines\services\impl\JpaUserDetailsService.class
 com\alejandro\animeninja\bussines\model\dto\FormationsNinjaDTO.class
+com\alejandro\animeninja\config\SpringSecurityConfig2.class
 com\alejandro\animeninja\bussines\auth\services\JWTService.class
 com\alejandro\animeninja\bussines\mappers\DummyMapper.class
 com\alejandro\animeninja\bussines\model\ChakraNature.class
@@ -246,6 +249,7 @@ com\alejandro\animeninja\bussines\exceptions\CreateNinjaException.class
 com\alejandro\animeninja\bussines\mappers\BonusAtributoMapper.class
 com\alejandro\animeninja\bussines\model\SetAccesorioUtils.class
 com\alejandro\animeninja\bussines\model\UserSet_.class
+com\alejandro\animeninja\AnimeninjaApplication$1.class
 com\alejandro\animeninja\bussines\model\Ninja.class
 com\alejandro\animeninja\bussines\mappers\AccesorieMapper.class
 com\alejandro\animeninja\integration\repositories\NinjaUserFormationRepository.class

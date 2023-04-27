@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,7 +44,7 @@ import com.alejandro.animeninja.integration.repositories.NinjaEquipmentRepositor
 import com.alejandro.animeninja.integration.repositories.UserFormationRepository;
 
 @RestController
-@CrossOrigin
+
 @RequestMapping("/sets")
 public class SetsController {
 
@@ -266,6 +267,28 @@ public class SetsController {
 		
 		if(response != null) {
 			responseDTO = new ResponseEntity <>(setMapper.toUserSetDTO(response),HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
+	}
+	
+	@DeleteMapping("/deleteByName/{name}")
+	public ResponseEntity <String> deleteSetByName(@PathVariable String name, @RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		boolean response = equipoServices.deleteUserSetByName(user, name);
+		
+		ResponseEntity <String> responseDTO = null;
+		
+		if(response ) {
+			responseDTO = new ResponseEntity <>(String.format("set %s deleted succesfully", name),HttpStatus.OK);
 		}else {
 			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
 		}

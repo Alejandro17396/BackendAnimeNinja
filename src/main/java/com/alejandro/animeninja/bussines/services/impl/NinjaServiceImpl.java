@@ -1089,10 +1089,6 @@ public class NinjaServiceImpl implements NinjaService {
 		ninjaUser.setNombre(ninja.getName());
 		ninjaUser.setUsername(user);
 
-		if (ninjaUser2 != null) {
-			ninjaUser.setId(ninjaUser2.getId());
-		}
-
 		Ninja ninjaEntity = getNinja(ninja.getNinja());
 		if (ninjaEntity != null) {
 			ninjaUser.setNinja(ninjaEntity);
@@ -1153,6 +1149,23 @@ public class NinjaServiceImpl implements NinjaService {
 	public NinjaUserFormation getNinjaByName(String name, String user) {
 		Optional <NinjaUserFormation> optional = ninjaUserFormationRepository.findByNombreAndUsername(name, user);
 		return optional.isPresent()? optional.get() : null;
+	}
+	
+	@Override
+	public boolean deleteNinjaByName(String name, String user) {
+		Optional <NinjaUserFormation> optional = ninjaUserFormationRepository.findByNombreAndUsername(name, user);
+		
+		if(optional.isPresent()) {
+			NinjaUserFormation ninja = optional.get();
+			ninja.setAccesories(null);
+			ninja.setEquipment(null);
+			ninja.setNinja(null);
+			ninja = ninjaUserFormationRepository.save(ninja);
+			ninjaUserFormationRepository.delete(ninja);
+			return true;
+		}
+		
+		return false;
 	}
 
 }

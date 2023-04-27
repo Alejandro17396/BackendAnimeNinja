@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alejandro.animeninja.bussines.auth.filter.JWTAuthenticationFilter;
 import com.alejandro.animeninja.bussines.exceptions.CreateSetException;
@@ -496,6 +497,19 @@ public class FormationServiceImpl implements FormationService {
         return ninjaEquipoSetCombinaciones;
     }
 	
-	
+	@Override
+	@Transactional
+	public boolean deleteUserFormationByName(String name, String user) {
+		Optional <UserFormation>  optional = userFormationRepository.findByNameAndUser(name, user);
+		
+		if(optional.isPresent()) {
+			UserFormation formation = optional.get();
+			formation.setNinjas(null);
+			formation = userFormationRepository.save(formation);
+			userFormationRepository.delete(formation);
+			return true;
+		}
+		return false;
+	}
 	
 }

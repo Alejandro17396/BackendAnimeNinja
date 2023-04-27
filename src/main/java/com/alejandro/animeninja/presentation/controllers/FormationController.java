@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,7 +79,12 @@ public class FormationController {
 		
 		//UserFormation result = formationService.createUserFormation(dto,jwtService.getUsername(token));
 		String user = jwtService.getUsername(token);
-		UserFormation result = formationService.createUserFormation(dto,user);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		UserFormation result = formationService.updateUserFormation(dto,user);
 		UserFormationDTO response = null;
 		boolean merge = true;
 		
@@ -115,6 +121,11 @@ public class FormationController {
 		
 		//UserFormation result = formationService.createUserFormation(dto,jwtService.getUsername(token));
 		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
 		List <UserFormationDTO> formations = formationService.getFormationsByUser(user);
 		if(formations.size() >= Constantes.MAX_SETS) {
 			throw new UserFormationException("400", "you cant have more formations", HttpStatus.BAD_REQUEST);
@@ -187,7 +198,7 @@ public class FormationController {
 	}
 	
 	@GetMapping("/findByName/{name}")
-	public ResponseEntity <UserFormationDTO> getFormationsByName(@PathVariable String name,@RequestHeader (name="Authorization") String token){
+	public ResponseEntity <UserFormationDTO> getFormationByName(@PathVariable String name,@RequestHeader (name="Authorization") String token){
 		
 		String user = jwtService.getUsername(token);
 		if(user == null) {
@@ -200,6 +211,27 @@ public class FormationController {
 		
 		if(response != null) {
 			responseDTO = new ResponseEntity <>(userFormationMapper.toDTO(response),HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
+	}
+	
+	@DeleteMapping("/deleteByName/{name}")
+	public ResponseEntity <String> deleteFormationByName(@PathVariable String name,@RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		boolean response = formationService.deleteUserFormationByName(name, user);
+		
+		ResponseEntity <String> responseDTO = null;
+		
+		if(response) {
+			responseDTO = new ResponseEntity <>(String.format("formation %s deleted succesfully",name),HttpStatus.OK);
 		}else {
 			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
 		}

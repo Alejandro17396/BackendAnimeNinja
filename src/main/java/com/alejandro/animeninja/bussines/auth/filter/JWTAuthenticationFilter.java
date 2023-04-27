@@ -22,6 +22,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.alejandro.animeninja.bussines.auth.services.JWTService;
 import com.alejandro.animeninja.bussines.auth.services.JWTServiceImpl;
@@ -32,6 +33,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
