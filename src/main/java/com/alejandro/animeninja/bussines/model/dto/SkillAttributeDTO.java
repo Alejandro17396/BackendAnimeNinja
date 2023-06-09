@@ -10,6 +10,15 @@ public class SkillAttributeDTO {
 	private Long value;
 	private String condition;
 	private String time;
+	private String color;
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
 
 	public String getAttributeName() {
 		return attributeName;
@@ -62,6 +71,16 @@ public class SkillAttributeDTO {
 	public SkillAttributeDTO() {
 		super();
 	}
+	
+	public SkillAttributeDTO(SkillAttributeDTO copy) {
+		this.attributeName = copy.attributeName;
+		this.action = copy.action;
+		this.color = copy.color;
+		this.condition = copy.condition;
+		this.impact = copy.impact;
+		this.time = copy.time;
+		this.value = copy.value;
+	}
 
 	public SkillAttributeDTO( String attributeName, String action,String impact, Long value, String condition, String time) {
 		super();
@@ -72,5 +91,15 @@ public class SkillAttributeDTO {
 		this.condition = condition;
 		this.time = time;
 	}
+
+	@Override
+	public String toString() {
+		return "SkillAttributeDTO [attributeName=" + attributeName + ", action=" + action + ", impact=" + impact
+				+ ", condition=" + condition + "]";
+	}
+	
+	
+	
+	
 
 }

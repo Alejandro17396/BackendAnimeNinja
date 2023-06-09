@@ -48,6 +48,7 @@ import com.alejandro.animeninja.bussines.model.dto.FormationsNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
+import com.alejandro.animeninja.bussines.model.dto.SuccesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
 import com.alejandro.animeninja.bussines.services.FormationService;
@@ -93,7 +94,7 @@ public class NinjasController {
 		
 	}
 
-	@GetMapping("/filter/and")
+	@PostMapping("/filter/and")
 	public ResponseEntity <Page <NinjaDTO>> getNinjaFiltroAnd(@RequestBody(required = false) CreateComboNinjaDTO attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
@@ -115,7 +116,7 @@ public class NinjasController {
 		return response;
 	}
 	
-	@GetMapping("/filter/or")
+	@PostMapping("/filter/or")
 	public ResponseEntity <Page <NinjaDTO>> getNinjaFiltroOr(@RequestBody(required = false) CreateComboNinjaDTO attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
@@ -135,7 +136,7 @@ public class NinjasController {
 		return response;
 	}
 	
-	@GetMapping("/createComboFormations")
+	@PostMapping("/createComboFormations")
 	public ResponseEntity <FormationsNinjaDTO> getNinjaComboFormations(
 			@RequestBody(required = false) CreateComboNinjaDTO dto,
 			@RequestParam(value = "merge", required = false, defaultValue = "true") boolean merge,
@@ -168,7 +169,7 @@ public class NinjasController {
 		return response;
 	}	
 	
-	@GetMapping("/createFormation")
+	@PostMapping("/createFormation")
 	public FormationNinjaDTO getNinjaComboFormations(@RequestBody HashMap<String,SkillType> request,
 			@RequestParam(value = "awakenings", required = false, defaultValue = "true") boolean awakenings
 			) throws InterruptedException, ExecutionException{
@@ -245,15 +246,32 @@ public class NinjasController {
 			throw new UserException("400", "Invalid token", HttpStatus.BAD_REQUEST);
 		}
 		
-		NinjaUserFormation accesories = ninjaService.createNinjaFormationByNameAndUsername(dto, user);
+		NinjaUserFormation ninja = ninjaService.createNinjaFormationByNameAndUsername(dto, user);
 		NinjaUserFormationDTO response = null;
 		boolean merge = true;
 		if(merge) {
-			response = ninjaService.mergeBonus(accesories);
+			response = ninjaService.mergeBonus(ninja);
 		}else {
-			response =  ninjaMapper.toNinjaUserFormationDTO(accesories);
+			response =  ninjaMapper.toNinjaUserFormationDTO(ninja);
 		}
 		
+		ResponseEntity <NinjaUserFormationDTO> responseDTO = null;
+		
+		if(response != null) {
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		return responseDTO;
+	}
+	
+	@PostMapping("/calculateNinjaBonuses")
+	public ResponseEntity <NinjaUserFormationDTO> calculateNinjaFinalBonuses(
+			@RequestBody CreateNinjaEquipmentDTO dto){
+		
+		NinjaUserFormation ninja = ninjaService.createMockUserNinja(dto);
+		NinjaUserFormationDTO response = null;
+		response = ninjaService.mergeBonus(ninja);
 		ResponseEntity <NinjaUserFormationDTO> responseDTO = null;
 		
 		if(response != null) {
@@ -340,7 +358,7 @@ public class NinjasController {
 	
 	
 	@DeleteMapping("/deleteByName/{name}")
-	public ResponseEntity <String> deleteNinjasByName(@PathVariable String name,@RequestHeader (name="Authorization") String token){
+	public ResponseEntity <SuccesDTO> deleteNinjasByName(@PathVariable String name,@RequestHeader (name="Authorization") String token){
 		
 		String user = jwtService.getUsername(token);
 		
@@ -350,12 +368,15 @@ public class NinjasController {
 		
 		boolean response = ninjaService.deleteNinjaByName(name,user);
 		
-		ResponseEntity <String> responseDTO = null;
+		ResponseEntity <SuccesDTO> responseDTO = null;
+		SuccesDTO dto = new SuccesDTO();
 		
 		if(response ) {
-			responseDTO = new ResponseEntity <>(String.format("Ninja %s deleted succesfully", name),HttpStatus.OK);
+			dto.setMessage(String.format("Ninja %s deleted succesfully", name));
+			responseDTO = new ResponseEntity <>(dto,HttpStatus.OK);
 		}else {
-			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+			dto.setMessage(String.format("Ninja %s cant be deleted", name));
+			responseDTO = new ResponseEntity <>(dto,HttpStatus.NO_CONTENT);
 		}
 		
 		return responseDTO;

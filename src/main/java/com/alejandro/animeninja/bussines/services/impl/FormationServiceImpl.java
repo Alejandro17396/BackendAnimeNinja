@@ -31,6 +31,7 @@ import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.ChakraNature;
 import com.alejandro.animeninja.bussines.model.Constantes;
 import com.alejandro.animeninja.bussines.model.Equipo;
+import com.alejandro.animeninja.bussines.model.Formation;
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
@@ -40,6 +41,7 @@ import com.alejandro.animeninja.bussines.model.UserFormation;
 import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
+import com.alejandro.animeninja.bussines.model.dto.CompareFormationsDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationCombosDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationDTO;
@@ -510,6 +512,120 @@ public class FormationServiceImpl implements FormationService {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public CompareFormationsDTO compareFormations(CompareFormationsDTO formations) {
+		
+		CompareFormationsDTO result = new CompareFormationsDTO();
+		
+		if(formations.getFormationLeft() == null && formations.getFormationRight() == null) {
+			return null;
+		}
+		
+		if(formations.getFormationLeft() == null ) {
+			for(SkillAttributeDTO attribute : formations.getFormationRight().getMergedTalentAttributes()) {
+				attribute.setColor("#00FF33");
+			}
+			result.setFormationRight( formations.getFormationRight());
+			return result;
+		}
+		
+		if(formations.getFormationRight() == null ) {
+			for(SkillAttributeDTO attribute : formations.getFormationLeft().getMergedTalentAttributes()) {
+				attribute.setColor("#00FF33");
+			}
+			result.setFormationLeft( formations.getFormationLeft());
+			return result;
+		}
+		
+		List <SkillAttributeDTO> list1 = compareResult(formations.getFormationLeft(),formations.getFormationRight());
+		List <SkillAttributeDTO> list2 = compareResult(formations.getFormationRight(),formations.getFormationLeft());
+		
+		result.setFormationLeft(formations.getFormationLeft());
+		result.getFormationLeft().setMergedTalentAttributes(list1);
+		result.setFormationRight(formations.getFormationRight());
+		result.getFormationRight().setMergedTalentAttributes(list2);
+		return result;
+	}
+
+	private List <SkillAttributeDTO> compareResult(FormationNinjaDTO formationLeft, FormationNinjaDTO formationRight) {
+
+		
+		
+		
+		Map<String,SkillAttributeDTO> mapaToCalculate = new HashMap<>();
+		Map<String,SkillAttributeDTO> mapaToCompare = new HashMap<>();
+		
+		for(SkillAttributeDTO attribute : formationLeft.getMergedTalentAttributes()) {
+			mapaToCalculate.put(attribute.toString(), attribute);
+		}
+		
+		for(SkillAttributeDTO attribute : formationRight.getMergedTalentAttributes()) {
+			mapaToCompare.put(attribute.toString(), attribute);
+		}
+		
+		List <SkillAttributeDTO> listToCalculate = new ArrayList<>();
+		for(Map.Entry<String, SkillAttributeDTO> entry : mapaToCalculate.entrySet()) {
+			SkillAttributeDTO element = mapaToCompare.get(entry.getKey());
+			
+			if(element != null) {
+				if(element.getValue() == entry.getValue().getValue()) {
+					SkillAttributeDTO aux = new SkillAttributeDTO(element);
+					aux.setColor("#FFFF00");
+					listToCalculate.add(aux);
+				}else {
+					Long result = entry.getValue().getValue() - element.getValue();
+					if(result < 0) {
+						SkillAttributeDTO aux = new SkillAttributeDTO(element);
+						aux.setColor("#FF0000");
+						aux.setValue(result);
+						listToCalculate.add(aux);
+					}else {
+						SkillAttributeDTO aux = new SkillAttributeDTO(element);
+						aux.setColor("#00FF33");
+						aux.setValue(result);
+						listToCalculate.add(aux);
+					}
+				}
+			}else {
+				SkillAttributeDTO aux = new SkillAttributeDTO(entry.getValue());
+				aux.setColor("#00FF33");
+				listToCalculate.add(aux);
+			}
+		}
+		
+		for(Map.Entry<String, SkillAttributeDTO> entry : mapaToCompare.entrySet()) {
+			SkillAttributeDTO element = mapaToCalculate.get(entry.getKey());
+			if(element == null) {
+				SkillAttributeDTO aux = new SkillAttributeDTO(entry.getValue());
+				aux.setColor("#FF0000");
+				aux.setValue(-aux.getValue());
+				listToCalculate.add(aux);
+			}
+		}
+		
+		return listToCalculate;
+	}
+	
+	@Override
+	public UserFormationDTO setNinjasPosition(UserFormationDTO formation) {
+		formation.setAssaulters(new ArrayList<>());
+		formation.setSupports(new ArrayList<>());
+		formation.setVanguards(new ArrayList<>());
+		for(NinjaUserFormationDTO ninja : formation.getNinjas()) {
+			
+			if(ninja.getFormation().equals(Formation.ASSAULTER)) {
+				formation.getAssaulters().add(ninja);
+			}
+			if(ninja.getFormation().equals(Formation.SUPPORT)) {
+				formation.getSupports().add(ninja);
+			}
+			if(ninja.getFormation().equals(Formation.VANGUARD)) {
+				formation.getVanguards().add(ninja);
+			}
+		}
+		return formation;
 	}
 	
 }

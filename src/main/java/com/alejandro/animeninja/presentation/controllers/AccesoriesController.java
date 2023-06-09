@@ -34,6 +34,7 @@ import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetsAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.SuccesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
@@ -92,7 +93,7 @@ public class AccesoriesController {
 		return accesorioServices.getByNombre(nombre);
 	}
 
-	@GetMapping("/CombinacionesBonusTotal")
+	@PostMapping("/CombinacionesBonusTotal")
 	public ResponseEntity<SetsAccesorioDTO> getAll4(@RequestBody(required = false) CreateComboSetAccesorio attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
@@ -261,7 +262,7 @@ public class AccesoriesController {
 	}
 	
 	@DeleteMapping("/deleteByName/{name}")
-	public ResponseEntity <String> deleteAccesorieUserByName(@PathVariable String name,
+	public ResponseEntity <SuccesDTO> deleteAccesorieUserByName(@PathVariable String name,
 			@RequestHeader(name = "Authorization") String token) {
 
 		String user = jwtService.getUsername(token);
@@ -272,12 +273,16 @@ public class AccesoriesController {
 
 		boolean response = accesorioServices.deleteUserAccesorieByName(name, user);
 
-		ResponseEntity<String> responseDTO = null;
-
+		ResponseEntity<SuccesDTO> responseDTO = null;
+		SuccesDTO dto = new SuccesDTO();
+		
+		
 		if (response) {
-			responseDTO = new ResponseEntity<>(String.format("Accesorie set %s deleted succesfully", name), HttpStatus.OK);
+			dto.setMessage(String.format("Accesorie set %s deleted succesfully", name));
+			responseDTO = new ResponseEntity<>(dto, HttpStatus.OK);
 		} else {
-			responseDTO = new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			dto.setMessage(String.format("Accesorie set %s cant be deleted", name));
+			responseDTO = new ResponseEntity<>(dto, HttpStatus.NO_CONTENT);
 		}
 
 		return responseDTO;

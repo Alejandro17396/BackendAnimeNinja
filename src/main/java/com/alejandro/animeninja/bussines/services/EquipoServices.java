@@ -42,6 +42,8 @@ public interface EquipoServices {
 	
 	UserSet createOrUpdateSetByName(CreateSetDTO dto,String user);
 	
+	UserSet createMockUserSet(CreateSetDTO dto);
+	
 	UserSet UpdateSetByName(CreateSetDTO dto,String user);
 	
 	UserSet createSetByName(CreateSetDTO dto,String user);

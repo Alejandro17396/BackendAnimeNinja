@@ -8,6 +8,35 @@ public class UserFormationDTO {
 	private String name;
 	private String user;
 	private List<NinjaUserFormationDTO> ninjas;
+	private List<NinjaUserFormationDTO> assaulters;
+	private List<NinjaUserFormationDTO> supports;
+	private List<NinjaUserFormationDTO> vanguards;
+	
+	
+
+	public List<NinjaUserFormationDTO> getVanguards() {
+		return vanguards;
+	}
+
+	public void setVanguards(List<NinjaUserFormationDTO> vanguards) {
+		this.vanguards = vanguards;
+	}
+
+	public List<NinjaUserFormationDTO> getAssaulters() {
+		return assaulters;
+	}
+
+	public void setAssaulters(List<NinjaUserFormationDTO> assaulters) {
+		this.assaulters = assaulters;
+	}
+
+	public List<NinjaUserFormationDTO> getSupports() {
+		return supports;
+	}
+
+	public void setSupports(List<NinjaUserFormationDTO> supports) {
+		this.supports = supports;
+	}
 
 	public Long getId() {
 		return id;

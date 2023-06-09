@@ -97,7 +97,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
 		
 		/*http.cors().and().csrf().disable().authorizeRequests()
 				.antMatchers("/ninjas/**", "/accesorios/**", "/equipos/**", "/sets/**", "/skills/**", "/partes/**",
@@ -115,8 +114,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/ninjas/**", "/accesorios/**", "/equipos/**", "/sets/**", "/skills/**", "/partes/**",
 					"/bonuses/**", "/atributos/**", "/accesories/**", "/users/**", "/formation/**")
 				.permitAll()
-			.antMatchers("/sets/**")
-				.authenticated()
+			/*.antMatchers("/sets/**")
+				.authenticated()*/
 			.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 }

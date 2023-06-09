@@ -15,9 +15,9 @@ import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 
-//@RestController
-//@CrossOrigin
-@RequestMapping("/bonuses")
+@RestController
+@CrossOrigin
+@RequestMapping("/setBonuses")
 public class BonusController {
 
 	@Autowired

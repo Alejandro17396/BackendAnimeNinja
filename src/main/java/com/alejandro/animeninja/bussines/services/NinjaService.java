@@ -51,6 +51,8 @@ public interface NinjaService {
 	
 	NinjaUserFormation createNinjaFormationByNameAndUsername(CreateNinjaEquipmentDTO dto, String user);
 	
+	NinjaUserFormation createMockUserNinja(CreateNinjaEquipmentDTO ninja);
+	
 	NinjaUserFormation updateNinjaFormationByNameAndUsername(CreateNinjaEquipmentDTO dto, String user);
 	
 	NinjaUserFormation getNinjaByName(String name,String user);

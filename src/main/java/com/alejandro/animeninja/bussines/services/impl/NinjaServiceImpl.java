@@ -45,6 +45,7 @@ import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.SkillAttributeKey;
 import com.alejandro.animeninja.bussines.model.SkillType;
+import com.alejandro.animeninja.bussines.model.UserFormation;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
@@ -54,6 +55,7 @@ import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
+import com.alejandro.animeninja.bussines.services.FormationService;
 import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortFinalSkillAttribute;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortFormationsByMergedAttributes;
@@ -61,6 +63,7 @@ import com.alejandro.animeninja.bussines.utils.FormationFilterUtils;
 import com.alejandro.animeninja.bussines.utils.PruebasReflection;
 import com.alejandro.animeninja.integration.repositories.NinjaRepository;
 import com.alejandro.animeninja.integration.repositories.NinjaUserFormationRepository;
+import com.alejandro.animeninja.integration.repositories.UserFormationRepository;
 import com.alejandro.animeninja.integration.specifications.NinjaSpecification;
 
 @SuppressWarnings({ "unchecked" })
@@ -1104,6 +1107,43 @@ public class NinjaServiceImpl implements NinjaService {
 
 		return saveUserSet(ninjaUser);
 	}
+	
+	public NinjaUserFormation createMockUserNinja(CreateNinjaEquipmentDTO ninja) {
+		if (ninja == null) {
+			return null;
+		}
+
+		NinjaUserFormation ninjaUser = new NinjaUserFormation();
+
+		if (ninja.getChakraNature() != null) {
+			ninjaUser.setChakraNature(ninja.getChakraNature());
+		} else {
+			ninjaUser.setChakraNature(ChakraNature.UNACTIVATED);
+		}
+		if (ninja.getSkillType() != null) {
+			ninjaUser.setSkill(ninja.getSkillType());
+		} else {
+			ninjaUser.setSkill(SkillType.SKILL);
+		}
+		
+		ninjaUser.setNombre(ninja.getName());
+
+		Ninja ninjaEntity = getNinja(ninja.getNinja());
+		if (ninjaEntity != null) {
+			ninjaUser.setNinja(ninjaEntity);
+			ninjaUser.setFormation(ninjaEntity.getFormation());
+			ninjaUser.setSex(ninjaEntity.getSex());
+		} else {
+			ninjaUser.setNinja(ninjaEntity);
+		}
+
+		ninjaUser.setEquipment(setService.createMockUserSet(ninja.getSet()));
+		ninjaUser.setAccesories(accesorieService.createMockUserAccesorieSet(ninja.getAccesories()));
+
+		return ninjaUser;
+	}
+	
+	
 	private NinjaUserFormation getNinjaFormationByNameAndUsername(String name, String user) {
 		if (name == null || user == null) {
 			throw new CreateNinjaException("400", "cant create or find a ninja without name or username",
@@ -1137,11 +1177,15 @@ public class NinjaServiceImpl implements NinjaService {
 	
 	@Override
 	public List<NinjaUserFormationDTO> getNinjasByUser(String user) {
-		
+		List<NinjaUserFormationDTO> ninjasDTO = new ArrayList<>();
 		List<NinjaUserFormation> ninjas = ninjaUserFormationRepository.findByUsername(user);
 		if(ninjas != null & !ninjas.isEmpty()) {
-			return ninjaMapper.toNinjaUserFormationDTOList(ninjas);
+			for(NinjaUserFormation ninja : ninjas) {
+				ninjasDTO.add(mergeBonus(ninja));
+			}
+			return ninjasDTO;
 		}
+		
 		return null;
 	}
 	
@@ -1151,12 +1195,16 @@ public class NinjaServiceImpl implements NinjaService {
 		return optional.isPresent()? optional.get() : null;
 	}
 	
+	@Autowired
+	private UserFormationRepository userFormationRepository;
+	
 	@Override
 	public boolean deleteNinjaByName(String name, String user) {
 		Optional <NinjaUserFormation> optional = ninjaUserFormationRepository.findByNombreAndUsername(name, user);
 		
 		if(optional.isPresent()) {
 			NinjaUserFormation ninja = optional.get();
+			deleteNinjaFromFormations(ninja,user);
 			ninja.setAccesories(null);
 			ninja.setEquipment(null);
 			ninja.setNinja(null);
@@ -1166,6 +1214,17 @@ public class NinjaServiceImpl implements NinjaService {
 		}
 		
 		return false;
+	}
+	
+	private void deleteNinjaFromFormations(NinjaUserFormation ninja,String user) {
+		List<UserFormation> formations = userFormationRepository.findByUser(user);
+		for(UserFormation formation : formations) {
+			if(formation.getNinjas().contains(ninja)) {
+				System.out.println("Toca eliminar");
+				formation.getNinjas().remove(ninja);
+				userFormationRepository.save(formation);
+			}
+		}
 	}
 
 }

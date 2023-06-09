@@ -67,6 +67,8 @@ com\alejandro\animeninja\bussines\validators\ValidatorUserFormation.class
 com\alejandro\animeninja\bussines\model\dto\SkillAttributeDTO.class
 com\alejandro\animeninja\bussines\model\dto\CreateComboNinjaDTO.class
 com\alejandro\animeninja\bussines\model\dto\NinjaAwakeningStatDTO.class
+com\alejandro\animeninja\presentation\controllers\AccesoriesPartsController.class
+com\alejandro\animeninja\bussines\model\dto\RegisterDTO.class
 com\alejandro\animeninja\bussines\model\dto\NinjaSkillKeyDTO.class
 com\alejandro\animeninja\bussines\model\NinjaUserFormation_.class
 com\alejandro\animeninja\bussines\model\SkillType.class
@@ -139,6 +141,7 @@ com\alejandro\animeninja\bussines\model\FormationNinja.class
 com\alejandro\animeninja\bussines\mappers\UserFormationMapper.class
 com\alejandro\animeninja\bussines\utils\PruebasReflection.class
 com\alejandro\animeninja\bussines\model\NinjaAwakening.class
+com\alejandro\animeninja\bussines\model\dto\SuccesDTO.class
 com\alejandro\animeninja\bussines\exceptions\UserException.class
 com\alejandro\animeninja\bussines\services\impl\BonusServicesImpl.class
 com\alejandro\animeninja\integration\specifications\BonusSpecification.class
@@ -262,3 +265,4 @@ com\alejandro\animeninja\bussines\services\AccesorioServices2.class
 com\alejandro\animeninja\bussines\mappers\NinjaAwakeningStatMapperImpl.class
 com\alejandro\animeninja\bussines\model\utils\Formations.class
 com\alejandro\animeninja\bussines\exceptions\NinjaSkillException.class
+com\alejandro\animeninja\bussines\model\dto\CompareFormationsDTO.class

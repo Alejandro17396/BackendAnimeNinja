@@ -29,7 +29,9 @@ import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.ClaveBonus;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
 import com.alejandro.animeninja.bussines.model.Equipo;
+import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.Parte;
+import com.alejandro.animeninja.bussines.model.UserFormation;
 import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
@@ -39,6 +41,8 @@ import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.model.utils.CombinacionesSetUtils;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
+import com.alejandro.animeninja.bussines.services.FormationService;
+import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.services.ParteServices;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusById;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortBonusBySetStat;
@@ -46,6 +50,8 @@ import com.alejandro.animeninja.bussines.sort.services.impl.SortEquiposByAttribu
 import com.alejandro.animeninja.bussines.sort.services.impl.SortSetDTOByAttributes;
 import com.alejandro.animeninja.bussines.utils.BonusAtributoUtils;
 import com.alejandro.animeninja.integration.repositories.EquipoRepository;
+import com.alejandro.animeninja.integration.repositories.NinjaUserFormationRepository;
+import com.alejandro.animeninja.integration.repositories.UserFormationRepository;
 import com.alejandro.animeninja.integration.repositories.UserSetRepository;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 import com.alejandro.animeninja.integration.specifications.EquipoSpecification;
@@ -575,9 +581,21 @@ public class EquipoServicesImpl implements EquipoServices {
 			set.setId(set2.getId());
 		}
 		
-		
-		
 		return saveUserSet(set);
+	}
+	
+	@Override
+	public UserSet createMockUserSet(CreateSetDTO dto) {
+		
+		if(dto == null || (dto.getEquipment()!= null &&  dto.getEquipment().size() < 1)) {
+			return null;
+		}
+		
+		UserSet set = null;
+		set = setMapper.toUserSet(createSet(dto.getEquipment(),dto.getSetName()));
+		set.setNombre(dto.getSetName());
+		
+		return set;
 	}
 	
 	@Override
@@ -814,10 +832,11 @@ public class EquipoServicesImpl implements EquipoServices {
 	
 	@Override
 	@Transactional
-	public boolean deleteUserSetByName(String name, String username) {
-		Optional<UserSet> optional  = userSetRepository.findByNombreAndUsername(name, username);
+	public boolean deleteUserSetByName(String setName, String username) {
+		Optional<UserSet> optional  = userSetRepository.findByNombreAndUsername(setName, username);
 		if(optional.isPresent()) {
 			UserSet set = optional.get();
+			deleteSetFromNinjas(set,username);
 			set.setBonuses(null);
 			set.setPartes(null);
 			set = userSetRepository.save(set);
@@ -826,5 +845,19 @@ public class EquipoServicesImpl implements EquipoServices {
 		}
 		return false;
 	}
+
 	
+	@Autowired
+	private NinjaUserFormationRepository ninjaUserFormationRepository;
+	
+	private void deleteSetFromNinjas(UserSet set,String user) {
+		List<NinjaUserFormation> ninjas = ninjaUserFormationRepository.findByUsername(user);
+		for(NinjaUserFormation ninja : ninjas) {
+			if(ninja.getEquipment() != null && ninja.getEquipment().getId() == set.getId()) {
+				System.out.println("Toca eliminar");
+				ninja.setEquipment(null);
+				ninjaUserFormationRepository.save(ninja);
+			}
+		}
+	}
 }

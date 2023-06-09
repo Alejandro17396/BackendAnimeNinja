@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alejandro.animeninja.bussines.auth.services.JWTService;
@@ -24,8 +26,12 @@ import com.alejandro.animeninja.bussines.exceptions.UserFormationException;
 import com.alejandro.animeninja.bussines.mappers.UserFormationMapper;
 import com.alejandro.animeninja.bussines.model.Constantes;
 import com.alejandro.animeninja.bussines.model.UserFormation;
+import com.alejandro.animeninja.bussines.model.dto.CompareFormationsDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationCombosDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationDTO;
+import com.alejandro.animeninja.bussines.model.dto.FormationsNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.SuccesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
 import com.alejandro.animeninja.bussines.services.FormationService;
 import com.alejandro.animeninja.bussines.validators.ValidatorUserFormation;
@@ -57,6 +63,7 @@ public class FormationController {
 
 		UserFormationDTO result = userFormationMapper.toDTO(formationService.getUserFormationById(id));
 		ResponseEntity <UserFormationDTO> responseDTO = null;
+		formationService.setNinjasPosition(result);
 		
 		if(result != null) {
 			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
@@ -102,6 +109,30 @@ public class FormationController {
 		
 		if(response != null) {
 			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
+	}
+	
+	@PostMapping("/compareFormations")
+	public ResponseEntity <CompareFormationsDTO> getNinjaComboFormations(
+			@RequestBody(required = false) CompareFormationsDTO dto,
+			@RequestParam(value = "skills", required = false, defaultValue = "true") boolean merge,
+			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
+			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
+			@RequestParam(value = "or", required = false, defaultValue = "true") boolean or,
+			@RequestParam(value = "awakenings", required = false, defaultValue = "true") boolean awakenings,
+			Pageable pageable) {
+		
+		
+		//formationService.getFormationsByUser(user);
+		CompareFormationsDTO result = formationService.compareFormations(dto);
+		ResponseEntity <CompareFormationsDTO> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
 		}else {
 			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
 		}
@@ -186,6 +217,10 @@ public class FormationController {
 		
 		List <UserFormationDTO> response = formationService.getFormationsByUser(user);
 		
+		for(UserFormationDTO formation : response) {
+			formationService.setNinjasPosition(formation);
+		}
+		
 		ResponseEntity <List <UserFormationDTO>> responseDTO = null;
 		
 		if(response != null) {
@@ -219,7 +254,7 @@ public class FormationController {
 	}
 	
 	@DeleteMapping("/deleteByName/{name}")
-	public ResponseEntity <String> deleteFormationByName(@PathVariable String name,@RequestHeader (name="Authorization") String token){
+	public ResponseEntity <SuccesDTO> deleteFormationByName(@PathVariable String name,@RequestHeader (name="Authorization") String token){
 		
 		String user = jwtService.getUsername(token);
 		if(user == null) {
@@ -228,12 +263,15 @@ public class FormationController {
 		
 		boolean response = formationService.deleteUserFormationByName(name, user);
 		
-		ResponseEntity <String> responseDTO = null;
+		ResponseEntity <SuccesDTO> responseDTO = null;
+		SuccesDTO dto = new SuccesDTO();
 		
 		if(response) {
-			responseDTO = new ResponseEntity <>(String.format("formation %s deleted succesfully",name),HttpStatus.OK);
+			dto.setMessage(String.format("formation %s deleted succesfully",name));
+			responseDTO = new ResponseEntity <>(dto,HttpStatus.OK);
 		}else {
-			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+			dto.setMessage(String.format("formation %s cant be deleted",name));
+			responseDTO = new ResponseEntity <>(dto,HttpStatus.NO_CONTENT);
 		}
 		
 		return responseDTO;

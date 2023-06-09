@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.model.UserFormation;
+import com.alejandro.animeninja.bussines.model.dto.CompareFormationsDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationCombosDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
@@ -23,6 +24,8 @@ public interface FormationService {
 	UserFormation getUserFormationByName(String name,String user);
 	boolean deleteUserFormationByName(String name,String user);
 	List <UserFormationDTO> getFormationsByUser(String user);
+	CompareFormationsDTO compareFormations(CompareFormationsDTO formations);
+	UserFormationDTO setNinjasPosition(UserFormationDTO formation);
 	
 	@Transactional
 	UserFormation saveUserFormation(UserFormation entity);

@@ -36,6 +36,7 @@ import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetsDTO;
+import com.alejandro.animeninja.bussines.model.dto.SuccesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
@@ -108,7 +109,7 @@ public class SetsController {
 	}
 
 	
-	@GetMapping("/CombinacionesBonusTotal")
+	@PostMapping("/CombinacionesBonusTotal")
 	public ResponseEntity <SetsDTO> CombineSetsByAttributesTotal(@RequestBody(required = false) CreateComboSet attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
@@ -136,6 +137,7 @@ public class SetsController {
 		
 	}
 	
+	
 	@PostMapping("/create")
 	public ResponseEntity <UserSetDTO> createSet(
 			@RequestBody CreateSetDTO dto,
@@ -147,7 +149,7 @@ public class SetsController {
 			throw new UserException("400", "Invalid token", HttpStatus.BAD_REQUEST);
 		}
 		
-		ResponseEntity <List <UserSetDTO>> sets = getNinjasByUser(token);
+		ResponseEntity <List <UserSetDTO>> sets = getSetsByUser(token);
 		if(sets.getBody().size() >= Constantes.MAX_SETS) {
 			throw new SetException("400","you cant create more sets update or delete 1", HttpStatus.FORBIDDEN);
 		}
@@ -230,7 +232,7 @@ public class SetsController {
 	}
 	
 	@GetMapping("/findByUser")
-	public ResponseEntity <List<UserSetDTO>> getNinjasByUser(@RequestHeader (name="Authorization") String token){
+	public ResponseEntity <List<UserSetDTO>> getSetsByUser(@RequestHeader (name="Authorization") String token){
 		
 		String user = jwtService.getUsername(token);
 		
@@ -274,7 +276,7 @@ public class SetsController {
 		return responseDTO;
 	}
 	
-	@DeleteMapping("/deleteByName/{name}")
+	/*@DeleteMapping("/deleteByName/{name}")
 	public ResponseEntity <String> deleteSetByName(@PathVariable String name, @RequestHeader (name="Authorization") String token){
 		
 		String user = jwtService.getUsername(token);
@@ -283,7 +285,7 @@ public class SetsController {
 			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
 		}
 		
-		boolean response = equipoServices.deleteUserSetByName(user, name);
+		boolean response = equipoServices.deleteUserSetByName(name,user);
 		
 		ResponseEntity <String> responseDTO = null;
 		
@@ -291,6 +293,32 @@ public class SetsController {
 			responseDTO = new ResponseEntity <>(String.format("set %s deleted succesfully", name),HttpStatus.OK);
 		}else {
 			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		
+		return responseDTO;
+	} */
+	
+	@DeleteMapping("/deleteByName/{name}")
+	public ResponseEntity <SuccesDTO> deleteSetByName(@PathVariable String name, @RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		boolean response = equipoServices.deleteUserSetByName(name,user);
+		
+		ResponseEntity <SuccesDTO> responseDTO = null;
+		
+		if(response) {
+			SuccesDTO respo = new SuccesDTO();
+			respo.setMessage(String.format("set %s deleted succesfully", name));
+			responseDTO = new ResponseEntity <>(respo,HttpStatus.OK);
+		}else {
+			SuccesDTO respo = new SuccesDTO();
+			respo.setMessage(String.format("set %s cant be deleted", name));
+			responseDTO = new ResponseEntity <>(respo,HttpStatus.NO_CONTENT);
 		}
 		
 		return responseDTO;

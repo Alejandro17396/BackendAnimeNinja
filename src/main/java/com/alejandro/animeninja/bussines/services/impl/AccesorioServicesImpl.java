@@ -32,11 +32,13 @@ import com.alejandro.animeninja.bussines.model.ClaveBonusAccesorio;
 import com.alejandro.animeninja.bussines.model.Constantes;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
 import com.alejandro.animeninja.bussines.model.Equipo;
+import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.Parte;
 import com.alejandro.animeninja.bussines.model.ParteAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorioUtils;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
@@ -51,6 +53,7 @@ import com.alejandro.animeninja.bussines.services.ParteAccesorioService;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosByAttributes;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosDtoByAttributes;
 import com.alejandro.animeninja.integration.repositories.AccesorioRepository;
+import com.alejandro.animeninja.integration.repositories.NinjaUserFormationRepository;
 import com.alejandro.animeninja.integration.repositories.UserAccesoriesRepository;
 import com.alejandro.animeninja.integration.specifications.AccesorioSpecification;
 import com.alejandro.animeninja.integration.specifications.BonusAccesorioSpecification;
@@ -456,6 +459,21 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	}
 	
 	@Override
+	public UserAccesories createMockUserAccesorieSet(CreateAccesorieSetDTO dto) {
+
+		if(dto == null || (dto.getAccesories()!= null &&  dto.getAccesories().size() < 1)) {
+			return null;
+		}
+		
+		UserAccesories accesories = null;
+		
+		accesories = accesorieMapper.toUserAccesories(createAccesorieSet(dto.getAccesories()));
+		accesories.setNombre(dto.getAccesorieSetName());
+		
+		return accesories;
+	}
+	
+	@Override
 	public UserAccesories createAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String user) {
 
 		if (dto == null) {
@@ -775,6 +793,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		Optional <UserAccesories> optional = userAccesoriesRepository.findByNombreAndUsername(name, user);
 		if(optional.isPresent()) {
 			UserAccesories accesories = optional.get();
+			deleteAccesorieSetFromNinjas(accesories,user);
 			accesories.setBonuses(null);
 			accesories.setPartes(null);
 			accesories = userAccesoriesRepository.save(accesories);
@@ -782,6 +801,20 @@ public class AccesorioServicesImpl implements AccesorioServices {
 			return true;
 		}
 		return false;
+	}
+	
+	@Autowired
+	private NinjaUserFormationRepository ninjaUserFormationRepository;
+	
+	private void deleteAccesorieSetFromNinjas(UserAccesories set,String user) {
+		List<NinjaUserFormation> ninjas = ninjaUserFormationRepository.findByUsername(user);
+		for(NinjaUserFormation ninja : ninjas) {
+			if(ninja.getAccesories()!= null && ninja.getAccesories().getId() == set.getId()) {
+				System.out.println("Toca eliminar");
+				ninja.setAccesories(null);
+				ninjaUserFormationRepository.save(ninja);
+			}
+		}
 	}
 	
 

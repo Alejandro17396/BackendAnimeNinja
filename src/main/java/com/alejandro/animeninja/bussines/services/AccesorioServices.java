@@ -47,6 +47,8 @@ public interface AccesorioServices {
 
 	UserAccesories createOrUpdateAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String username);
 	
+	UserAccesories createMockUserAccesorieSet(CreateAccesorieSetDTO dto);
+	
 	UserAccesories createAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String username);
 	
 	UserAccesories updateAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String username);

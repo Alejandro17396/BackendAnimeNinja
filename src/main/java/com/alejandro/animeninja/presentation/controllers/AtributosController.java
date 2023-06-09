@@ -14,7 +14,7 @@ import com.alejandro.animeninja.bussines.services.AtributoServices;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/atributos")
+@RequestMapping("/attributes")
 public class AtributosController {
 	
 	@Autowired
