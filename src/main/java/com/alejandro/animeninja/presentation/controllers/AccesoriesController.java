@@ -27,12 +27,15 @@ import com.alejandro.animeninja.bussines.exceptions.UserException;
 import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
+import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Pagination;
+import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
 import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetsAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.SuccesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
@@ -285,6 +288,28 @@ public class AccesoriesController {
 			responseDTO = new ResponseEntity<>(dto, HttpStatus.NO_CONTENT);
 		}
 
+		return responseDTO;
+	}
+	
+	@PostMapping("/transform")
+	public ResponseEntity<SetAccesorioDTO> transformUserSetToNormalSet(@RequestBody CreateAccesorieSetDTO dto, 
+			@RequestHeader (name="Authorization") String token){
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		SetAccesorio accesorieSet = accesorioServices.createAccesorieSet(dto.getAccesories());//equipoServices.createSet(dto.getEquipment(), dto.getSetName());
+		
+		accesorieSet.setNombre(dto.getAccesorieSetName());
+		SetAccesorioDTO result = accesorieMapper.toDTO(accesorioServices.mergeAccesorieSetBonuses(accesorieSet));
+		ResponseEntity <SetAccesorioDTO> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
 		return responseDTO;
 	}
 

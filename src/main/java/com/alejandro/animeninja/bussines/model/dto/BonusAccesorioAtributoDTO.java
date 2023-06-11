@@ -12,6 +12,25 @@ public class BonusAccesorioAtributoDTO {
 	private String time;
 	private String tipoBonus;
 	private String nombreSet;
+	private String color;
+	
+	public BonusAccesorioAtributoDTO(BonusAccesorioAtributoDTO copy) {
+		this.nombreAtributo = copy.nombreAtributo;
+		this.action = copy.action;
+		this.color = copy.color;
+		this.condition = copy.condition;
+		this.impact = copy.impact;
+		this.time = copy.time;
+		this.valor = copy.valor;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
 	
 	public String getTipoBonus() {
 		return tipoBonus;

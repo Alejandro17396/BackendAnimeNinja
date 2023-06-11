@@ -38,6 +38,7 @@ import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.dto.CompareNinjaUserDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
@@ -51,6 +52,9 @@ import com.alejandro.animeninja.bussines.model.dto.NinjasDTO;
 import com.alejandro.animeninja.bussines.model.dto.SuccesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
+import com.alejandro.animeninja.bussines.services.AccesorioServices;
+import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.services.FormationService;
 import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
@@ -64,7 +68,13 @@ public class NinjasController {
 
 	@Autowired
 	private NinjaService ninjaService;
+	
+	@Autowired
+	private EquipoServices equipoServices;
 
+	@Autowired
+	private AccesorioServices accesoriesServices;
+	
 	@Autowired
 	private NinjaMapper ninjaMapper;
 	
@@ -312,6 +322,64 @@ public class NinjasController {
 	}
 	
 	
+	@PostMapping("/compareNinjas")
+	public ResponseEntity <CompareNinjaUserDTO> comapreNinjas(
+			@RequestBody CompareNinjaUserDTO dto,
+			@RequestHeader (name="Authorization") String token){
+		
+		String user = jwtService.getUsername(token);
+		if(user == null) {
+			throw new UserException("400", "Invalid token", HttpStatus.BAD_REQUEST);
+		}
+		
+		CompareNinjaUserDTO compareNinjas = ninjaService.
+				comapreNinjasUser(dto);
+		UserSetDTO setAuxLeft = null;
+		UserSetDTO setAuxRight = null;
+		if(dto.getNinjaLeft() != null) {
+			setAuxLeft = dto.getNinjaLeft().getEquipment();
+		}
+		
+		if(dto.getNinjaRight() != null) {
+			setAuxRight = dto.getNinjaRight().getEquipment();
+		}
+		
+		equipoServices.compareSetsBonuses(setAuxLeft,setAuxRight);
+		
+		
+		UserAccesoriesDTO setAccesorieAuxLeft = null;
+		UserAccesoriesDTO setAccesorieAuxRight = null;
+		if(dto.getNinjaLeft() != null) {
+			setAccesorieAuxLeft = dto.getNinjaLeft().getAccesories();
+		}
+		
+		if(dto.getNinjaRight() != null) {
+			setAccesorieAuxRight = dto.getNinjaRight().getAccesories();
+		}
+		
+		accesoriesServices.compareAccesorieSetBonuses(
+				setAccesorieAuxLeft,
+				setAccesorieAuxRight);
+		
+		/*NinjaUserFormationDTO response = null;
+		boolean merge = true;
+		if(merge) {
+			response = ninjaService.mergeBonus(accesories);
+		}else {
+			response =  ninjaMapper.toNinjaUserFormationDTO(accesories);
+		}*/
+		
+		ResponseEntity <CompareNinjaUserDTO> responseDTO = null;
+		
+		if(compareNinjas != null) {
+			responseDTO = new ResponseEntity <>(compareNinjas,HttpStatus.OK);
+		}else {
+			responseDTO = new ResponseEntity <>(null,HttpStatus.NO_CONTENT);
+		}
+		return responseDTO;
+	}
+	
+	
 	@GetMapping("/findByUser")
 	public ResponseEntity <List<NinjaUserFormationDTO>> getNinjasByUser(@RequestHeader (name="Authorization") String token){
 		
@@ -321,7 +389,8 @@ public class NinjasController {
 			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
 		}
 		
-		List <NinjaUserFormationDTO> response = ninjaService.getNinjasByUser(user);
+		List <NinjaUserFormationDTO> response = ninjaService.
+				getNinjasByUser(user);
 		
 		ResponseEntity <List <NinjaUserFormationDTO>> responseDTO = null;
 		

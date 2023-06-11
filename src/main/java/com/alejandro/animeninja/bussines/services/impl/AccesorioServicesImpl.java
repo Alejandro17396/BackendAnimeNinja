@@ -4,12 +4,15 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,6 +31,7 @@ import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
+import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.ClaveBonusAccesorio;
 import com.alejandro.animeninja.bussines.model.Constantes;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
@@ -41,10 +45,12 @@ import com.alejandro.animeninja.bussines.model.UserAccesories;
 import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
+import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.model.utils.Elemento;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.BonusAccesorioService;
@@ -788,6 +794,46 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	}
 	
 	@Override
+	public SetAccesorio mergeAccesorieSetBonuses(SetAccesorio accesorieSet) {
+		
+		Map <BonusAccesorioAtributo,Long> mapa = new HashMap<>();
+		Set <String> sets = new HashSet<>();
+		for(BonusAccesorio b : accesorieSet.getBonuses()) {
+			for(BonusAccesorioAtributo ba: b.getBonuses()) {
+				Long value = mapa.get(ba);
+				if(value != null) {
+					mapa.put(ba, value+ba.getValor());
+				}else {
+					mapa.put(ba, ba.getValor());
+				}
+				sets.add(ba.getNombreSet());
+			}
+		}
+		
+		List<BonusAccesorioAtributo> bonusesAtributo = new ArrayList<>();
+		
+		for(Map.Entry<BonusAccesorioAtributo, Long> entry : mapa.entrySet()) {
+			BonusAccesorioAtributo bonusAux = new BonusAccesorioAtributo(entry.getKey());
+			bonusAux.setValor(entry.getValue());
+			bonusesAtributo.add(bonusAux);
+		}
+		
+		StringBuilder sp = new StringBuilder();
+		for(String s : sets) {
+			sp.append(s);
+			sp.append(" ");
+		}
+		
+		BonusAccesorio bonus = new BonusAccesorio();
+		bonus.setNombreAccesorioSet(sp.toString());
+		bonus.setBonuses(bonusesAtributo);
+		
+		accesorieSet.setBonuses(new ArrayList<>());
+		accesorieSet.getBonuses().add(bonus);
+		return accesorieSet;
+	}
+	
+	@Override
 	@Transactional
 	public boolean deleteUserAccesorieByName(String name, String user) {
 		Optional <UserAccesories> optional = userAccesoriesRepository.findByNombreAndUsername(name, user);
@@ -817,5 +863,128 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		}
 	}
 	
+	@Override
+	public void compareAccesorieSetBonuses(UserAccesoriesDTO left, UserAccesoriesDTO right) {
+		// TODO Auto-generated method stub
+		List <BonusAccesorioAtributoDTO> leftResult = new ArrayList<>();
+		List <BonusAccesorioAtributoDTO> rightResult = new ArrayList<>();
+		
+		//BonusAccesorioDTO leftAux = new BonusAccesorioDTO();
+		//BonusAccesorioDTO rightAux = new BonusAccesorioDTO();
+		
+		/*
+		 	@Mapping(target="bonuses",source="bonus.listaBonus")
+	BonusAccesorioDTO toBonusAccesorioDTO (BonusDTO bonus);
+	
+	@Mapping(target="listaBonus",source="bonus.bonuses")
+	BonusDTO toBonusDTO (BonusAccesorioDTO bonus);*/
+		
+		if(left != null && left.getBonuses() != null) {
+			List<BonusDTO> aux1 = bonusMapper.toBonusDTOList(left.getBonuses());
+			BonusDTO aux2 = bonusService2.mergeBonusesNinja(aux1);
+			BonusAccesorioDTO aux = bonusMapper.toBonusAccesorioDTO(aux2);
+			left.setBonuses(new ArrayList<>());
+			left.getBonuses().add(aux);
+		}
+		
+		if(right != null && right.getBonuses() != null) {
+			List<BonusDTO> aux1 = bonusMapper.toBonusDTOList(right.getBonuses());
+			BonusDTO aux2 = bonusService2.mergeBonusesNinja(aux1);
+			BonusAccesorioDTO aux = bonusMapper.toBonusAccesorioDTO(aux2);
+			right.setBonuses(new ArrayList<>());
+			right.getBonuses().add(aux);
+		}
 
+		
+		leftResult = compareSets(left,right);
+		rightResult = compareSets(right,left);
+		
+		BonusAccesorioDTO leftBonus = new BonusAccesorioDTO();
+		leftBonus.setTipo("Accesories Bonuses");
+		leftBonus.setBonuses(leftResult);
+		BonusAccesorioDTO rightBonus = new BonusAccesorioDTO();
+		rightBonus.setTipo("Accesories Bonuses");
+		rightBonus.setBonuses(rightResult);
+		
+		
+		List <BonusAccesorioDTO> leftList = new ArrayList<>();
+		leftList.add(leftBonus);
+		List <BonusAccesorioDTO> rightList = new ArrayList<>();
+		rightList.add(rightBonus);
+		
+		
+		if(left != null) {
+			left.setBonuses(leftList);
+		}
+		if(right != null){
+			right.setBonuses(rightList);
+		}
+	}
+	
+
+	public List <BonusAccesorioAtributoDTO> compareSets(UserAccesoriesDTO left, UserAccesoriesDTO right) {
+		Map<String,BonusAccesorioAtributoDTO> mapaToCalculate = new HashMap<>();
+		Map<String,BonusAccesorioAtributoDTO> mapaToCompare = new HashMap<>();
+		
+		if(left != null && left.getBonuses() != null && left.getBonuses().size() > 0
+			&& left.getBonuses().get(0)!= null
+			&& left.getBonuses().get(0).getBonuses() != null
+			&& left.getBonuses().get(0).getBonuses().size() > 0) {
+			for(BonusAccesorioAtributoDTO attribute : left.getBonuses().get(0).getBonuses()) {
+				mapaToCalculate.put(attribute.toString(), attribute);
+			}
+		}
+		
+		if(right != null && right.getBonuses() != null && right.getBonuses().size() > 0
+				&& right.getBonuses().get(0)!= null
+				&& right.getBonuses().get(0).getBonuses() != null
+				&& right.getBonuses().get(0).getBonuses().size() > 0) {
+			for(BonusAccesorioAtributoDTO attribute : right.getBonuses().get(0).getBonuses()) {
+				mapaToCompare.put(attribute.toString(), attribute);
+			}
+		}
+		List <BonusAccesorioAtributoDTO> listToCalculate = new ArrayList<>();
+		for(Map.Entry<String, BonusAccesorioAtributoDTO> entry : mapaToCalculate.entrySet()) {
+			BonusAccesorioAtributoDTO element = mapaToCompare.get(entry.getKey());
+			
+			if(element != null) {
+				if(element.getValor() == entry.getValue().getValor()) {
+					BonusAccesorioAtributoDTO aux = new BonusAccesorioAtributoDTO(element);
+					aux.setColor("#FFFF00");
+					listToCalculate.add(aux);
+				}else {
+					Long result = entry.getValue().getValor() - element.getValor();
+					if(result < 0) {
+						BonusAccesorioAtributoDTO aux = new BonusAccesorioAtributoDTO(element);
+						aux.setColor("#FF0000");
+						aux.setValor(result);
+						listToCalculate.add(aux);
+					}else {
+						BonusAccesorioAtributoDTO aux = new BonusAccesorioAtributoDTO(element);
+						aux.setColor("#00FF33");
+						aux.setValor(result);
+						listToCalculate.add(aux);
+					}
+				}
+			}else {
+				BonusAccesorioAtributoDTO aux = new BonusAccesorioAtributoDTO(entry.getValue());
+				aux.setColor("#00FF33");
+				listToCalculate.add(aux);
+			}
+		}
+		
+		for(Map.Entry<String, BonusAccesorioAtributoDTO> entry : mapaToCompare.entrySet()) {
+			BonusAccesorioAtributoDTO element = mapaToCalculate.get(entry.getKey());
+			if(element == null) {
+				BonusAccesorioAtributoDTO aux = new BonusAccesorioAtributoDTO(entry.getValue());
+				aux.setColor("#FF0000");
+				aux.setValor(-aux.getValor());
+				listToCalculate.add(aux);
+			}
+		}
+		
+		return listToCalculate;
+		
+	}
+	
 }

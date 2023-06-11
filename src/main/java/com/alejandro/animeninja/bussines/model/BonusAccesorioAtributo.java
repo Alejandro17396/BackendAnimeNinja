@@ -17,12 +17,10 @@ public class BonusAccesorioAtributo implements Serializable {
 	
 	@Id
 	@Column(name="TIPO_BONUS")
-	
 	private String tipoBonus;
 	
 	@Id
 	@Column(name="NOMBRE_SET_ACCESORIOS")
-	
 	private String nombreSet;
 	
 	@Id
@@ -63,7 +61,21 @@ public class BonusAccesorioAtributo implements Serializable {
 				&& Objects.equals(condition, other.getCondition())
 				&& Objects.equals(impact, other.getImpact()		);
 	}
+	
+	public BonusAccesorioAtributo(BonusAccesorioAtributo bonus) {
+		this.tipoBonus = bonus.tipoBonus;
+		this.nombreSet = bonus.nombreSet;
+		this.nombreAtributo = bonus.nombreAtributo;
+		this.valor = bonus.valor;
+		this.action = bonus.action;
+		this.impact = bonus.impact;
+		this.condition = bonus.condition;
+		this.time = bonus.time;
+	}
 
+	public BonusAccesorioAtributo() {
+
+	}
 	/*@Override
 	public int hashCode() {
 		return Objects.hash(nombreAtributo, nombreSet, tipoBonus);

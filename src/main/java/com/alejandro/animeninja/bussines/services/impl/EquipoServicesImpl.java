@@ -831,6 +831,46 @@ public class EquipoServicesImpl implements EquipoServices {
 	}
 	
 	@Override
+	public Equipo mergeSetBonuses(Equipo set) {
+		
+		Map <BonusAtributo,Long> mapa = new HashMap<>();
+		Set <String> sets = new HashSet<>();
+		for(Bonus b : set.getBonuses()) {
+			for(BonusAtributo ba:b.getListaBonus()) {
+				Long value = mapa.get(ba);
+				if(value != null) {
+					mapa.put(ba, value+ba.getValor());
+				}else {
+					mapa.put(ba, ba.getValor());
+				}
+				sets.add(ba.getNombreEquipo());
+			}
+		}
+		
+		List<BonusAtributo> bonusesAtributo = new ArrayList<>();
+		
+		for(Map.Entry<BonusAtributo, Long> entry : mapa.entrySet()) {
+			BonusAtributo bonusAux = new BonusAtributo(entry.getKey());
+			bonusAux.setValor(entry.getValue());
+			bonusesAtributo.add(bonusAux);
+		}
+		
+		StringBuilder sp = new StringBuilder();
+		for(String s : sets) {
+			sp.append(s);
+			sp.append(" ");
+		}
+		
+		Bonus bonus = new Bonus();
+		bonus.setEquipo(sp.toString());
+		bonus.setListaBonus(bonusesAtributo);
+		
+		set.setBonuses(new ArrayList<>());
+		set.getBonuses().add(bonus);
+		return set;
+	}
+	
+	@Override
 	@Transactional
 	public boolean deleteUserSetByName(String setName, String username) {
 		Optional<UserSet> optional  = userSetRepository.findByNombreAndUsername(setName, username);
@@ -859,5 +899,98 @@ public class EquipoServicesImpl implements EquipoServices {
 				ninjaUserFormationRepository.save(ninja);
 			}
 		}
+	}
+	
+	@Override
+	public void compareSetsBonuses(UserSetDTO left, UserSetDTO right) {
+		List <BonusAtributoDTO> leftResult = new ArrayList<>();
+		List <BonusAtributoDTO> rightResult = new ArrayList<>();
+		
+		leftResult = compareSets(left,right);
+		rightResult = compareSets(right,left);
+		
+		BonusDTO leftBonus = new BonusDTO();
+		leftBonus.setNombre("Equipment Bonuses");
+		leftBonus.setListaBonus(leftResult);
+		BonusDTO rightBonus = new BonusDTO();
+		rightBonus.setNombre("Equipment Bonuses");
+		rightBonus.setListaBonus(rightResult);
+		
+		
+		List <BonusDTO> leftList = new ArrayList<>();
+		leftList.add(leftBonus);
+		List <BonusDTO> rightList = new ArrayList<>();
+		rightList.add(rightBonus);
+		if(left != null) {
+			left.setBonuses(leftList);
+		}
+		if(right != null){
+			right.setBonuses(rightList);
+		}
+		
+	}
+	public List <BonusAtributoDTO> compareSets(UserSetDTO left, UserSetDTO right) {
+		Map<String,BonusAtributoDTO> mapaToCalculate = new HashMap<>();
+		Map<String,BonusAtributoDTO> mapaToCompare = new HashMap<>();
+		
+		if(left != null && left.getBonuses() != null && left.getBonuses().size() > 0
+			&& left.getBonuses().get(0)!= null
+			&& left.getBonuses().get(0).getListaBonus() != null
+			&& left.getBonuses().get(0).getListaBonus().size() > 0) {
+			for(BonusAtributoDTO attribute : left.getBonuses().get(0).getListaBonus()) {
+				mapaToCalculate.put(attribute.toString(), attribute);
+			}
+		}
+		
+		if(right != null && right.getBonuses() != null && right.getBonuses().size() > 0
+				&& right.getBonuses().get(0)!= null
+				&& right.getBonuses().get(0).getListaBonus() != null
+				&& right.getBonuses().get(0).getListaBonus().size() > 0) {
+			for(BonusAtributoDTO attribute : right.getBonuses().get(0).getListaBonus()) {
+				mapaToCompare.put(attribute.toString(), attribute);
+			}
+		}
+		List <BonusAtributoDTO> listToCalculate = new ArrayList<>();
+		for(Map.Entry<String, BonusAtributoDTO> entry : mapaToCalculate.entrySet()) {
+			BonusAtributoDTO element = mapaToCompare.get(entry.getKey());
+			
+			if(element != null) {
+				if(element.getValor() == entry.getValue().getValor()) {
+					BonusAtributoDTO aux = new BonusAtributoDTO(element);
+					aux.setColor("#FFFF00");
+					listToCalculate.add(aux);
+				}else {
+					Long result = entry.getValue().getValor() - element.getValor();
+					if(result < 0) {
+						BonusAtributoDTO aux = new BonusAtributoDTO(element);
+						aux.setColor("#FF0000");
+						aux.setValor(result);
+						listToCalculate.add(aux);
+					}else {
+						BonusAtributoDTO aux = new BonusAtributoDTO(element);
+						aux.setColor("#00FF33");
+						aux.setValor(result);
+						listToCalculate.add(aux);
+					}
+				}
+			}else {
+				BonusAtributoDTO aux = new BonusAtributoDTO(entry.getValue());
+				aux.setColor("#00FF33");
+				listToCalculate.add(aux);
+			}
+		}
+		
+		for(Map.Entry<String, BonusAtributoDTO> entry : mapaToCompare.entrySet()) {
+			BonusAtributoDTO element = mapaToCalculate.get(entry.getKey());
+			if(element == null) {
+				BonusAtributoDTO aux = new BonusAtributoDTO(entry.getValue());
+				aux.setColor("#FF0000");
+				aux.setValor(-aux.getValor());
+				listToCalculate.add(aux);
+			}
+		}
+		
+		return listToCalculate;
+		
 	}
 }

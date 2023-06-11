@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
+import com.alejandro.animeninja.bussines.model.dto.CompareNinjaUserDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
@@ -54,6 +55,8 @@ public interface NinjaService {
 	NinjaUserFormation createMockUserNinja(CreateNinjaEquipmentDTO ninja);
 	
 	NinjaUserFormation updateNinjaFormationByNameAndUsername(CreateNinjaEquipmentDTO dto, String user);
+	
+	CompareNinjaUserDTO comapreNinjasUser(CompareNinjaUserDTO dto);
 	
 	NinjaUserFormation getNinjaByName(String name,String user);
 	

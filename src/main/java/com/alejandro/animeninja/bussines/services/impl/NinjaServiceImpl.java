@@ -46,12 +46,16 @@ import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.SkillAttributeKey;
 import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.model.UserFormation;
+import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
+import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
+import com.alejandro.animeninja.bussines.model.dto.CompareNinjaUserDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaFilterDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
+import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.BonusServices;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
@@ -1227,4 +1231,117 @@ public class NinjaServiceImpl implements NinjaService {
 		}
 	}
 
+	@Override
+	public CompareNinjaUserDTO comapreNinjasUser(CompareNinjaUserDTO dto) {
+		NinjaUserFormationDTO left = dto.getNinjaLeft();
+		NinjaUserFormationDTO right = dto.getNinjaRight();
+		
+		
+		if(left != null) {
+			left.setSelfBonusWithItems(bonusService.mergeNinjaSetAndAccesorieBonuses(left));
+		}
+		if(right != null) {
+			right.setSelfBonusWithItems(bonusService.mergeNinjaSetAndAccesorieBonuses(right));
+		}
+		boolean canModifyLeft = left != null && left.getSelfBonusWithItems() != null 
+				&& left.getSelfBonusWithItems().size() > 0
+				&& left.getSelfBonusWithItems().get(0) != null 
+				&& left.getSelfBonusWithItems().get(0).getListaBonus().size() > 0;
+		boolean canModifyRight = right!= null && right.getSelfBonusWithItems() != null 
+				&& right.getSelfBonusWithItems().size() > 0
+				&& right.getSelfBonusWithItems().get(0) != null 
+				&& right.getSelfBonusWithItems().get(0).getListaBonus().size() > 0;
+				
+		List <BonusAtributoDTO>	leftBonuses = new ArrayList<>();
+		List <BonusAtributoDTO>	rightBonuses = new ArrayList<>();	
+		if(canModifyLeft) {
+			leftBonuses = compareResult(left,right,canModifyLeft,canModifyRight);
+		}
+		
+		if(canModifyRight) {
+			rightBonuses = compareResult(right,left,canModifyRight,canModifyLeft);
+		}
+		
+		if(canModifyLeft) {
+			BonusDTO bonus = new BonusDTO();
+			bonus.setNombre("total bonuses");
+			bonus.setListaBonus(leftBonuses);
+			List <BonusDTO> list = new ArrayList<BonusDTO>();
+			list.add(bonus);
+			left.setSelfBonusWithItems(list);
+		}
+		
+		if(canModifyRight) {
+			BonusDTO bonus = new BonusDTO();
+			bonus.setNombre("total bonuses");
+			bonus.setListaBonus(rightBonuses);
+			List <BonusDTO> list = new ArrayList<BonusDTO>();
+			list.add(bonus);
+			right.setSelfBonusWithItems(list);
+		}
+		
+		return dto;
+	}
+	
+	
+	private List <BonusAtributoDTO> compareResult(NinjaUserFormationDTO ninajleft, NinjaUserFormationDTO ninjaRight,
+			boolean left,boolean right) {	
+		
+		Map<String,BonusAtributoDTO> mapaToCalculate = new HashMap<>();
+		Map<String,BonusAtributoDTO> mapaToCompare = new HashMap<>();
+		
+		if(left) {
+			for(BonusAtributoDTO attribute : ninajleft.getSelfBonusWithItems().get(0).getListaBonus()) {
+				mapaToCalculate.put(attribute.toString(), attribute);
+			}
+		}
+		
+		if(right) {
+			for(BonusAtributoDTO attribute : ninjaRight.getSelfBonusWithItems().get(0).getListaBonus()) {
+				mapaToCompare.put(attribute.toString(), attribute);
+			}
+		}
+		List <BonusAtributoDTO> listToCalculate = new ArrayList<>();
+		for(Map.Entry<String, BonusAtributoDTO> entry : mapaToCalculate.entrySet()) {
+			BonusAtributoDTO element = mapaToCompare.get(entry.getKey());
+			
+			if(element != null) {
+				if(element.getValor() == entry.getValue().getValor()) {
+					BonusAtributoDTO aux = new BonusAtributoDTO(element);
+					aux.setColor("#FFFF00");
+					listToCalculate.add(aux);
+				}else {
+					Long result = entry.getValue().getValor() - element.getValor();
+					if(result < 0) {
+						BonusAtributoDTO aux = new BonusAtributoDTO(element);
+						aux.setColor("#FF0000");
+						aux.setValor(result);
+						listToCalculate.add(aux);
+					}else {
+						BonusAtributoDTO aux = new BonusAtributoDTO(element);
+						aux.setColor("#00FF33");
+						aux.setValor(result);
+						listToCalculate.add(aux);
+					}
+				}
+			}else {
+				BonusAtributoDTO aux = new BonusAtributoDTO(entry.getValue());
+				aux.setColor("#00FF33");
+				listToCalculate.add(aux);
+			}
+		}
+		
+		for(Map.Entry<String, BonusAtributoDTO> entry : mapaToCompare.entrySet()) {
+			BonusAtributoDTO element = mapaToCalculate.get(entry.getKey());
+			if(element == null) {
+				BonusAtributoDTO aux = new BonusAtributoDTO(entry.getValue());
+				aux.setColor("#FF0000");
+				aux.setValor(-aux.getValor());
+				listToCalculate.add(aux);
+			}
+		}
+		
+		return listToCalculate;
+	}
+	
 }

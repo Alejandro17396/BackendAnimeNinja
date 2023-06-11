@@ -63,5 +63,9 @@ public interface AccesorioServices {
 			boolean sorted,boolean filtred, boolean hardSearch,Pageable pageable);
 
 	List<UserAccesoriesDTO> getNinjasByUser(String user);
+	
+	SetAccesorio mergeAccesorieSetBonuses(SetAccesorio set);
+	
+	void compareAccesorieSetBonuses(UserAccesoriesDTO left,UserAccesoriesDTO right);
 
 }

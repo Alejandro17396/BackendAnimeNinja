@@ -12,6 +12,25 @@ public class BonusAtributoDTO {
 	private String impact;
 	private String condition;
 	private String time;
+	private String color;
+	
+	public BonusAtributoDTO(BonusAtributoDTO copy) {
+		this.nombreAtributo = copy.nombreAtributo;
+		this.action = copy.action;
+		this.color = copy.color;
+		this.condition = copy.condition;
+		this.impact = copy.impact;
+		this.time = copy.time;
+		this.valor = copy.valor;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
 
 	public BonusAtributoDTO( String nombreAtributo, long valor) {
 		super();

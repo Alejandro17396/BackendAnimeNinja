@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.ClaveBonus;
+import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
@@ -34,6 +35,8 @@ public interface BonusServices {
 	List <BonusDTO> mergeNinjaSetAndAccesorieBonuses(NinjaUserFormationDTO ninja);
 	
 	BonusDTO mergeBonusesNinja(List<BonusDTO> bonuses);
+	
+	BonusAccesorioDTO mergeBonusesAccesorieDTO(List<BonusAccesorioDTO> bonuses);
 	
 	List<BonusDTO> parseBonusFormation(List<SkillAttributeDTO> mergedTalentAttributes);
 	

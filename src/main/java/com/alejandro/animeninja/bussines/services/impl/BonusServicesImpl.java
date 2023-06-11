@@ -17,6 +17,8 @@ import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.ClaveBonus;
 import com.alejandro.animeninja.bussines.model.Constantes;
+import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
+import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
@@ -79,9 +81,9 @@ public class BonusServicesImpl implements BonusServices {
 		for(BonusDTO bonus: bonuses) {
 			for(BonusAtributoDTO b : bonus.getListaBonus()) {
 				if(mapa.containsKey(b)) {
-					mapa.put(b, mapa.get(b) + b.getValor());
+					mapa.put(new BonusAtributoDTO(b), mapa.get(b) + b.getValor());
 				}else {
-					mapa.put(b, b.getValor());
+					mapa.put(new BonusAtributoDTO(b), b.getValor());
 				}
 			
 			}
@@ -133,8 +135,40 @@ public class BonusServicesImpl implements BonusServices {
 	}
 	
 	@Override
+	public BonusAccesorioDTO mergeBonusesAccesorieDTO(List<BonusAccesorioDTO> bonuses) {
+		
+		
+		Map <BonusAccesorioAtributoDTO, Long> mapa = new HashMap<>();
+		
+		for(BonusAccesorioDTO bonus: bonuses) {
+			for(BonusAccesorioAtributoDTO b : bonus.getBonuses()) {
+				
+				if(mapa.containsKey(b)) {
+					mapa.put(b, mapa.get(b) + b.getValor());
+				}else {
+					mapa.put(b, b.getValor());
+				}
+			
+			}
+			
+		}
+
+		BonusAccesorioDTO bonus = new BonusAccesorioDTO();
+		for(Map.Entry <BonusAccesorioAtributoDTO, Long> entry : mapa.entrySet()) {
+			entry.getKey().setValor(entry.getValue());
+		}
+		bonus.setBonuses(new ArrayList <> (mapa.keySet()));
+		
+		return bonus;
+	}
+	
+	@Override
 	public List <BonusDTO> mergeNinjaSetAndAccesorieBonuses(NinjaUserFormationDTO ninja) {
 		List <BonusDTO> bonuses = new ArrayList<>();
+		
+		if(ninja.getNombre().equals("ninja4")) {
+			System.out.println("zdasfas");
+		}
 		
 		if(ninja.getEquipment()!=null) {
 		bonuses.add(mergeBonuses(ninja.getEquipment().getBonuses(),null));

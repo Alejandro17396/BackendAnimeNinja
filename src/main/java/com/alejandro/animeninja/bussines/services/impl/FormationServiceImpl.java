@@ -549,10 +549,7 @@ public class FormationServiceImpl implements FormationService {
 		return result;
 	}
 
-	private List <SkillAttributeDTO> compareResult(FormationNinjaDTO formationLeft, FormationNinjaDTO formationRight) {
-
-		
-		
+	private List <SkillAttributeDTO> compareResult(FormationNinjaDTO formationLeft, FormationNinjaDTO formationRight) {	
 		
 		Map<String,SkillAttributeDTO> mapaToCalculate = new HashMap<>();
 		Map<String,SkillAttributeDTO> mapaToCompare = new HashMap<>();

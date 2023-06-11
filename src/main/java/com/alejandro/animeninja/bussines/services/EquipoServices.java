@@ -60,6 +60,10 @@ public interface EquipoServices {
 	
 	UserSet saveUserSet(UserSet set);
 	
+	Equipo mergeSetBonuses(Equipo set);
+	
+	void compareSetsBonuses(UserSetDTO left,UserSetDTO right);
+	
 	List <SetDTO> generateCombos(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable);
 
 	List<UserSetDTO> getNinjasByUser(String user);

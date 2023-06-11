@@ -62,7 +62,7 @@ public class BonusAtributo implements Serializable {
 		return  Objects.equals(nombreAtributo, other.getNombreAtributo())
 				&& Objects.equals(action, other.getAction())
 				&& Objects.equals(condition, other.getCondition())
-				&& Objects.equals(impact, other.getImpact()		);
+				&& Objects.equals(impact, other.getImpact());
 	}
 
 	@Override
@@ -134,7 +134,19 @@ public class BonusAtributo implements Serializable {
 	public void setTime(String time) {
 		this.time = time;
 	}
+
+	public BonusAtributo() {
+		super();
+	}
 	
-	
+	public BonusAtributo(BonusAtributo bonus) {
+		this.action = bonus.action;
+		this.condition = bonus.condition;
+		this.idBonus = bonus.idBonus;
+		this.impact = bonus.impact;
+		this.nombreAtributo = bonus.nombreAtributo;
+		this.nombreEquipo = bonus.nombreEquipo;
+		this.time = bonus.time;
+	}
 
 }

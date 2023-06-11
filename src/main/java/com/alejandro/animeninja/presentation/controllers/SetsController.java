@@ -324,7 +324,26 @@ public class SetsController {
 		return responseDTO;
 	}
 	
-	
+	@PostMapping("/transform")
+	public ResponseEntity<SetDTO> transformUserSetToNormalSet(@RequestBody CreateSetDTO dto, 
+			@RequestHeader (name="Authorization") String token){
+		String user = jwtService.getUsername(token);
+		
+		if(user == null) {
+			throw new UserException("400","has no access",HttpStatus.BAD_REQUEST);
+		}
+		
+		Equipo set = equipoServices.createSet(dto.getEquipment(), dto.getSetName());
+		set.setNombre(dto.getSetName());
+		SetDTO result = setMapper.toDTO(equipoServices.mergeSetBonuses(set));
+		ResponseEntity <SetDTO> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}
 	
 	/*@Autowired
 	private NinjaEquipmentRepository repository1;
