@@ -40,7 +40,7 @@ public class BonusAccesorioServiceImpl implements BonusAccesorioService{
 
 	@Override
 	public List<BonusAccesorio> getBonusByParteBonus(Long valor) {
-		return bonusAccesorioRepository.findBySets(50000L);
+		return bonusAccesorioRepository.findBySets(valor);
 	}
 
 	@Override

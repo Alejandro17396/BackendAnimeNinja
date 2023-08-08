@@ -10,6 +10,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class Ninja_ {
 
 	public static volatile ListAttribute<Ninja, NinjaSkill> skills;
+	public static volatile SingularAttribute<Ninja, byte[]> ninjaImage;
 	public static volatile ListAttribute<Ninja, NinjaAwakening> awakenings;
 	public static volatile ListAttribute<Ninja, NinjaStats> stats;
 	public static volatile SingularAttribute<Ninja, ChakraNature> chakraNature;
@@ -17,8 +18,10 @@ public abstract class Ninja_ {
 	public static volatile SingularAttribute<Ninja, String> name;
 	public static volatile SingularAttribute<Ninja, Formation> formation;
 	public static volatile SingularAttribute<Ninja, NinjaType> type;
+	public static volatile SingularAttribute<Ninja, byte[]> ninjaStatImage;
 
 	public static final String SKILLS = "skills";
+	public static final String NINJA_IMAGE = "ninjaImage";
 	public static final String AWAKENINGS = "awakenings";
 	public static final String STATS = "stats";
 	public static final String CHAKRA_NATURE = "chakraNature";
@@ -26,6 +29,7 @@ public abstract class Ninja_ {
 	public static final String NAME = "name";
 	public static final String FORMATION = "formation";
 	public static final String TYPE = "type";
+	public static final String NINJA_STAT_IMAGE = "ninjaStatImage";
 
 }
 

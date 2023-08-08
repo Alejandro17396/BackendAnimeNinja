@@ -68,9 +68,9 @@ public class SortSetAccesoriosByAttributes implements Comparator <SetAccesorio>{
 		        return 1;
 		    }
 		    BonusAccesorioAtributo bonusAtributo1 = bonuses1.get(0).getBonuses().stream()
-		            .filter(bonus -> bonus.getNombreAtributo().equals(attribute)).findFirst().orElse(null);
+		            .filter(bonus -> bonus.getAtributo().getNombre().equals(attribute)).findFirst().orElse(null);
 		    BonusAccesorioAtributo bonusAtributo2 = bonuses2.get(0).getBonuses().stream()
-		            .filter(bonus -> bonus.getNombreAtributo().equals(attribute)).findFirst().orElse(null);
+		            .filter(bonus -> bonus.getAtributo().getNombre().equals(attribute)).findFirst().orElse(null);
 		    if (bonusAtributo1 != null && bonusAtributo2 != null) {
 		        return Integer.compare((int) bonusAtributo1.getValor(), (int) bonusAtributo2.getValor());
 		    }

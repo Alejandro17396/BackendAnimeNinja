@@ -1,14 +1,16 @@
 package com.alejandro.animeninja.bussines.mappers;
 
+import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
+import com.alejandro.animeninja.bussines.model.dto.AtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
 import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-06-10T19:50:21+0200",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2023-08-07T21:33:41+0200",
+    comments = "version: 1.5.2.Final, compiler: Eclipse JDT (IDE) 3.35.0.v20230721-1147, environment: Java 17.0.7 (Eclipse Adoptium)"
 )
 @Component
 public class SkillAttributeMapperImpl implements SkillAttributeMapper {
@@ -21,7 +23,7 @@ public class SkillAttributeMapperImpl implements SkillAttributeMapper {
 
         SkillAttributeDTO skillAttributeDTO = new SkillAttributeDTO();
 
-        skillAttributeDTO.setAttributeName( formation.getAttributeName() );
+        skillAttributeDTO.setAtributo( atributoToAtributoDTO( formation.getAtributo() ) );
         skillAttributeDTO.setAction( formation.getAction() );
         skillAttributeDTO.setImpact( formation.getImpact() );
         skillAttributeDTO.setValue( formation.getValue() );
@@ -43,9 +45,33 @@ public class SkillAttributeMapperImpl implements SkillAttributeMapper {
         skillAttribute.setTime( formation.getTime() );
         skillAttribute.setAction( formation.getAction() );
         skillAttribute.setImpact( formation.getImpact() );
-        skillAttribute.setAttributeName( formation.getAttributeName() );
         skillAttribute.setValue( formation.getValue() );
+        skillAttribute.setAtributo( atributoDTOToAtributo( formation.getAtributo() ) );
 
         return skillAttribute;
+    }
+
+    protected AtributoDTO atributoToAtributoDTO(Atributo atributo) {
+        if ( atributo == null ) {
+            return null;
+        }
+
+        AtributoDTO atributoDTO = new AtributoDTO();
+
+        atributoDTO.setNombre( atributo.getNombre() );
+
+        return atributoDTO;
+    }
+
+    protected Atributo atributoDTOToAtributo(AtributoDTO atributoDTO) {
+        if ( atributoDTO == null ) {
+            return null;
+        }
+
+        Atributo atributo = new Atributo();
+
+        atributo.setNombre( atributoDTO.getNombre() );
+
+        return atributo;
     }
 }

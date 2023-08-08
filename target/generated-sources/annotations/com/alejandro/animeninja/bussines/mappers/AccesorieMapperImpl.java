@@ -1,24 +1,27 @@
 package com.alejandro.animeninja.bussines.mappers;
 
+import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
 import com.alejandro.animeninja.bussines.model.ParteAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.dto.AtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.ParteAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-06-10T19:50:21+0200",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2023-08-07T21:33:41+0200",
+    comments = "version: 1.5.2.Final, compiler: Eclipse JDT (IDE) 3.35.0.v20230721-1147, environment: Java 17.0.7 (Eclipse Adoptium)"
 )
 @Component
 public class AccesorieMapperImpl implements AccesorieMapper {
@@ -98,7 +101,12 @@ public class AccesorieMapperImpl implements AccesorieMapper {
 
         ParteAccesorioDTO parteAccesorioDTO = new ParteAccesorioDTO();
 
+        byte[] image = parteAccesorio.getImage();
+        if ( image != null ) {
+            parteAccesorioDTO.setImage( Arrays.copyOf( image, image.length ) );
+        }
         parteAccesorioDTO.setNombre( parteAccesorio.getNombre() );
+        parteAccesorioDTO.setAtributo( parteAccesorio.getAtributo() );
         parteAccesorioDTO.setValor( parteAccesorio.getValor() );
         parteAccesorioDTO.setTipo( parteAccesorio.getTipo() );
 
@@ -118,6 +126,18 @@ public class AccesorieMapperImpl implements AccesorieMapper {
         return list1;
     }
 
+    protected AtributoDTO atributoToAtributoDTO(Atributo atributo) {
+        if ( atributo == null ) {
+            return null;
+        }
+
+        AtributoDTO atributoDTO = new AtributoDTO();
+
+        atributoDTO.setNombre( atributo.getNombre() );
+
+        return atributoDTO;
+    }
+
     protected BonusAccesorioAtributoDTO bonusAccesorioAtributoToBonusAccesorioAtributoDTO(BonusAccesorioAtributo bonusAccesorioAtributo) {
         if ( bonusAccesorioAtributo == null ) {
             return null;
@@ -132,6 +152,7 @@ public class AccesorieMapperImpl implements AccesorieMapper {
         bonusAccesorioAtributoDTO.setCondition( bonusAccesorioAtributo.getCondition() );
         bonusAccesorioAtributoDTO.setTime( bonusAccesorioAtributo.getTime() );
         bonusAccesorioAtributoDTO.setNombreAtributo( bonusAccesorioAtributo.getNombreAtributo() );
+        bonusAccesorioAtributoDTO.setAtributo( atributoToAtributoDTO( bonusAccesorioAtributo.getAtributo() ) );
         bonusAccesorioAtributoDTO.setValor( bonusAccesorioAtributo.getValor() );
 
         return bonusAccesorioAtributoDTO;
@@ -183,8 +204,13 @@ public class AccesorieMapperImpl implements AccesorieMapper {
 
         ParteAccesorio parteAccesorio = new ParteAccesorio();
 
+        byte[] image = parteAccesorioDTO.getImage();
+        if ( image != null ) {
+            parteAccesorio.setImage( Arrays.copyOf( image, image.length ) );
+        }
         parteAccesorio.setTipo( parteAccesorioDTO.getTipo() );
         parteAccesorio.setNombre( parteAccesorioDTO.getNombre() );
+        parteAccesorio.setAtributo( parteAccesorioDTO.getAtributo() );
         parteAccesorio.setValor( parteAccesorioDTO.getValor() );
 
         return parteAccesorio;
@@ -203,6 +229,18 @@ public class AccesorieMapperImpl implements AccesorieMapper {
         return list1;
     }
 
+    protected Atributo atributoDTOToAtributo(AtributoDTO atributoDTO) {
+        if ( atributoDTO == null ) {
+            return null;
+        }
+
+        Atributo atributo = new Atributo();
+
+        atributo.setNombre( atributoDTO.getNombre() );
+
+        return atributo;
+    }
+
     protected BonusAccesorioAtributo bonusAccesorioAtributoDTOToBonusAccesorioAtributo(BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO) {
         if ( bonusAccesorioAtributoDTO == null ) {
             return null;
@@ -210,9 +248,10 @@ public class AccesorieMapperImpl implements AccesorieMapper {
 
         BonusAccesorioAtributo bonusAccesorioAtributo = new BonusAccesorioAtributo();
 
+        bonusAccesorioAtributo.setNombreAtributo( bonusAccesorioAtributoDTO.getNombreAtributo() );
+        bonusAccesorioAtributo.setAtributo( atributoDTOToAtributo( bonusAccesorioAtributoDTO.getAtributo() ) );
         bonusAccesorioAtributo.setTipoBonus( bonusAccesorioAtributoDTO.getTipoBonus() );
         bonusAccesorioAtributo.setNombreSet( bonusAccesorioAtributoDTO.getNombreSet() );
-        bonusAccesorioAtributo.setNombreAtributo( bonusAccesorioAtributoDTO.getNombreAtributo() );
         bonusAccesorioAtributo.setValor( bonusAccesorioAtributoDTO.getValor() );
         bonusAccesorioAtributo.setAction( bonusAccesorioAtributoDTO.getAction() );
         bonusAccesorioAtributo.setImpact( bonusAccesorioAtributoDTO.getImpact() );

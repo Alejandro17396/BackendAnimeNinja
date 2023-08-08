@@ -11,7 +11,7 @@ public class AttributeStatKey implements Serializable{
 	
 	private String ninja;
 	private String level;
-	private String attribute_name;
+	private Atributo atributo;
 	
 	public AttributeStatKey() {
 		
@@ -33,7 +33,35 @@ public class AttributeStatKey implements Serializable{
 		this.level = level;
 	}
 
-	public String getAttribute_name() {
+	public Atributo getAtributo() {
+		return atributo;
+	}
+
+	public void setAtributo(Atributo atributo) {
+		this.atributo = atributo;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(atributo, level, ninja);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AttributeStatKey other = (AttributeStatKey) obj;
+		return Objects.equals(atributo, other.atributo) && Objects.equals(level, other.level)
+				&& Objects.equals(ninja, other.ninja);
+	}
+	
+	
+
+	/*public String getAttribute_name() {
 		return attribute_name;
 	}
 
@@ -57,7 +85,7 @@ public class AttributeStatKey implements Serializable{
 		AttributeStatKey other = (AttributeStatKey) obj;
 		return Objects.equals(attribute_name, other.attribute_name) && Objects.equals(level, other.level)
 				&& Objects.equals(ninja, other.ninja);
-	}
+	}*/
 	
 	
 	

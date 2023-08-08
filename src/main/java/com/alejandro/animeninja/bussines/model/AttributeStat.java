@@ -2,11 +2,16 @@ package com.alejandro.animeninja.bussines.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -24,13 +29,28 @@ public class AttributeStat implements Serializable{
 	@Column(name="nivel")
 	private String level;
 	
-	@Id
+	/*@Id
 	@Column(name="nombre_atributo")
-	private String attribute_name; 
-	
+	private String attribute_name; */
+	@Id
+	@ManyToOne(cascade= {CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.EAGER)
+	@JoinColumn(name="nombre_atributo", referencedColumnName = "nombre",nullable=false,insertable=false,updatable=false)
+	protected Atributo atributo;
 	
 	@Column(name="valor")
 	private Long value;
+	
+	@Transient
+	private String attributeName;
+
+	public String getNombreAtributo() {
+		return attributeName;
+	}
+
+	public void setNombreAtributo(String attributeName) {
+		this.atributo = new Atributo(attributeName);
+		this.attributeName = attributeName;
+	}
 	
 	public AttributeStat() {
 		
@@ -52,20 +72,20 @@ public class AttributeStat implements Serializable{
 		this.level = level;
 	}
 
-	public String getAttribute_name() {
-		return attribute_name;
-	}
-
-	public void setAttribute_name(String attribute_name) {
-		this.attribute_name = attribute_name;
-	}
-
 	public Long getValue() {
 		return value;
 	}
 
 	public void setValue(Long value) {
 		this.value = value;
+	}
+
+	public Atributo getAtributo() {
+		return atributo;
+	}
+
+	public void setAtributo(Atributo atributo) {
+		this.atributo = atributo;
 	}
 	
 	

@@ -1,7 +1,9 @@
 package com.alejandro.animeninja.bussines.mappers;
 
+import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
+import com.alejandro.animeninja.bussines.model.dto.AtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaSkillDTO;
 import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
 import java.util.ArrayList;
@@ -11,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-06-10T19:50:21+0200",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2023-08-07T21:33:41+0200",
+    comments = "version: 1.5.2.Final, compiler: Eclipse JDT (IDE) 3.35.0.v20230721-1147, environment: Java 17.0.7 (Eclipse Adoptium)"
 )
 @Component
 public class NinjaSkillMapperImpl implements NinjaSkillMapper {
@@ -49,6 +51,18 @@ public class NinjaSkillMapperImpl implements NinjaSkillMapper {
         return ninjaSkill;
     }
 
+    protected AtributoDTO atributoToAtributoDTO(Atributo atributo) {
+        if ( atributo == null ) {
+            return null;
+        }
+
+        AtributoDTO atributoDTO = new AtributoDTO();
+
+        atributoDTO.setNombre( atributo.getNombre() );
+
+        return atributoDTO;
+    }
+
     protected SkillAttributeDTO skillAttributeToSkillAttributeDTO(SkillAttribute skillAttribute) {
         if ( skillAttribute == null ) {
             return null;
@@ -56,7 +70,7 @@ public class NinjaSkillMapperImpl implements NinjaSkillMapper {
 
         SkillAttributeDTO skillAttributeDTO = new SkillAttributeDTO();
 
-        skillAttributeDTO.setAttributeName( skillAttribute.getAttributeName() );
+        skillAttributeDTO.setAtributo( atributoToAtributoDTO( skillAttribute.getAtributo() ) );
         skillAttributeDTO.setAction( skillAttribute.getAction() );
         skillAttributeDTO.setImpact( skillAttribute.getImpact() );
         skillAttributeDTO.setValue( skillAttribute.getValue() );
@@ -79,6 +93,18 @@ public class NinjaSkillMapperImpl implements NinjaSkillMapper {
         return list1;
     }
 
+    protected Atributo atributoDTOToAtributo(AtributoDTO atributoDTO) {
+        if ( atributoDTO == null ) {
+            return null;
+        }
+
+        Atributo atributo = new Atributo();
+
+        atributo.setNombre( atributoDTO.getNombre() );
+
+        return atributo;
+    }
+
     protected SkillAttribute skillAttributeDTOToSkillAttribute(SkillAttributeDTO skillAttributeDTO) {
         if ( skillAttributeDTO == null ) {
             return null;
@@ -90,8 +116,8 @@ public class NinjaSkillMapperImpl implements NinjaSkillMapper {
         skillAttribute.setTime( skillAttributeDTO.getTime() );
         skillAttribute.setAction( skillAttributeDTO.getAction() );
         skillAttribute.setImpact( skillAttributeDTO.getImpact() );
-        skillAttribute.setAttributeName( skillAttributeDTO.getAttributeName() );
         skillAttribute.setValue( skillAttributeDTO.getValue() );
+        skillAttribute.setAtributo( atributoDTOToAtributo( skillAttributeDTO.getAtributo() ) );
 
         return skillAttribute;
     }

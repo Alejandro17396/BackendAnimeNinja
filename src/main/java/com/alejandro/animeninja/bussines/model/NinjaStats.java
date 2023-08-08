@@ -3,6 +3,7 @@ package com.alejandro.animeninja.bussines.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -27,10 +28,10 @@ public class NinjaStats implements Serializable{
 	@Column(name="nivel")
 	private String level;
 	
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
 	@JoinColumns( {
-	    @JoinColumn(name="ninja",referencedColumnName="ninja"),
-	    @JoinColumn(name="nivel",referencedColumnName="nivel")} )
+	    @JoinColumn(name="ninja",referencedColumnName="ninja",nullable=false,insertable=false,updatable=false),
+	    @JoinColumn(name="nivel",referencedColumnName="nivel",nullable=false,insertable=false,updatable=false)} )
 	//@Transient
 	private List <AttributeStat> statsAttributes;
 	

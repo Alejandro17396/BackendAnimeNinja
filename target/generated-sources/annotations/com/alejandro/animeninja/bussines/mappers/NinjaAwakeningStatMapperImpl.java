@@ -1,13 +1,15 @@
 package com.alejandro.animeninja.bussines.mappers;
 
+import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.NinjaAwakeningStat;
+import com.alejandro.animeninja.bussines.model.dto.AtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaAwakeningStatDTO;
 import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-06-10T19:50:20+0200",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2023-08-07T21:33:41+0200",
+    comments = "version: 1.5.2.Final, compiler: Eclipse JDT (IDE) 3.35.0.v20230721-1147, environment: Java 17.0.7 (Eclipse Adoptium)"
 )
 public class NinjaAwakeningStatMapperImpl implements NinjaAwakeningStatMapper {
 
@@ -22,7 +24,7 @@ public class NinjaAwakeningStatMapperImpl implements NinjaAwakeningStatMapper {
         ninjaAwakeningStatDTO.setName( ninjaAwaken.getName() );
         ninjaAwakeningStatDTO.setNinja( ninjaAwaken.getNinja() );
         ninjaAwakeningStatDTO.setLevel( ninjaAwaken.getLevel() );
-        ninjaAwakeningStatDTO.setAttributeName( ninjaAwaken.getAttributeName() );
+        ninjaAwakeningStatDTO.setAtributo( atributoToAtributoDTO( ninjaAwaken.getAtributo() ) );
         ninjaAwakeningStatDTO.setType( ninjaAwaken.getType() );
         ninjaAwakeningStatDTO.setAction( ninjaAwaken.getAction() );
         ninjaAwakeningStatDTO.setImpact( ninjaAwaken.getImpact() );
@@ -48,10 +50,34 @@ public class NinjaAwakeningStatMapperImpl implements NinjaAwakeningStatMapper {
         ninjaAwakeningStat.setName( ninjaAwaken.getName() );
         ninjaAwakeningStat.setNinja( ninjaAwaken.getNinja() );
         ninjaAwakeningStat.setLevel( ninjaAwaken.getLevel() );
-        ninjaAwakeningStat.setAttributeName( ninjaAwaken.getAttributeName() );
+        ninjaAwakeningStat.setAtributo( atributoDTOToAtributo( ninjaAwaken.getAtributo() ) );
         ninjaAwakeningStat.setType( ninjaAwaken.getType() );
         ninjaAwakeningStat.setValue( ninjaAwaken.getValue() );
 
         return ninjaAwakeningStat;
+    }
+
+    protected AtributoDTO atributoToAtributoDTO(Atributo atributo) {
+        if ( atributo == null ) {
+            return null;
+        }
+
+        AtributoDTO atributoDTO = new AtributoDTO();
+
+        atributoDTO.setNombre( atributo.getNombre() );
+
+        return atributoDTO;
+    }
+
+    protected Atributo atributoDTOToAtributo(AtributoDTO atributoDTO) {
+        if ( atributoDTO == null ) {
+            return null;
+        }
+
+        Atributo atributo = new Atributo();
+
+        atributo.setNombre( atributoDTO.getNombre() );
+
+        return atributo;
     }
 }

@@ -3946,3 +3946,4 @@ values("Awaken Multiple Rakasasa","Sakon & Ukon","1ri","apply","enemy wind chakr
 insert into ninja_awakening_atributo(nombre,ninja,nivel,accion,afecta,nombre_atributo,valor,tipo,condicion,tiempo)
 values("Awaken Multiple Rakasasa","Sakon & Ukon","1ri","attack","enemy fire chakra nature","growth rate",300,"SKILL","ninja attack","attack ends");
 
+insert into authorities(authority) values('ROLE_USER');

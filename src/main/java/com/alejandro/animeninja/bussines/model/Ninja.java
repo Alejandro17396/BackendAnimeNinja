@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -43,26 +45,50 @@ public class Ninja implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private Sex sex;
 	
-	@OneToMany
+	@Lob
+    @Column(name="ninjaImage", columnDefinition="MEDIUMBLOB")
+    private byte[] ninjaImage;
+	
+	@Lob
+    @Column(name="ninjaStatImage", columnDefinition="MEDIUMBLOB")
+    private byte[] ninjaStatImage;
+	
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
 	@JoinColumns( {
-	    @JoinColumn(name="ninja", nullable = false)} )
+	    @JoinColumn(name="ninja", referencedColumnName="nombre",nullable=false,insertable=false,updatable=false)} )
 	
 	private List <NinjaStats> stats;
 	
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
 	@JoinColumns( {
-	    @JoinColumn(name="ninja", referencedColumnName="nombre",nullable = false)} )
+	    @JoinColumn(name="ninja", referencedColumnName="nombre",nullable=false,insertable=false,updatable=false)} )
 
 	private List <NinjaSkill> skills;
 	
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
 	@JoinColumns( {
-	    @JoinColumn(name="ninja", referencedColumnName="nombre",nullable = false)} )
+	    @JoinColumn(name="ninja", referencedColumnName="nombre",nullable=false,insertable=false,updatable=false)} )
 	
 	private List <NinjaAwakening> awakenings;
 	
 	public Ninja() {
 		
+	}
+	
+	public byte[] getNinjaImage() {
+		return ninjaImage;
+	}
+
+	public void setNinjaImage(byte[] ninjaImage) {
+		this.ninjaImage = ninjaImage;
+	}
+
+	public byte[] getNinjaStatImage() {
+		return ninjaStatImage;
+	}
+
+	public void setNinjaStatImage(byte[] ninjaStatImage) {
+		this.ninjaStatImage = ninjaStatImage;
 	}
 
 	public String getName() {

@@ -2,12 +2,15 @@ package com.alejandro.animeninja.presentation.controllers;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,10 +22,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandro.animeninja.bussines.auth.services.JWTService;
 import com.alejandro.animeninja.bussines.exceptions.AccesoriesException;
+import com.alejandro.animeninja.bussines.exceptions.SetException;
 import com.alejandro.animeninja.bussines.exceptions.UserException;
 import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
@@ -32,7 +38,9 @@ import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
 import com.alejandro.animeninja.bussines.model.UserSet;
+import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
@@ -41,6 +49,7 @@ import com.alejandro.animeninja.bussines.model.dto.SuccesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
+import com.alejandro.animeninja.bussines.services.JsonMapperObjectsService;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 
 @RestController
@@ -59,13 +68,46 @@ public class AccesoriesController {
 
 	@Autowired
 	private JWTService jwtService;
+	
+	@Autowired(required=true)
+	private JsonMapperObjectsService jsonMapperService;
 
 	@GetMapping
 	public ResponseEntity<Page<SetAccesorioDTO>> getAll(Pageable pageable) {
 		Page<SetAccesorioDTO> responseDTO = accesorioServices.getAll(pageable);
 		ResponseEntity<Page<SetAccesorioDTO>> response = null;
+		//responseDTO.getContent().clear();
+		//responseDTO.getContent().addAll(accesorioServices.getAllNoPage());
+		List<SetAccesorioDTO> resp = accesorioServices.getAllNoPage();
+		Page<SetAccesorioDTO> p =new PageImpl<SetAccesorioDTO>(resp,pageable,resp.size());
+		
+		if (p.getContent().size() > 0) {
+			response = new ResponseEntity<>(responseDTO, HttpStatus.OK);
+		} else {
+			response = new ResponseEntity<>(responseDTO, HttpStatus.NO_CONTENT);
+		}
+		return response;
+	}
+	
+	@GetMapping("/list")
+	public ResponseEntity<List<SetAccesorioDTO>> getAllN(Pageable pageable) {
+		List<SetAccesorioDTO> responseDTO = accesorioServices.getAllNoPage();
+		ResponseEntity<List<SetAccesorioDTO>> response = null;
+		
+		if (responseDTO.size() > 0) {
+			response = new ResponseEntity<>(responseDTO, HttpStatus.OK);
+		} else {
+			response = new ResponseEntity<>(responseDTO, HttpStatus.NO_CONTENT);
+		}
+		return response;
+	}
+	
+	@GetMapping("/transporter")
+	public ResponseEntity<List<SetAccesorioDTO>> getAll() {
+		List<SetAccesorioDTO> responseDTO = accesorioServices.getAllElements();
+		ResponseEntity<List<SetAccesorioDTO>> response = null;
 
-		if (responseDTO.getContent().size() > 0) {
+		if (responseDTO.size() > 0) {
 			response = new ResponseEntity<>(responseDTO, HttpStatus.OK);
 		} else {
 			response = new ResponseEntity<>(responseDTO, HttpStatus.NO_CONTENT);
@@ -94,6 +136,45 @@ public class AccesoriesController {
 	@GetMapping("/getSet/{nombre}")
 	public SetAccesorioDTO getSetById(@PathVariable String nombre) {
 		return accesorioServices.getByNombre(nombre);
+	}
+	
+	@PostMapping("/chatgpt")
+	public ResponseEntity<SetsAccesorioDTO> getAll5(@RequestBody(required = false) CreateComboSetAccesorio attributes,
+			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
+			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
+			@RequestParam(value = "hardSearch", required = false, defaultValue = "false") boolean hardSearch,
+			Pageable pageable) {
+
+		validator.validateCreateComboSetAccesorio(attributes);
+		// accesorioServices.createComboAccesories(attributes, sorted, filtred,
+		// hardSearch, pageable);
+		Long ini, fin;
+		ini = System.currentTimeMillis();
+
+		List <SetAccesorioDTO> result = accesorioServices.createComboAccesories(attributes, sorted, filtred, hardSearch, pageable);
+		Pagination<SetAccesorioDTO> pagination = new Pagination<SetAccesorioDTO>(
+				result,pageable.getPageNumber(), pageable.getPageSize());
+		
+		/*Pagination<SetAccesorioDTO> pagination = new Pagination<SetAccesorioDTO>(
+				result,
+				result.size(), 0);*/
+		
+		ResponseEntity<SetsAccesorioDTO> response = null;
+		SetsAccesorioDTO responseDTO = new SetsAccesorioDTO();
+
+		responseDTO.setSets(pagination.getPagedList());
+		responseDTO.setNumber(pageable.getPageSize());
+		responseDTO.setTotal(result.size());
+
+		if (responseDTO.getNumber() > 0) {
+			response = new ResponseEntity<>(responseDTO, HttpStatus.OK);
+		} else {
+			response = new ResponseEntity<>(responseDTO, HttpStatus.NO_CONTENT);
+		}
+		fin = System.currentTimeMillis();
+		System.out.println("Algoritmo nuevo tarda " + (fin - ini));
+		return response;
+
 	}
 
 	@PostMapping("/CombinacionesBonusTotal")
@@ -184,39 +265,7 @@ public class AccesoriesController {
 		return responseDTO;
 	}
 
-	@GetMapping("/chatgpt")
-	public ResponseEntity<SetsAccesorioDTO> getAll5(@RequestBody(required = false) CreateComboSetAccesorio attributes,
-			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
-			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
-			@RequestParam(value = "hardSearch", required = false, defaultValue = "false") boolean hardSearch,
-			Pageable pageable) {
-
-		validator.validateCreateComboSetAccesorio(attributes);
-		// accesorioServices.createComboAccesories(attributes, sorted, filtred,
-		// hardSearch, pageable);
-		Long ini, fin;
-		ini = System.currentTimeMillis();
-
-		Pagination<SetAccesorioDTO> pagination = new Pagination<SetAccesorioDTO>(
-				accesorioServices.createComboAccesories(attributes, sorted, filtred, hardSearch, pageable),
-				pageable.getPageNumber(), pageable.getPageSize());
-		ResponseEntity<SetsAccesorioDTO> response = null;
-		SetsAccesorioDTO responseDTO = new SetsAccesorioDTO();
-
-		responseDTO.setSets(pagination.getPagedList());
-		responseDTO.setNumber(pagination.getPagedList().size());
-		responseDTO.setTotal(pagination.getList().size());
-
-		if (responseDTO.getNumber() > 0) {
-			response = new ResponseEntity<>(responseDTO, HttpStatus.OK);
-		} else {
-			response = new ResponseEntity<>(responseDTO, HttpStatus.NO_CONTENT);
-		}
-		fin = System.currentTimeMillis();
-		System.out.println("Algoritmo nuevo tarda " + (fin - ini));
-		return response;
-
-	}
+	
 
 	@GetMapping("/findByUser")
 	public ResponseEntity<List<UserAccesoriesDTO>> getNinjasByUser(
@@ -312,5 +361,99 @@ public class AccesoriesController {
 		
 		return responseDTO;
 	}
+	
+	@PostMapping(value="/accesorieSet/create",
+			consumes = {MediaType.APPLICATION_JSON_VALUE, 
+						MediaType.MULTIPART_FORM_DATA_VALUE})
+	@Transactional
+	public ResponseEntity<SetAccesorio> createSet(
+			@RequestPart("body") String json,
+			@RequestPart(value ="files",required=false) List<MultipartFile> files){
+			//@RequestBody CreateAccesorieSetAttributesDTO dto){
+	
+		CreateAccesorieSetAttributesDTO dto = jsonMapperService.
+				jsonToCreateAccesorieSetAttributesDTO(json);
+		
+		String name = dto.getSet().getNombre();
+		SetAccesorio result = accesorioServices.getSetByNombre(name);
+		if(result != null) {
+			throw new SetException("400","There is already an equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result = accesorioServices.createNewAccesorieSet(dto,files);
+		ResponseEntity <SetAccesorio> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}
+	
+	/*@PostMapping(value="/accesorieSet/create",
+				consumes = {MediaType.APPLICATION_JSON_VALUE, 
+							MediaType.MULTIPART_FORM_DATA_VALUE})
+	@Transactional
+	public ResponseEntity<SetAccesorio> createSet(@RequestBody CreateAccesorieSetAttributesDTO dto){
+
+		
+		String name = dto.getSet().getNombre();
+		SetAccesorio result = accesorioServices.getSetByNombre(name);
+		if(result != null) {
+			throw new SetException("400","There is already an equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result = accesorioServices.createNewAccesorieSet(dto);
+		ResponseEntity <SetAccesorio> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}*/
+	
+	@PutMapping(value="/accesorieSet/update",consumes = {MediaType.APPLICATION_JSON_VALUE, 
+			 MediaType.MULTIPART_FORM_DATA_VALUE})
+	@Transactional
+	public ResponseEntity<SetAccesorio> updateSet(//@RequestBody CreateAccesorieSetAttributesDTO dto
+			@RequestPart("body") String json,
+			@RequestPart(value ="files",required=false) List<MultipartFile> files){
+
+		CreateAccesorieSetAttributesDTO dto = jsonMapperService.
+				jsonToCreateAccesorieSetAttributesDTO(json);
+		String name = dto.getSet().getNombre();
+		SetAccesorio result = accesorioServices.getSetByNombre(name);
+		if(result == null) {
+			throw new SetException("400","There is no equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result = accesorioServices.updateAccesorieSet(dto,files);
+		ResponseEntity <SetAccesorio> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}
+	
+	@DeleteMapping("/accesorieSet/delete/{name}")
+
+	public ResponseEntity<SuccesDTO> deleteSet(@PathVariable String name){
+
+		Boolean result = accesorioServices.deleteAccesorieSet(name);
+		ResponseEntity <SuccesDTO> responseDTO = null;
+		
+		if(result) {
+			SuccesDTO response = new SuccesDTO();
+			response.setMessage(String.format("equipoment %s deleted succesfully", name));
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			SuccesDTO response = new SuccesDTO();
+			response.setMessage(String.format("equipoment %s doesnt exist", name));
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}
+	
 
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -32,11 +33,13 @@ public class BonusAccesorio implements Serializable {
 	private	String nombreAccesorioSet;
 	
 	//@Transient 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
 	@JoinColumns({
 			//name es el nombre de la columna en la tabla con la que se relaciona  es decir "bonus_atributos" y referencedColumn el nombre de la columna en  la misma tabla es decir "bonuses"
-	        @JoinColumn(name="TIPO_BONUS", referencedColumnName="TIPO"),
-	        @JoinColumn(name="NOMBRE_SET_ACCESORIOS", referencedColumnName="NOMBRE_SET_ACCESORIOS")
+	        @JoinColumn(name="TIPO_BONUS", referencedColumnName="TIPO"
+	        		,nullable=false,insertable=false,updatable=false),
+	        @JoinColumn(name="NOMBRE_SET_ACCESORIOS", referencedColumnName="NOMBRE_SET_ACCESORIOS"
+	        		,nullable=false,insertable=false,updatable=false)
 	})
 	private List<BonusAccesorioAtributo> bonuses;
 

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -21,7 +22,7 @@ public class Bonus implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "ID")
+	@Column(name = "id")
 	private Long id;
 
 	@Id
@@ -31,19 +32,29 @@ public class Bonus implements Serializable {
 	@Column(name = "nombre")
 	private String nombre;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
 	@JoinColumns({
 			// name es el nombre de la columna en la tabla con la que se relaciona es decir
 			// "bonus_atributos" y referencedColumn el nombre de la tabla en la misma tabla
 			// es decir "bonuses"
-			@JoinColumn(name = "nombre_equipo", referencedColumnName = "nombre_equipo"),
-			@JoinColumn(name = "id_bonus", referencedColumnName = "id") })
+			@JoinColumn(name = "nombre_equipo", referencedColumnName = "nombre_equipo",nullable=false,insertable=false,updatable=false),
+			@JoinColumn(name = "id_bonus", referencedColumnName = "id",nullable=false,insertable=false,updatable=false) })
 	List<BonusAtributo> listaBonus;
+	
+	/*@OneToMany(mappedBy = "bonus", cascade = CascadeType.ALL)
+	List<UserSetBonus> userSetBonuses;
+
+	public List<UserSetBonus> getUserSetBonuses() {
+		return userSetBonuses;
+	}
+
+	public void setUserSetBonuses(List<UserSetBonus> userSetBonuses) {
+		this.userSetBonuses = userSetBonuses;
+	}*/
 
 	public Long getId() {
 		return id;
 	}
-
 	
 	public void setId(Long id) {
 		this.id = id;
@@ -95,8 +106,4 @@ public class Bonus implements Serializable {
 		return Objects.equals(equipo, other.equipo) && Objects.equals(id, other.id);
 	}
 
-	public Bonus getThis()
-	{
-		return this;
-	}
 }

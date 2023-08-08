@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -23,12 +24,12 @@ public class Equipo implements Serializable {
 	@Column(name="NOMBRE")
 	private String nombre;
 
-	@OneToMany
-	@JoinColumn(name="nombre_equipo")
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+	@JoinColumn(name="nombre_equipo",nullable=false,insertable=false,updatable=false)
 	private List <Parte> partes;
 	
-	@OneToMany
-	@JoinColumn(name="nombre_equipo")
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+	@JoinColumn(name="nombre_equipo",nullable=false,insertable=false,updatable=false)
 	private List <Bonus> bonuses;
 	
 	

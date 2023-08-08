@@ -8,10 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+
+import org.apache.commons.io.FilenameUtils;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,9 +25,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandro.animeninja.bussines.exceptions.AccesoriesException;
 import com.alejandro.animeninja.bussines.exceptions.CreateAccesoriesException;
+import com.alejandro.animeninja.bussines.exceptions.FileException;
 import com.alejandro.animeninja.bussines.exceptions.SetException;
 import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
 import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
@@ -47,7 +53,9 @@ import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
@@ -87,12 +95,28 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 	@Autowired
 	private UserAccesoriesRepository userAccesoriesRepository;
+	
+	@Autowired
+	private EntityManager entityManager;
 
 	@Override
 	public Page<SetAccesorioDTO> getAll(Pageable pageable) {
 		Page<SetAccesorio> page = accesorioRepository.findAll(pageable);
 		return new PageImpl<SetAccesorioDTO>(accesorieMapper.toDtoList(page.getContent()), pageable,
 				page.getTotalElements());
+	}
+	
+	@Override
+	public List<SetAccesorioDTO> getAllNoPage() {
+		List<SetAccesorio> page = accesorioRepository.findAll();
+		return accesorieMapper.toDtoList(page);
+	}
+	
+	@Override
+	public List<SetAccesorioDTO> getAllElements() {
+		List<SetAccesorio> aux = accesorioRepository.findAll();
+		return accesorieMapper.toDtoList(aux);
+
 	}
 
 	@Override
@@ -234,20 +258,20 @@ public class AccesorioServicesImpl implements AccesorioServices {
 			bonus.setBonuses(new ArrayList<>());
 			for (BonusAccesorio b1 : set.getBonuses()) {
 				for (BonusAccesorioAtributo b : b1.getBonuses()) {
-					if (!mapa.containsKey(b.getNombreAtributo())) {
-						mapa.put(b.getNombreAtributo(), 0L);
+					if (!mapa.containsKey(b.getAtributo().getNombre())) {
+						mapa.put(b.getAtributo().getNombre(), 0L);
 					}
 				}
 				for (BonusAccesorioAtributo b : b1.getBonuses()) {
-					if (mapa.containsKey(b.getNombreAtributo())) {
-						mapa.put(b.getNombreAtributo(), mapa.get(b.getNombreAtributo()) + b.getValor());
+					if (mapa.containsKey(b.getAtributo().getNombre())) {
+						mapa.put(b.getAtributo().getNombre(), mapa.get(b.getAtributo().getNombre()) + b.getValor());
 					}
 				}
 			}
 
 			for (Map.Entry<String, Long> entry : mapa.entrySet()) {
 				BonusAccesorioAtributo miBonusAtributo = new BonusAccesorioAtributo();
-				miBonusAtributo.setNombreAtributo(entry.getKey());
+				miBonusAtributo.setAtributo(new Atributo(entry.getKey()));
 				miBonusAtributo.setValor(entry.getValue());
 				bonus.getBonuses().add(miBonusAtributo);
 			}
@@ -265,10 +289,10 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		sets.removeIf(set -> {
 			Map<String, Long> mapa = new HashMap<String, Long>();
 			for (BonusAccesorioAtributo a : set.getBonuses().get(0).getBonuses()) {
-				mapa.put(a.getNombreAtributo(), a.getValor());
+				mapa.put(a.getAtributo().getNombre(), a.getValor());
 			}
 			for (BonusAccesorioAtributo a : attributesFilter) {
-				Long aux = mapa.get(a.getNombreAtributo());
+				Long aux = mapa.get(a.getAtributo().getNombre());
 				if (aux != null && aux < a.getValor()) {
 					return true;
 				}
@@ -336,7 +360,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 			for (BonusAccesorio b : bonuses) {
 				List<BonusAccesorioAtributo> bonusAccesorioAtributos = b.getBonuses();
 				for (BonusAccesorioAtributo bonusAccesorioAtributo : bonusAccesorioAtributos) {
-					if (bonusAccesorioAtributo.getNombreAtributo().equals(atributo.getNombre())) {
+					if (bonusAccesorioAtributo.getAtributo().getNombre().equals(atributo.getNombre())) {
 						return true;
 					}
 				}
@@ -446,7 +470,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	@Override
 	public UserAccesories createOrUpdateAccesorieSetByNameAndUsername(CreateAccesorieSetDTO dto, String user) {
 
-		if (dto == null) {
+		if (dto == null || dto.getAccesorieSetName() == null) {
 			return null;
 		}
 		
@@ -655,9 +679,9 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		
 		//removeCombosNotMatchAttributes(sets, attributes.getAttributes());
 		*/
-		/*if (filtred) {
+		if (filtred) {
 			filterSetByStats(sets, attributes.getAttributesFilter());
-		}*/
+		}
 		//List<SetAccesorioDTO>  setsDto= accesorieMapper.toDtoList(sets)
 		if (sorted) {
 			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
@@ -706,7 +730,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
     			set.setPartes(new ArrayList<>());
             	if(isValid(set,  (List<Atributo>) ((ArrayList<Atributo>) attributes.getAttributes()).clone())) {
             		BonusAccesorio bonus = bonusAccesorioService.mergeBonusesEntity(combinacionActual);
-            		if(filtred && !filterSet(bonus,attributes.getAttributesFilter())) {	
+            		if(filtred && filterSet3(bonus,attributes.getAttributesFilter())) {	
                 		addPartes(set, mapa, combinacionActual);
                 		bonus.setNombreAccesorioSet(set.getNombre());
                 		bonus.setTipo("Merge");
@@ -772,10 +796,10 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	private boolean filterSet(BonusAccesorio bonus, List<BonusAccesorioAtributo> attributesFilter) {
 		Map<String, Long> mapa = new HashMap<String, Long>();
 		for (BonusAccesorioAtributo a : bonus.getBonuses()) {
-			mapa.put(a.getNombreAtributo(), a.getValor());
+			mapa.put(a.getAtributo().getNombre(), a.getValor());
 		}
 		for (BonusAccesorioAtributo a : attributesFilter) {
-			Long aux = mapa.get(a.getNombreAtributo());
+			Long aux = mapa.get(a.getAtributo().getNombre());
 			if (aux != null && aux < a.getValor()) {
 				return true;
 			}
@@ -783,6 +807,42 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		return false;
 		
 	}
+	
+	 public boolean filterSet2(BonusAccesorio bonus, List<BonusAccesorioAtributo> attributesFilter) {
+	        for (BonusAccesorioAtributo filter : attributesFilter) {
+	            boolean matchFound = false;
+
+	            for (BonusAccesorioAtributo bonusAttribute : bonus.getBonuses()) {
+	                if (bonusAttribute.getAtributo().equals(filter.getAtributo())
+		                    && (filter.getAction() == null || filter.getAction().equals(bonusAttribute.getAction()))
+		                    && (filter.getImpact() == null || filter.getImpact().equals(bonusAttribute.getImpact()))
+		                    && filter.getCondition().equals(bonusAttribute.getCondition())
+		                    && bonusAttribute.getValor() >= filter.getValor()) {
+
+	                    matchFound = true;
+	                    break;
+	                }
+	            }
+
+	            if (!matchFound) {
+	                return false; // return false if no matching attribute is found
+	            }
+	        }
+	        return true; // return true if all filters have a matching attribute
+	 }
+	 
+	 public boolean filterSet3(BonusAccesorio bonus, List<BonusAccesorioAtributo> attributesFilter) {
+	        return attributesFilter.stream()
+	            .allMatch(filter -> bonus.getBonuses().stream()
+	                .anyMatch(bonusAttribute ->
+	                    bonusAttribute.getAtributo().equals(filter.getAtributo())
+	                    && bonusAttribute.getValor() >= filter.getValor()
+	                    && (filter.getAction() == null || filter.getAction().equals(bonusAttribute.getAction()))
+	                    && (filter.getImpact() == null || filter.getImpact().equals(bonusAttribute.getImpact()))
+	                    && (filter.getCondition() == null || filter.getCondition().equals(bonusAttribute.getCondition()))
+	                )
+	            );
+	    }
 	
 	@Override
 	public List<UserAccesoriesDTO> getNinjasByUser(String user) {
@@ -986,5 +1046,158 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		return listToCalculate;
 		
 	}
+
+	@Override
+	public SetAccesorio createNewAccesorieSet(CreateAccesorieSetAttributesDTO dto,List<MultipartFile> files) {
+		SetAccesorio result = accesorieMapper.toEntity(dto.getSet());
+		Map<String,Atributo>  mapa = new HashMap<>();
+		Map<String,byte[]> images = new HashMap<>();
+		if(files != null) {
+			for(MultipartFile file:files) {
+				String key = FilenameUtils.removeExtension(file.getOriginalFilename());
+				try {
+					images.put(key, file.getBytes());
+				}catch(Exception e) {
+					throw new FileException("400","Error parsing the images createNewAccesorieSet()",HttpStatus.BAD_REQUEST);
+				}
+			}
+		}
+		
+		for(String attribute:dto.getAttributes()) {
+			mapa.put(attribute, new Atributo(attribute));
+		}
+		
+		for(int i = 0; i< result.getPartes().size(); i++) {
+			if(result.getPartes().get(i).getNombre() == null) {
+				result.getPartes().remove(i);
+			}
+		}
+		
+		for(ParteAccesorio p2: result.getPartes()) {
+			p2.setNombreSet(result.getNombre());
+			p2.setTipo(mapa.get(p2.getAtributo().getNombre()).getNombre());
+			p2.setAtributo(mapa.get(p2.getTipo()));
+			p2.setImage(images.get(p2.getNombre()));
+		}
+		
+		for(BonusAccesorio p2: result.getBonuses()) {
+			p2.setNombreAccesorioSet(result.getNombre());
+		}
+		
+		for(BonusAccesorio p2: result.getBonuses()) {
+			for(BonusAccesorioAtributo ba: p2.getBonuses()) {
+				ba.setTipoBonus(p2.getTipo());
+				ba.setNombreSet(p2.getNombreAccesorioSet());
+				ba.setAtributo(mapa.get(ba.getAtributo().getNombre()));
+			}
+		}
+		return accesorioRepository.save(result);
+	}
+
+	@Override
+	public SetAccesorio updateAccesorieSet(CreateAccesorieSetAttributesDTO dto,List<MultipartFile> files) {
+		SetAccesorio result = accesorieMapper.toEntity(dto.getSet());
+		SetAccesorio persist = entityManager.find(SetAccesorio.class, dto.getSet().getNombre());
+		Map<String,Atributo>  mapa = new HashMap<>();
+		Map<String,byte[]> images = new HashMap<>();
+		if(files != null) {
+			for(MultipartFile file:files) {
+				String key = FilenameUtils.removeExtension(file.getOriginalFilename());
+				try {
+					images.put(key, file.getBytes());
+				}catch(Exception e) {
+					throw new FileException("400","Error parsing the images createNewAccesorieSet()",HttpStatus.BAD_REQUEST);
+				}
+			}
+		}
+		
+		for(ParteAccesorio p : persist.getPartes()) {
+			byte [] image = images.get(p.getNombre());
+			if(image == null) {
+				images.put(p.getNombre(), p.getImage());
+			}
+		}
+		
+		for(String attribute:dto.getAttributes()) {
+			mapa.put(attribute, new Atributo(attribute));
+		}
+		
+		for(int i = 0; i< result.getPartes().size(); i++) {
+			if(result.getPartes().get(i).getNombre() == null) {
+				result.getPartes().remove(i);
+			}
+		}
+		
+		for(ParteAccesorio p2: result.getPartes()) {
+			p2.setNombreSet(result.getNombre());
+			p2.setTipo(mapa.get(p2.getAtributo().getNombre()).getNombre());
+			p2.setAtributo(mapa.get(p2.getTipo()));
+			byte [] image = images.get(p2.getNombre());
+			if(image != null) {
+				p2.setImage(image);
+			}
+		}
+		
+		for(BonusAccesorio p2: result.getBonuses()) {
+			p2.setNombreAccesorioSet(result.getNombre());
+		}
+		
+		for(BonusAccesorio p2: result.getBonuses()) {
+			for(BonusAccesorioAtributo ba: p2.getBonuses()) {
+				ba.setTipoBonus(p2.getTipo());
+				ba.setNombreSet(p2.getNombreAccesorioSet());
+				ba.setAtributo(mapa.get(ba.getAtributo().getNombre()));
+			}
+		}
+		
+		persist.getPartes().clear();
+		persist.getBonuses().clear();
+		persist.getPartes().addAll(result.getPartes());
+		persist.getBonuses().addAll(result.getBonuses());
+		
+		return entityManager.merge(persist);
+	}
+
+	@Override
+	public boolean deleteAccesorieSet(String name) {
+		Optional <SetAccesorio> op = accesorioRepository.findById(name);
+		if(!op.isPresent()) {
+			return false;
+		}
+		SetAccesorio result = op.get();//entityManager.find(Equipo.class, name);
+		Set<UserAccesories> userSets  = new HashSet<>();
+		userAccesoriesRepository.count();
+		for(BonusAccesorio b : result.getBonuses()) {
+			userSets.addAll(userAccesoriesRepository.findAllByBonus(b.getTipo(), b.getNombreAccesorioSet()));
+			userSets.addAll(userAccesoriesRepository.findAllByParte(name));
+		}
+		List<CreateAccesorieSetDTO> sets = new ArrayList<>();
+		for(UserAccesories set:userSets) {
+			CreateAccesorieSetDTO aux = new CreateAccesorieSetDTO();
+			aux.setAccesorieSetName(set.getNombre());
+			List<String> parts = new ArrayList<>();
+			for(ParteAccesorio part: set.getPartes()) {
+				if(!part.getNombreSet().equals(name)) {
+					parts.add(part.getNombre());
+				}
+			}
+			aux.setAccesories(parts);
+			aux.setUsername(set.getUsername());
+			sets.add(aux);
+		}
+		
+		for(CreateAccesorieSetDTO aux: sets) {
+			if(aux.getAccesories().size() > 0) {
+				this.updateAccesorieSetByNameAndUsername(aux, aux.getUsername());
+			}else {
+				this.deleteUserAccesorieByName(aux.getAccesorieSetName(), aux.getUsername());
+			}
+		}
+		
+		accesorioRepository.deleteById(name);
+		return true;
+	}
+	
+	
 	
 }

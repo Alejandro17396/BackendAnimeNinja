@@ -111,20 +111,20 @@ public class AccesorioServicesImpl2 implements AccesorioServices2 {
 			bonus.setBonuses(new ArrayList<>());
 			for (BonusAccesorio b1 : set.getBonuses()) {
 				for (BonusAccesorioAtributo b : b1.getBonuses()) {
-					if (!mapa.containsKey(b.getNombreAtributo())) {
-						mapa.put(b.getNombreAtributo(), 0L);
+					if (!mapa.containsKey(b.getAtributo().getNombre())) {
+						mapa.put(b.getAtributo().getNombre(), 0L);
 					}
 				}
 				for (BonusAccesorioAtributo b : b1.getBonuses()) {
-					if (mapa.containsKey(b.getNombreAtributo())) {
-						mapa.put(b.getNombreAtributo(), mapa.get(b.getNombreAtributo()) + b.getValor());
+					if (mapa.containsKey(b.getAtributo().getNombre())) {
+						mapa.put(b.getAtributo().getNombre(), mapa.get(b.getAtributo().getNombre()) + b.getValor());
 					}
 				}
 			}
 
 			for (Map.Entry<String, Long> entry : mapa.entrySet()) {
 				BonusAccesorioAtributo miBonusAtributo = new BonusAccesorioAtributo();
-				miBonusAtributo.setNombreAtributo(entry.getKey());
+				miBonusAtributo.setAtributo(new Atributo(entry.getKey()));
 				miBonusAtributo.setValor(entry.getValue());
 				bonus.getBonuses().add(miBonusAtributo);
 			}
@@ -142,10 +142,10 @@ public class AccesorioServicesImpl2 implements AccesorioServices2 {
 		sets.removeIf(set -> {
 			Map<String, Long> mapa = new HashMap<String, Long>();
 			for (BonusAccesorioAtributo a : set.getBonuses().get(0).getBonuses()) {
-				mapa.put(a.getNombreAtributo(), a.getValor());
+				mapa.put(a.getAtributo().getNombre(), a.getValor());
 			}
 			for (BonusAccesorioAtributo a : attributesFilter) {
-				Long aux = mapa.get(a.getNombreAtributo());
+				Long aux = mapa.get(a.getAtributo().getNombre());
 				if (aux != null && aux < a.getValor()) {
 					return true;
 				}
@@ -211,7 +211,7 @@ public class AccesorioServicesImpl2 implements AccesorioServices2 {
 			for (BonusAccesorio b : bonuses) {
 				List<BonusAccesorioAtributo> bonusAccesorioAtributos = b.getBonuses();
 				for (BonusAccesorioAtributo bonusAccesorioAtributo : bonusAccesorioAtributos) {
-					if (bonusAccesorioAtributo.getNombreAtributo().equals(atributo.getNombre())) {
+					if (bonusAccesorioAtributo.getAtributo().getNombre().equals(atributo.getNombre())) {
 						return true;
 					}
 				}

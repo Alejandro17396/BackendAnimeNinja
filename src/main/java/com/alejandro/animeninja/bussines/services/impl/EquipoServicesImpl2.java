@@ -105,13 +105,13 @@ public class EquipoServicesImpl2 implements EquipoServices2 {
 			bonus.setListaBonus(new ArrayList<>());
 			for (Bonus b1 : equipo.getBonuses()) {
 				for (BonusAtributo b : b1.getListaBonus()) {
-					if (!mapa.containsKey(b.getNombreAtributo())) {
-						mapa.put(b.getNombreAtributo(), 0L);
+					if (!mapa.containsKey(b.getAtributo().getNombre())) {
+						mapa.put(b.getAtributo().getNombre(), 0L);
 					}
 				}
 				for (BonusAtributo b : b1.getListaBonus()) {
-					if (mapa.containsKey(b.getNombreAtributo())) {
-						mapa.put(b.getNombreAtributo(), mapa.get(b.getNombreAtributo()) + b.getValor());
+					if (mapa.containsKey(b.getAtributo().getNombre())) {
+						mapa.put(b.getAtributo().getNombre(), mapa.get(b.getAtributo().getNombre()) + b.getValor());
 					}
 				}
 
@@ -119,7 +119,7 @@ public class EquipoServicesImpl2 implements EquipoServices2 {
 
 			for (Map.Entry<String, Long> entry : mapa.entrySet()) {
 				BonusAtributo miBonusAtributo = new BonusAtributo();
-				miBonusAtributo.setNombreAtributo(entry.getKey());
+				miBonusAtributo.setAtributo( new Atributo(entry.getKey()));
 				miBonusAtributo.setValor(entry.getValue());
 				bonus.getListaBonus().add(miBonusAtributo);
 			}
@@ -149,10 +149,10 @@ public class EquipoServicesImpl2 implements EquipoServices2 {
 		equipos.removeIf(x -> {
 			Map<String, Long> mapa = new HashMap<String, Long>();
 			for (BonusAtributo a : x.getBonuses().get(0).getListaBonus()) {
-				mapa.put(a.getNombreAtributo(), a.getValor());
+				mapa.put(a.getAtributo().getNombre(), a.getValor());
 			}
 			for (BonusAtributo a : attributesFilter) {
-				Long aux = mapa.get(a.getNombreAtributo());
+				Long aux = mapa.get(a.getAtributo().getNombre());
 				if (aux != null && aux < a.getValor()) {
 					return true;
 				}
@@ -315,7 +315,7 @@ public class EquipoServicesImpl2 implements EquipoServices2 {
 		Set<String> atributosEquipo = new HashSet<>();
 
 		equipo.getBonuses().forEach(bonus -> bonuses.addAll(bonus.getListaBonus()));
-		bonuses.forEach(bonus -> atributosEquipo.add(bonus.getNombreAtributo()));
+		bonuses.forEach(bonus -> atributosEquipo.add(bonus.getAtributo().getNombre()));
 
 		attributes.removeIf(attribute -> {
 			return atributosEquipo.contains(attribute.getNombre());

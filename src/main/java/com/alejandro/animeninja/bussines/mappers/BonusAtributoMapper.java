@@ -8,9 +8,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
-
+import com.alejandro.animeninja.bussines.model.UserSetBonus;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
@@ -24,7 +25,7 @@ public interface BonusAtributoMapper {
 	
 	BonusAtributoMapper INSTANCE = Mappers.getMapper(BonusAtributoMapper.class);
 	
-	@Mapping(target="attribute", source="bonus.nombreAtributo")
+	@Mapping(target="attribute", source="bonus.atributo.nombre")
 	@Mapping(target="value", source="bonus.valor")
 	@Mapping(target="action", source="bonus.action")
 	@Mapping(target="impact", source="bonus.impact")
@@ -32,7 +33,10 @@ public interface BonusAtributoMapper {
 	@Mapping(target="time", source="bonus.time")
 	BonusAtributoUtils toUtils(BonusAtributo bonus);
 	
-	@Mapping(target="nombreAtributo", source="bonus.attribute")
+	
+	UserSetBonus toUserSetBonus(Bonus bonus);
+	
+	@Mapping(target="atributo.nombre", source="bonus.attribute")
 	@Mapping(target="valor", source="bonus.value")
 	@Mapping(target="action", source="bonus.action")
 	@Mapping(target="impact", source="bonus.impact")
@@ -46,7 +50,7 @@ public interface BonusAtributoMapper {
 	@Mapping(target="listaBonus",source="bonus.bonuses")
 	BonusDTO toBonusDTO (BonusAccesorioDTO bonus);
 	
-	@Mapping(target="nombreAtributo",source="bonus.attributeName")
+	@Mapping(target="atributo.nombre",source="bonus.attributeName")
 	@Mapping(target="valor",source="bonus.value")
 	BonusAtributoDTO toBonusAtributoDTO(SkillAttributeDTO bonus);
 	

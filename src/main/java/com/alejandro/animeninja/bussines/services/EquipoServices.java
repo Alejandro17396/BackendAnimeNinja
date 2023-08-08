@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Equipo;
@@ -12,6 +13,7 @@ import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.CreateComboSet;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
@@ -67,5 +69,11 @@ public interface EquipoServices {
 	List <SetDTO> generateCombos(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable);
 
 	List<UserSetDTO> getNinjasByUser(String user);
+	
+	Equipo createNewEquipment(CreateSetAttributesDTO dto,List<MultipartFile> files);
+	
+	Equipo updateEquipment(CreateSetAttributesDTO dto,List<MultipartFile> files);
+	
+	boolean deleteSet(String name);
 	
 }

@@ -27,7 +27,7 @@ public class BonusSpecification {
 			Predicate joinPredicate2=cb.equal(bonus.get(Bonus_.ID),bonusAtributo.get(BonusAtributo_.ID_BONUS));
 			
 			Predicate attributePredicate= cb.equal(bonusAtributo.get
-					(BonusAtributo_.NOMBRE_ATRIBUTO),attribute.getNombre());
+					(BonusAtributo_.ATRIBUTO),attribute);
 			
 			return cb.exists(subquery.select(bonusAtributo).
 						where(joinPredicate,joinPredicate2,attributePredicate));

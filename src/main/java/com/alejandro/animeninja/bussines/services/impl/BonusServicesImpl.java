@@ -38,15 +38,11 @@ public class BonusServicesImpl implements BonusServices {
 
 	@Override
 	public List<Bonus> getAll() {
-		BonusAtributo b = new BonusAtributo();
-		b.setNombreAtributo("avoid injury rate");
 		return bonusRepository.findAll();
 	}
 
 	@Override
 	public List<Bonus> getBonusByAttributes(List<Atributo> atributos) {
-		BonusAtributo b = new BonusAtributo();
-		b.setNombreAtributo("avoid injury rate");
 		return bonusRepository.findByListOfAtributtes(atributos);
 	}
 

@@ -3,6 +3,7 @@ package com.alejandro.animeninja.bussines.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -38,17 +39,17 @@ public class NinjaAwakening implements Serializable{
 	@Column(name="activo")
 	private boolean active;
 	
-	@Column(name="ninja",insertable=false, updatable=false)
+	@Column(name="ninja")
 	private String ninja;
 	
 	@Column(name="texto")
 	private String skillText;
 	
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
 	@JoinColumns( {
-	    @JoinColumn(name="nombre", referencedColumnName="nombre",nullable = false),
-	    @JoinColumn(name="tipo", referencedColumnName="tipo",nullable = false),
-	    @JoinColumn(name="nivel", referencedColumnName="nivel",nullable = false)} )
+	    @JoinColumn(name="nombre", referencedColumnName="nombre",nullable=false,insertable=false,updatable=false),
+	    @JoinColumn(name="tipo", referencedColumnName="tipo",nullable=false,insertable=false,updatable=false),
+	    @JoinColumn(name="nivel", referencedColumnName="nivel",nullable=false,insertable=false,updatable=false)} )
 	private List <NinjaAwakeningStat> stats;
 	
 

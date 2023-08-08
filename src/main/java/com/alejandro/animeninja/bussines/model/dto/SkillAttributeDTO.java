@@ -1,5 +1,6 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
+import com.alejandro.animeninja.bussines.model.Atributo;
 
 public class SkillAttributeDTO {
 
@@ -11,6 +12,18 @@ public class SkillAttributeDTO {
 	private String condition;
 	private String time;
 	private String color;
+	private AtributoDTO atributo;
+
+	public AtributoDTO getAtributo() {
+		return atributo;
+	}
+
+	public void setAtributo(AtributoDTO atributo) {
+		if(atributo != null) {
+			this.attributeName = atributo.getNombre();
+		}
+		this.atributo = atributo;
+	}
 
 	public String getColor() {
 		return color;
@@ -25,6 +38,7 @@ public class SkillAttributeDTO {
 	}
 
 	public void setAttributeName(String attributeName) {
+		this.atributo = new AtributoDTO(attributeName);
 		this.attributeName = attributeName;
 	}
 

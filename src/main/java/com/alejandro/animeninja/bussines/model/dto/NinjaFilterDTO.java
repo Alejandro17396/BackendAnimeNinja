@@ -14,6 +14,7 @@ public class NinjaFilterDTO {
 	private Long value;
 	private String condition;
 	private String time;
+	private AtributoDTO atributo;
 	private boolean mandatory;
 	
 	public NinjaFilterDTO() {
@@ -36,8 +37,22 @@ public class NinjaFilterDTO {
 		return attributeName;
 	}
 	public void setAttributeName(String attributeName) {
+		this.atributo = new AtributoDTO(attributeName);
 		this.attributeName = attributeName;
 	}
+	
+	
+	public AtributoDTO getAtributo() {
+		return atributo;
+	}
+
+	public void setAtributo(AtributoDTO atributo) {
+		if(atributo != null) {
+			this.attributeName = atributo.getNombre();
+		}
+		this.atributo = atributo;
+	}
+
 	public SkillType getType() {
 		return type;
 	}

@@ -9,20 +9,40 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alejandro.animeninja.bussines.mappers.ParteAccesorioMapper;
+import com.alejandro.animeninja.bussines.mappers.ParteMapper;
 import com.alejandro.animeninja.bussines.model.Parte;
+import com.alejandro.animeninja.bussines.model.ParteAccesorio;
+import com.alejandro.animeninja.bussines.model.dto.ParteAccesorioDTO;
+import com.alejandro.animeninja.bussines.model.dto.ParteDTO;
+import com.alejandro.animeninja.bussines.services.ParteAccesorioService;
 import com.alejandro.animeninja.bussines.services.ParteServices;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/setItems")
+@RequestMapping("/items")
 public class ParteController {
 
 	@Autowired
 	private ParteServices parteServices;
+	
+	@Autowired
+	private ParteAccesorioService parteAccesorioServices;
+	
+	@Autowired
+	private ParteMapper equipmentPartsMapper;
+	
+	@Autowired
+	private ParteAccesorioMapper accesoriesPartsMapper;
 
-	@GetMapping
-	public List<Parte> getAll() {
-		return parteServices.getAll();
+	@GetMapping("/equipment")
+	public List<ParteDTO> getAll() {
+		return equipmentPartsMapper.toListParteDTO(parteServices.getAll());
+	}
+	
+	@GetMapping("/accesories")
+	public List<ParteAccesorioDTO> getAllAccesories() {
+		return accesoriesPartsMapper.toListParteDTO(parteAccesorioServices.getAll());
 	}
 
 	@GetMapping("/like/{filter}")

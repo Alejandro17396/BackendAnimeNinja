@@ -1,5 +1,6 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +16,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,16 +28,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandro.animeninja.bussines.exceptions.AccesoriesException;
 import com.alejandro.animeninja.bussines.exceptions.CreateNinjaException;
+import com.alejandro.animeninja.bussines.exceptions.FileException;
 import com.alejandro.animeninja.bussines.exceptions.NinjaUserException;
 import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
 import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
 import com.alejandro.animeninja.bussines.mappers.FormationNinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.SetMapper;
+import com.alejandro.animeninja.bussines.model.Atributo;
+import com.alejandro.animeninja.bussines.model.AttributeStat;
+import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.ChakraNature;
+import com.alejandro.animeninja.bussines.model.Constantes;
+import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.FinalSkillsAttributes;
 import com.alejandro.animeninja.bussines.model.Formation;
 import com.alejandro.animeninja.bussines.model.FormationNinja;
@@ -41,16 +52,24 @@ import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaAwakening;
 import com.alejandro.animeninja.bussines.model.NinjaAwakeningStat;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
+import com.alejandro.animeninja.bussines.model.NinjaStats;
 import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
+import com.alejandro.animeninja.bussines.model.Parte;
+import com.alejandro.animeninja.bussines.model.ParteAccesorio;
+import com.alejandro.animeninja.bussines.model.Sex;
 import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.SkillAttributeKey;
 import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.model.UserFormation;
+import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.CompareNinjaUserDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateNinjaAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaFilterDTO;
@@ -103,11 +122,21 @@ public class NinjaServiceImpl implements NinjaService {
 
 	@Autowired
 	private BonusAtributoMapper bonusMapper;
+	
+	@Autowired
+	private UserFormationRepository userFormationRepository;
 
 	@Override
 	public List<Ninja> getAll() {
-		return ninjaRepository.findAll();
+		List<Ninja> ninjas = ninjaRepository.findAll();
+		ninjas.removeIf(ninja -> 
+				ninja.getName().equals(Constantes.AUX_ASSAULTER) || 
+				ninja.getName().equals(Constantes.AUX_SUPPORT) ||
+				ninja.getName().equals(Constantes.AUX_VANGUARD));
+		return ninjas;
 	}
+	
+	
 
 	@Override
 	public Page<Ninja> getAllPaged(Pageable pageable) {
@@ -132,16 +161,39 @@ public class NinjaServiceImpl implements NinjaService {
 	@Override
 	public Page<NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
 			Pageable pageable) {
-		Specification<Ninja> specification = createAndSkillAttributeSpecification(attributes);
+		Specification<Ninja> specification = createAndSkillAwakeningSpecification(attributes);
 		Page<Ninja> page = ninjaRepository.findAll(specification, pageable);
 
 		return new PageImpl<NinjaDTO>(ninjaMapper.toDtoList(page.getContent()), pageable, page.getTotalElements());
+	}
+	
+	@Override
+	public Page<NinjaDTO> getNinjaFiltroAndNoPaged(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
+			boolean awakenings,boolean or,Pageable pageable) {
+		Specification<Ninja> specification = null;
+		if(awakenings) {
+			if(or) {
+				specification = createOrSkillAwakeningSpecification(attributes);
+			} else {
+				specification = createAndSkillAwakeningSpecification(attributes);
+			}
+		}else {
+			if (or) {
+				specification = createOrSkillAttributeSpecification(attributes);
+			} else {
+				specification = createAndSkillAttributeSpecification(attributes);
+			}
+		}
+		//Specification<Ninja> specification = createAndSkillAwakeningSpecification(attributes);
+		List <Ninja> page = ninjaRepository.findAll(specification);
+
+		return new PageImpl<NinjaDTO>(ninjaMapper.toDtoList(page), pageable, page.size());
 	}
 
 	@Override
 	public Page<NinjaDTO> getNinjaFiltroOr(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
 			Pageable pageable) {
-		Specification<Ninja> specification = createOrSkillAttributeSpecification(attributes);
+		Specification<Ninja> specification = createOrSkillAwakeningSpecification(attributes);
 		Page<Ninja> page = ninjaRepository.findAll(specification, pageable);
 
 		return new PageImpl<NinjaDTO>(ninjaMapper.toDtoList(page.getContent()), pageable, page.getTotalElements());
@@ -216,16 +268,21 @@ public class NinjaServiceImpl implements NinjaService {
 			ninjas = getAll();
 		}else{
 			ninjas = new ArrayList<>();
-			if (or) {
-				specification = createOrSkillAttributeSpecification(dto);
-			} else {
-				specification = createAndSkillAttributeSpecification(dto);
-			}	
-			ninjas = getNinjasBySpecificationPrivate(specification);
-			if (awakenings) {
-				specificationAwakening = createOrSkillAwakeningSpecification(dto);
-				ninjas2 = getNinjasBySpecificationPrivate(specificationAwakening);
+			if(awakenings) {
+				if(or) {
+					specification = createOrSkillAwakeningSpecification(dto);
+				} else {
+					specification = createAndSkillAwakeningSpecification(dto);
+				}
+			}else {
+				if (or) {
+					specification = createOrSkillAttributeSpecification(dto);
+				} else {
+					specification = createAndSkillAttributeSpecification(dto);
+				}
 			}
+			
+			ninjas2 = getNinjasBySpecificationPrivate(specification);
 			ninjasSet.addAll(ninjas);
 			ninjasSet.addAll(ninjas2);
 			ninjas = ninjasSet.stream().collect(Collectors.toList());
@@ -519,13 +576,14 @@ public class NinjaServiceImpl implements NinjaService {
 	private void addSpecialCases(List<NinjaFilterDTO> attributeFilters, List<FormationNinja> formations) {
 
 		for (NinjaFilterDTO filter : attributeFilters) {
-			if (filter.getImpact().equals("all allies") || filter.getImpact().equals("all enemies")) {
+			if (Constantes.IMPACT_ALL_ALLIES.equals(filter.getImpact()) || 
+					Constantes.IMPACT_ALL_ENEMIES.equals(filter.getImpact())) {
 				for (FormationNinja formation : formations) {
-					if (filter.getImpact().equals("all allies")
+					if (Constantes.IMPACT_ALL_ALLIES.equals(filter.getImpact())
 							&& !containsAllAllies(formation.getMergedTalentAttributes(), filter)) {
 						SkillAttribute aux = new SkillAttribute();
 						aux.setAction(filter.getAction());
-						aux.setAttributeName(filter.getAttributeName());
+						aux.setAtributo(new Atributo(filter.getAttributeName()));
 						aux.setCondition(filter.getCondition());
 						aux.setType(filter.getType());
 						aux.setValue(filter.getValue());
@@ -533,11 +591,11 @@ public class NinjaServiceImpl implements NinjaService {
 							impactAllNatures(formation.getMergedTalentAttributes(), filter, aux, "ally");
 						}
 
-					} else if (filter.getImpact().equals("all enemies")
+					} else if (Constantes.IMPACT_ALL_ENEMIES.equals(filter.getImpact())
 							&& !containsAllAllies(formation.getMergedTalentAttributes(), filter)) {
 						SkillAttribute aux = new SkillAttribute();
 						aux.setAction(filter.getAction());
-						aux.setAttributeName(filter.getAttributeName());
+						aux.setAtributo(new Atributo(filter.getAttributeName()));
 						aux.setCondition(filter.getCondition());
 						aux.setType(filter.getType());
 						aux.setValue(filter.getValue());
@@ -750,14 +808,33 @@ public class NinjaServiceImpl implements NinjaService {
 		Specification<Ninja> specification = Specification.where(null);
 
 		for (NinjaFilterDTO filter : filterList) {
-			if (filter.getImpact().equals("all allies")) {
+			if (Constantes.IMPACT_ALL_ALLIES.equals(filter.getImpact())) {
 				specification = specification
-						.or(NinjaSpecification.createAlliesEspecialSkillAttributePredicate(filter));
-			} else if (filter.getImpact().equals("all enemies")) {
+						.or(NinjaSpecification.combinedAlliesAttributePredicate(filter));
+			} else if (Constantes.IMPACT_ALL_ENEMIES.equals(filter.getImpact())) {
 				specification = specification
-						.or(NinjaSpecification.createEnemiesEspecialSkillAttributePredicate(filter));
+						.or(NinjaSpecification.combinedEnemiesAttributePredicate(filter));
 			} else {
-				specification = specification.or(NinjaSpecification.skillAttributePredicate(filter));
+				specification = specification.or(NinjaSpecification.baseAttributePredicate(filter));
+			}
+		}
+		return specification;
+	}
+	
+	private Specification<Ninja> createAndSkillAwakeningSpecification(CreateComboNinjaDTO attributes) {
+
+		List<NinjaFilterDTO> filterList = attributes.getFilters();
+		Specification<Ninja> specification = Specification.where(null);
+
+		for (NinjaFilterDTO filter : filterList) {
+			if (Constantes.IMPACT_ALL_ALLIES.equals(filter.getImpact())) {
+				specification = specification
+						.and(NinjaSpecification.combinedAlliesAttributePredicate(filter));
+			} else if (Constantes.IMPACT_ALL_ENEMIES.equals(filter.getImpact())) {
+				specification = specification
+						.and(NinjaSpecification.combinedEnemiesAttributePredicate(filter));
+			} else {
+				specification = specification.and(NinjaSpecification.baseAttributePredicate(filter));
 			}
 		}
 		return specification;
@@ -769,11 +846,12 @@ public class NinjaServiceImpl implements NinjaService {
 		Specification<Ninja> specification = Specification.where(null);
 
 		for (NinjaFilterDTO filter : filterList) {
-			if (filter.getImpact().equals("all allies")) {
+			
+			if (Constantes.IMPACT_ALL_ALLIES.equals(filter.getImpact())) {
 				specification = specification
 						.and(NinjaSpecification.createAlliesEspecialSkillAttributePredicate(filter));
 
-			} else if (filter.getImpact().equals("all enemies")) {
+			} else if (Constantes.IMPACT_ALL_ENEMIES.equals(filter.getImpact())) {
 				specification = specification
 						.and(NinjaSpecification.createEnemiesEspecialSkillAttributePredicate(filter));
 			} else {
@@ -789,10 +867,10 @@ public class NinjaServiceImpl implements NinjaService {
 		Specification<Ninja> specification = Specification.where(null);
 
 		for (NinjaFilterDTO filter : filterList) {
-			if (filter.getImpact().equals("all allies")) {
+			if (Constantes.IMPACT_ALL_ALLIES.equals(filter.getImpact())) {
 				specification = specification
 						.or(NinjaSpecification.createAlliesEspecialSkillAttributePredicate(filter));
-			} else if (filter.getImpact().equals("all enemies")) {
+			} else if (Constantes.IMPACT_ALL_ENEMIES.equals(filter.getImpact())) {
 				specification = specification
 						.or(NinjaSpecification.createEnemiesEspecialSkillAttributePredicate(filter));
 			} else {
@@ -999,6 +1077,7 @@ public class NinjaServiceImpl implements NinjaService {
 			ninjaUser.setSkill(SkillType.SKILL);
 		}
 		
+		
 		ninjaUser.setNombre(ninja.getName());
 		ninjaUser.setUsername(user);
 
@@ -1010,9 +1089,17 @@ public class NinjaServiceImpl implements NinjaService {
 		if (ninjaEntity != null) {
 			ninjaUser.setNinja(ninjaEntity);
 			ninjaUser.setFormation(ninjaEntity.getFormation());
-			ninjaUser.setSex(ninjaEntity.getSex());
+			if(ninjaUser.getSex() != null) {
+				ninjaUser.setSex(ninjaEntity.getSex());
+			}
 		} else {
 			ninjaUser.setNinja(ninjaEntity);
+		}
+		
+		if(ninja.getSex() != null) {
+			ninjaUser.setSex(ninja.getSex());
+		}else {
+			ninjaUser.setSex(Sex.MALE);
 		}
 
 		ninjaUser.setEquipment(setService.createOrUpdateSetByName(ninja.getSet(), user));
@@ -1045,6 +1132,12 @@ public class NinjaServiceImpl implements NinjaService {
 			ninjaUser.setSkill(SkillType.SKILL);
 		}
 		
+		if(ninja.getSex() != null) {
+			ninjaUser.setSex(ninja.getSex());
+		}else {
+			ninjaUser.setSex(Sex.MALE);
+		}
+		
 		ninjaUser.setNombre(ninja.getName());
 		ninjaUser.setUsername(user);
 
@@ -1056,9 +1149,17 @@ public class NinjaServiceImpl implements NinjaService {
 		if (ninjaEntity != null) {
 			ninjaUser.setNinja(ninjaEntity);
 			ninjaUser.setFormation(ninjaEntity.getFormation());
-			ninjaUser.setSex(ninjaEntity.getSex());
+			if(ninjaUser.getSex() != null) {
+				ninjaUser.setSex(ninjaEntity.getSex());
+			}
 		} else {
 			ninjaUser.setNinja(ninjaEntity);
+		}
+		
+		if(ninja.getSex() != null) {
+			ninjaUser.setSex(ninja.getSex());
+		}else {
+			ninjaUser.setSex(Sex.MALE);
 		}
 
 		ninjaUser.setEquipment(setService.createOrUpdateSetByName(ninja.getSet(), user));
@@ -1093,6 +1194,12 @@ public class NinjaServiceImpl implements NinjaService {
 			ninjaUser.setSkill(SkillType.SKILL);
 		}
 		
+		if(ninja.getSex() != null) {
+			ninjaUser.setSex(ninja.getSex());
+		}else {
+			ninjaUser.setSex(Sex.MALE);
+		}
+		
 		ninjaUser.setNombre(ninja.getName());
 		ninjaUser.setUsername(user);
 
@@ -1100,11 +1207,19 @@ public class NinjaServiceImpl implements NinjaService {
 		if (ninjaEntity != null) {
 			ninjaUser.setNinja(ninjaEntity);
 			ninjaUser.setFormation(ninjaEntity.getFormation());
-			ninjaUser.setSex(ninjaEntity.getSex());
+			if(ninjaUser.getSex() != null) {
+				ninjaUser.setSex(ninjaEntity.getSex());
+			};
 		} else {
 			ninjaUser.setNinja(ninjaEntity);
 		}
 
+		if(ninja.getSex() != null) {
+			ninjaUser.setSex(ninja.getSex());
+		}else {
+			ninjaUser.setSex(Sex.MALE);
+		}
+		
 		ninjaUser.setEquipment(setService.createOrUpdateSetByName(ninja.getSet(), user));
 		ninjaUser.setAccesories(
 				accesorieService.createOrUpdateAccesorieSetByNameAndUsername(ninja.getAccesories(), user));
@@ -1198,9 +1313,6 @@ public class NinjaServiceImpl implements NinjaService {
 		Optional <NinjaUserFormation> optional = ninjaUserFormationRepository.findByNombreAndUsername(name, user);
 		return optional.isPresent()? optional.get() : null;
 	}
-	
-	@Autowired
-	private UserFormationRepository userFormationRepository;
 	
 	@Override
 	public boolean deleteNinjaByName(String name, String user) {
@@ -1343,5 +1455,253 @@ public class NinjaServiceImpl implements NinjaService {
 		
 		return listToCalculate;
 	}
+
+	@Override
+	public Ninja createNewNinja(CreateNinjaAttributesDTO dto , List<MultipartFile> files) throws IOException {
+		Ninja newNinja = ninjaMapper.toEntity(dto.getNinja());
+		Map<String,Atributo>  mapa = new HashMap<>();
+		
+		Map<String,byte[]> images = new HashMap<>();
+		if(files != null) {
+			for(MultipartFile file : files) {
+				String key = FilenameUtils.removeExtension(file.getOriginalFilename());
+				try {
+					images.put(key, file.getBytes());
+				}catch(Exception e) {
+					throw new FileException("400","Error parsing the images createNewEquipment()",HttpStatus.BAD_REQUEST);
+				}
+			}
+		}
+		
+		newNinja.setNinjaImage(images.get("face"));
+		newNinja.setNinjaStatImage(images.get("stats"));
+		
+		for(String attribute:dto.getAttributes()) {
+			mapa.put(attribute, new Atributo(attribute));
+		}
+		
+		for(NinjaAwakening awakening : newNinja.getAwakenings()) {
+			awakening.setNinja(newNinja.getName());
+			awakening.setActive(true);
+			for(NinjaAwakeningStat stat : awakening.getStats()) {
+				mapa.put(stat.getAtributo().getNombre(), stat.getAtributo());
+			}
+	
+		}
+		
+		for(NinjaStats stats : newNinja.getStats()) {
+			stats.setName(newNinja.getName());
+			for(AttributeStat stat : stats.getStatsAttributes()) {
+				stat.setLevel(stats.getLevel());
+				stat.setNinja(newNinja.getName());
+				mapa.put(stat.getAtributo().getNombre(), stat.getAtributo());
+			}
+		}
+		
+		for(NinjaSkill skill : newNinja.getSkills()) {
+			skill.setNinja(newNinja.getName());
+			for(SkillAttribute attribute : skill.getAttributes()) {
+				attribute.setNinjaName(newNinja.getName());
+				attribute.setSkillName(skill.getNombre());
+				attribute.setType(skill.getType());
+				mapa.put(attribute.getAtributo().getNombre(), attribute.getAtributo());
+			}
+		}
+		
+		for(NinjaAwakening awakening : newNinja.getAwakenings()) {
+			for(NinjaAwakeningStat stat : awakening.getStats()) {
+				stat.setAtributo(mapa.get(stat.getAtributo().getNombre()));
+			}
+	
+		}
+		
+		for(NinjaStats stats : newNinja.getStats()) {
+			for(AttributeStat stat : stats.getStatsAttributes()) {
+				stat.setAtributo(mapa.get(stat.getAtributo().getNombre()));
+			}
+		}
+		
+		for(NinjaSkill skill : newNinja.getSkills()) {
+			for(SkillAttribute attribute : skill.getAttributes()) {
+				attribute.setAtributo(mapa.get(attribute.getAtributo().getNombre()));
+			}
+		}
+		
+		ninjaRepository.save(newNinja);
+		return newNinja;
+	}
+	
+	@Autowired
+	private EntityManager entityManager;
+
+	@Override
+	@Transactional
+	public Ninja updateNinja(CreateNinjaAttributesDTO dto,List <MultipartFile> files) throws IOException {
+		Ninja newNinja = ninjaMapper.toEntity(dto.getNinja());
+		Ninja persist = entityManager.find(Ninja.class, dto.getNinja().getName());
+		Map<String,Atributo>  mapa = new HashMap<>();
+		
+		Map<String,byte[]> images = new HashMap<>();
+		if(files != null) {
+			for(MultipartFile file : files) {
+				String key = FilenameUtils.removeExtension(file.getOriginalFilename());
+				try {
+					images.put(key, file.getBytes());
+				}catch(Exception e) {
+					throw new FileException("400","Error parsing the images createNewEquipment()",HttpStatus.BAD_REQUEST);
+				}
+			}
+		}
+		
+		byte [] faceImage = images.get("face");
+		byte [] statsImage = images.get("stats");
+		
+		if(faceImage != null) {
+			persist.setNinjaImage(faceImage);
+		}
+		
+		if(statsImage != null) {
+			persist.setNinjaStatImage(statsImage);
+		}
+		
+		
+		for(String attribute:dto.getAttributes()) {
+			mapa.put(attribute, new Atributo(attribute));
+		}
+		
+		for(NinjaAwakening awakening : newNinja.getAwakenings()) {
+			awakening.setNinja(newNinja.getName());
+			awakening.setActive(true);
+			for(NinjaAwakeningStat stat : awakening.getStats()) {
+				mapa.put(stat.getAtributo().getNombre(), stat.getAtributo());
+			}
+	
+		}
+		
+		for(NinjaStats stats : newNinja.getStats()) {
+			stats.setName(newNinja.getName());
+			for(AttributeStat stat : stats.getStatsAttributes()) {
+				stat.setLevel(stats.getLevel());
+				stat.setNinja(newNinja.getName());
+				mapa.put(stat.getAtributo().getNombre(), stat.getAtributo());
+			}
+		}
+		
+		for(NinjaSkill skill : newNinja.getSkills()) {
+			skill.setNinja(newNinja.getName());
+			for(SkillAttribute attribute : skill.getAttributes()) {
+				attribute.setNinjaName(newNinja.getName());
+				attribute.setSkillName(skill.getNombre());
+				attribute.setType(skill.getType());
+				mapa.put(attribute.getAtributo().getNombre(), attribute.getAtributo());
+			}
+		}
+		
+		for(NinjaAwakening awakening : newNinja.getAwakenings()) {
+			for(NinjaAwakeningStat stat : awakening.getStats()) {
+				stat.setAtributo(mapa.get(stat.getAtributo().getNombre()));
+			}
+	
+		}
+		
+		for(NinjaStats stats : newNinja.getStats()) {
+			for(AttributeStat stat : stats.getStatsAttributes()) {
+				stat.setAtributo(mapa.get(stat.getAtributo().getNombre()));
+			}
+		}
+		
+		for(NinjaSkill skill : newNinja.getSkills()) {
+			for(SkillAttribute attribute : skill.getAttributes()) {
+				attribute.setAtributo(mapa.get(attribute.getAtributo().getNombre()));
+			}
+		}
+		
+		persist.getAwakenings().clear();
+		persist.getSkills().clear();
+		persist.getStats().clear();
+		persist.getAwakenings().addAll(newNinja.getAwakenings());
+		persist.getSkills().addAll(newNinja.getSkills());
+		persist.getStats().addAll(newNinja.getStats());
+		
+		if(newNinja.getSex() != null) {
+			persist.setSex(newNinja.getSex());
+		}
+		
+		if(newNinja.getFormation() != null) {
+			persist.setFormation(newNinja.getFormation());
+		}
+		
+		if(newNinja.getChakraNature() != null) {
+			persist.setChakraNature(newNinja.getChakraNature());
+		}
+		
+		if(newNinja.getType() != null) {
+			persist.setType(newNinja.getType());
+		}
+
+		persist.setName(newNinja.getName());
+		return entityManager.merge(persist);
+	}
+
+	@Override
+	public boolean deleteNinja(String name) {
+		Optional <Ninja> op = ninjaRepository.findById(name);
+		if(!op.isPresent()) {
+			return false;
+		}
+		Ninja result = op.get();
+		Set<NinjaUserFormation> userNinjas  = new HashSet<>();
+		Set<UserFormation> userFormations  = new HashSet<>();
+
+		userNinjas.addAll(ninjaUserFormationRepository.findAllByNinja(name));
+		userFormations.addAll(userFormationRepository.findAllByNinjaName(name));
+	
+		List<CreateNinjaEquipmentDTO> ninjas = new ArrayList<>();
+		for(NinjaUserFormation set:userNinjas) {
+			CreateNinjaEquipmentDTO auxNinja = new CreateNinjaEquipmentDTO();
+			auxNinja.setName(set.getNombre());
+			auxNinja.setNinja(replaceNinjaAux(set.getNinja()));
+			auxNinja.setSet(new CreateSetDTO());
+			auxNinja.setAccesories(new CreateAccesorieSetDTO());
+			if(set.getEquipment() != null) {
+				auxNinja.getSet().setSetName(set.getEquipment().getNombre());
+				auxNinja.getSet().setEquipment(new ArrayList<>());
+				for(Parte part : set.getEquipment().getPartes()) {
+					auxNinja.getSet().getEquipment().add(part.getNombre());
+				}
+			}
+			if(set.getAccesories() != null) {
+				auxNinja.getAccesories().setAccesorieSetName(set.getAccesories().getNombre());
+				auxNinja.getAccesories().setAccesories(new ArrayList<>());
+				for(ParteAccesorio part : set.getAccesories().getPartes()) {
+					auxNinja.getAccesories().getAccesories().add(part.getNombre());
+				}
+			}
+			auxNinja.setUsername(set.getUsername());
+			ninjas.add(auxNinja);
+		}
+		
+		for(CreateNinjaEquipmentDTO aux: ninjas) {
+			this.updateNinjaFormationByNameAndUsername(aux, aux.getUsername());
+		}
+		
+		ninjaRepository.deleteById(name);
+		return true;
+	}
+
+	private String replaceNinjaAux(Ninja ninja) {
+		Ninja result = null;
+		
+		switch(ninja.getFormation()) {
+		case SUPPORT:result = ninjaRepository.getById(Constantes.AUX_SUPPORT);
+			break;
+		case ASSAULTER:result = ninjaRepository.getById(Constantes.AUX_ASSAULTER);
+			break;
+		case VANGUARD:result = ninjaRepository.getById(Constantes.AUX_VANGUARD);
+			break;
+		}
+		return result.getName();
+	}
+	
 	
 }

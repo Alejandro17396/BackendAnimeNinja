@@ -13,7 +13,7 @@ public class BonusAtributoSetsMergeUtils extends BonusAtributo{
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(condition, nombreAtributo, action);
+		return Objects.hash(condition, atributo, action);
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class BonusAtributoSetsMergeUtils extends BonusAtributo{
 		if (getClass() != obj.getClass())
 			return false;
 		BonusAtributo other = (BonusAtributo) obj;
-		return  Objects.equals(nombreAtributo, other.getNombreAtributo())
+		return  Objects.equals(atributo, other.getAtributo())
 				&& Objects.equals(action, other.getAction())
 				&& Objects.equals(condition, other.getCondition());
 	}

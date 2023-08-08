@@ -14,7 +14,7 @@ public class FormationFilterUtils {
 		if(filter == null) {
 			return false;
 		}
-		return attribute.getAttributeName().equals(filter.getAttributeName()) && attribute.getAction().equals(filter.getAction())
+		return attribute.getAtributo().getNombre().equals(filter.getAttributeName()) && attribute.getAction().equals(filter.getAction())
 				&& attribute.getImpact().equals(filter.getImpact()) && attribute.getType() == filter.getType();
 	}
 

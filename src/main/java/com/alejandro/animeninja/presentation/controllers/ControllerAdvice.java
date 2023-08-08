@@ -10,7 +10,9 @@ import com.alejandro.animeninja.bussines.exceptions.AccesoriesException;
 import com.alejandro.animeninja.bussines.exceptions.CreateAccesoriesException;
 import com.alejandro.animeninja.bussines.exceptions.CreateNinjaException;
 import com.alejandro.animeninja.bussines.exceptions.CreateSetException;
+import com.alejandro.animeninja.bussines.exceptions.FileException;
 import com.alejandro.animeninja.bussines.exceptions.FormationException;
+import com.alejandro.animeninja.bussines.exceptions.JsonMapperException;
 import com.alejandro.animeninja.bussines.exceptions.NinjaFilterException;
 import com.alejandro.animeninja.bussines.exceptions.NinjaSkillException;
 import com.alejandro.animeninja.bussines.exceptions.NinjaUserException;
@@ -118,6 +120,22 @@ public class ControllerAdvice {
 	
 	@ExceptionHandler(value = NinjaUserException.class)
 	public ResponseEntity<ErrorDTO> setExceptionHandler(NinjaUserException exception){
+		ErrorDTO error = new ErrorDTO();
+		error.setCode(exception.getCode());
+		error.setMessage(exception.getMessage());
+		return new ResponseEntity<ErrorDTO>(error,exception.getStatus());
+	}
+	
+	@ExceptionHandler(value = JsonMapperException.class)
+	public ResponseEntity<ErrorDTO> setExceptionHandler(JsonMapperException exception){
+		ErrorDTO error = new ErrorDTO();
+		error.setCode(exception.getCode());
+		error.setMessage(exception.getMessage());
+		return new ResponseEntity<ErrorDTO>(error,exception.getStatus());
+	}
+	
+	@ExceptionHandler(value = FileException.class)
+	public ResponseEntity<ErrorDTO> setExceptionHandler(FileException exception){
 		ErrorDTO error = new ErrorDTO();
 		error.setCode(exception.getCode());
 		error.setMessage(exception.getMessage());

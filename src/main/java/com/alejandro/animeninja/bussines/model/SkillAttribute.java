@@ -3,13 +3,20 @@ package com.alejandro.animeninja.bussines.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -32,9 +39,13 @@ public class SkillAttribute implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private SkillType type;
 	
-	@Id
+	/*@Id
 	@Column(name="nombre_atributo")
-	private String attributeName;
+	private String attributeName;*/
+	@Id
+	@ManyToOne(cascade= {CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.EAGER)
+	@JoinColumn(name="nombre_atributo", referencedColumnName = "nombre",insertable=false,updatable=false)
+	protected Atributo atributo;
 	
 	@Id
 	@Column(name="accion")
@@ -52,6 +63,18 @@ public class SkillAttribute implements Serializable{
 	
 	@Column(name="tiempo")
 	private String time;
+	
+	@Transient
+	private String attributeName;
+
+	public String getNombreAtributo() {
+		return attributeName;
+	}
+
+	public void setNombreAtributo(String attributeName) {
+		this.atributo = new Atributo(attributeName);
+		this.attributeName = attributeName;
+	}
 	
 	public SkillAttribute() {
 		
@@ -137,14 +160,14 @@ public class SkillAttribute implements Serializable{
 	}
 
 
-	public String getAttributeName() {
+	/*public String getAttributeName() {
 		return attributeName;
 	}
 
 
 	public void setAttributeName(String attributeName) {
 		this.attributeName = attributeName;
-	}
+	}*/
 
 
 	public Long getValue() {
@@ -159,7 +182,7 @@ public class SkillAttribute implements Serializable{
 
 	
 	
-	@Override
+	/*@Override
 	public int hashCode() {
 		return Objects.hash(action, attributeName, impact, ninjaName, skillName, type);
 	}
@@ -178,6 +201,41 @@ public class SkillAttribute implements Serializable{
 		return Objects.equals(action, other.action) && Objects.equals(attributeName, other.attributeName)
 				&& Objects.equals(impact, other.impact) && Objects.equals(ninjaName, other.ninjaName)
 				&& Objects.equals(skillName, other.skillName) && type == other.type;
+	}*/
+
+
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(action, atributo, impact, ninjaName, skillName, type);
+	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SkillAttribute other = (SkillAttribute) obj;
+		return Objects.equals(action, other.action) && Objects.equals(atributo, other.atributo)
+				&& Objects.equals(impact, other.impact) && Objects.equals(ninjaName, other.ninjaName)
+				&& Objects.equals(skillName, other.skillName) && type == other.type;
+	}
+
+
+
+	public Atributo getAtributo() {
+		return atributo;
+	}
+
+
+
+	public void setAtributo(Atributo atributo) {
+		this.atributo = atributo;
 	}
 
 
@@ -189,7 +247,7 @@ public class SkillAttribute implements Serializable{
 			return false;
 		if (getClass() != other.getClass())
 			return false;
-		if(this.attributeName.equals(other.attributeName) && this.type == other.type 
+		if(this.atributo.equals(other.atributo) && this.type == other.type 
 				&& this.impact.equals(other.impact) && this.action.equals(other.action) 
 				&& this.condition.equals(other.condition)) {
 			return true;
@@ -204,7 +262,7 @@ public class SkillAttribute implements Serializable{
 		SkillAttribute other = new SkillAttribute();
 		
 		other.action=this.action;
-		other.attributeName=this.attributeName;
+		other.atributo=this.atributo;
 		other.condition=this.condition;
 		other.impact=this.impact;
 		other.type=this.type;
@@ -224,7 +282,7 @@ public class SkillAttribute implements Serializable{
 			return false;
 		}
 		
-		return this.getAttributeName().equals(attribute.getAttributeName()) 
+		return this.getAtributo().equals(attribute.getAtributo()) 
 				&& this.getAction().equals(attribute.getAction())
 				&& this.getCondition().equals(attribute.getCondition());
 		
@@ -237,17 +295,18 @@ public class SkillAttribute implements Serializable{
 			return false;
 		}
 		
-		return this.getAttributeName().equals(attribute.getAttributeName()) 
+		return this.getAtributo().equals(attribute.getAtributo()) 
 				&& this.getAction().equals(attribute.getAction())
 				&& this.getImpact().equals(attribute.getImpact());
 		
 	}
 	
+	@JsonIgnore
 	public SkillAttributeKey getKey() {
 		SkillAttributeKey key = new SkillAttributeKey();
 		key.setImpact(impact);
 		key.setAction(action);
-		key.setAttributeName(attributeName);
+		key.setAtributo(atributo);
 		key.setType(type);
 		key.setNinjaName("");
 		key.setSkillName("");
@@ -259,7 +318,7 @@ public class SkillAttribute implements Serializable{
 	public static SkillAttribute createAttribute(NinjaAwakeningStat stat) {
 		SkillAttribute attribute = new SkillAttribute();
 		attribute.setAction(stat.getAction());
-		attribute.setAttributeName(stat.getAttributeName());
+		attribute.setAtributo(stat.getAtributo());
 		attribute.setCondition(stat.getCondition());
 		attribute.setImpact(stat.getImpact());
 		attribute.setNinjaName(stat.getNinja());

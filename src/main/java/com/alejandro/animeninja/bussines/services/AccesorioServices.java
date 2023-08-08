@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
@@ -12,6 +13,7 @@ import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
+import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
@@ -20,6 +22,10 @@ import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 public interface AccesorioServices {
 
 	Page <SetAccesorioDTO> getAll(Pageable pageable);
+	
+	List<SetAccesorioDTO> getAllNoPage();
+	
+	List<SetAccesorioDTO> getAllElements();
 
 	Page <SetAccesorioDTO> getBySpecification(List<Atributo> attributes,Pageable pageable);
 
@@ -67,5 +73,11 @@ public interface AccesorioServices {
 	SetAccesorio mergeAccesorieSetBonuses(SetAccesorio set);
 	
 	void compareAccesorieSetBonuses(UserAccesoriesDTO left,UserAccesoriesDTO right);
+	
+	SetAccesorio createNewAccesorieSet(CreateAccesorieSetAttributesDTO dto,List<MultipartFile> files);
+	
+	SetAccesorio updateAccesorieSet(CreateAccesorieSetAttributesDTO dto,List<MultipartFile> files);
+	
+	boolean deleteAccesorieSet(String name);
 
 }

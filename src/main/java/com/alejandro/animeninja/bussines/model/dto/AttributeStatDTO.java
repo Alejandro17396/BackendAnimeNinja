@@ -6,12 +6,25 @@ public class AttributeStatDTO {
 	
 	private String attribute_name;
 	private Long value;
+	private AtributoDTO atributo;
+
+	public AtributoDTO getAtributo() {
+		return atributo;
+	}
+
+	public void setAtributo(AtributoDTO atributo) {
+		if(atributo != null) {
+			this.attribute_name = atributo.getNombre();
+		}
+		this.atributo = atributo;
+	}
 
 	public String getAttribute_name() {
 		return attribute_name;
 	}
 
 	public void setAttribute_name(String attribute_name) {
+		this.atributo = new AtributoDTO(attribute_name);
 		this.attribute_name = attribute_name;
 	}
 

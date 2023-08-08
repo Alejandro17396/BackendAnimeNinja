@@ -7,12 +7,14 @@ import com.alejandro.animeninja.bussines.model.ChakraNature;
 import com.alejandro.animeninja.bussines.model.Formation;
 import com.alejandro.animeninja.bussines.model.NinjaType;
 import com.alejandro.animeninja.bussines.model.Sex;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class NinjaDTO {
 
-	
-private String name;
-	
+	private String name;
 	
 	private	ChakraNature chakraNature;
 	
@@ -27,6 +29,30 @@ private String name;
 	private List <NinjaSkillDTO> skills;
 	
 	private List <NinjaAwakeningDTO> awakenings;
+	
+	@JsonProperty 
+	private byte[] ninjaImage;
+	
+	@JsonProperty 
+	private byte[] ninjaStatImage;
+
+	public byte[] getNinjaImage() {
+		return ninjaImage;
+	}
+
+	@JsonIgnore
+	public void setNinjaImage(byte[] ninjaImage) {
+		this.ninjaImage = ninjaImage;
+	}
+
+	public byte[] getNinjaStatImage() {
+		return ninjaStatImage;
+	}
+
+	@JsonIgnore
+	public void setNinjaStatImage(byte[] ninjaStatImage) {
+		this.ninjaStatImage = ninjaStatImage;
+	}
 
 	public Sex getSex() {
 		return sex;

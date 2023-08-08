@@ -112,7 +112,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		.addFilter(new JWTAuthorizationFilter(authenticationManagerBean(), jwtService))
 		.authorizeRequests()
 			.antMatchers("/ninjas/**", "/accesorios/**", "/equipos/**", "/sets/**", "/skills/**", "/partes/**",
-					"/bonuses/**", "/atributos/**", "/accesories/**", "/users/**", "/formation/**")
+					"/bonuses/**", "/atributos/**", "/accesories/**", "/users/**", "/formation/**","/items/**")
 				.permitAll()
 			/*.antMatchers("/sets/**")
 				.authenticated()*/

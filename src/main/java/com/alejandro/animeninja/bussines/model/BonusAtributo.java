@@ -3,15 +3,22 @@ package com.alejandro.animeninja.bussines.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="Bonus_atributo")
+@IdClass(ClaveBonusAtributo.class)
 public class BonusAtributo implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -26,9 +33,15 @@ public class BonusAtributo implements Serializable {
 	@JsonIgnore
 	protected String nombreEquipo;
 	
-	@Id
+	/*@Id
 	@Column(name="nombre_atributo")
-	protected String nombreAtributo;
+	//@Transient
+	protected String nombreAtributo;*/
+	
+	@Id
+	@ManyToOne(cascade= {CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.EAGER)
+	@JoinColumn(name="nombre_atributo", referencedColumnName = "nombre",insertable=false,updatable=false)
+	protected Atributo atributo;
 	
 	@Column(name="valor")
 	protected long valor;
@@ -44,10 +57,22 @@ public class BonusAtributo implements Serializable {
 	
 	@Column(name="tiempo")
 	protected String time;
+	
+	@Transient
+	private String nombreAtributo;
+
+	public String getNombreAtributo() {
+		return nombreAtributo;
+	}
+
+	public void setNombreAtributo(String nombreAtributo) {
+		this.atributo = new Atributo(nombreAtributo);
+		this.nombreAtributo = nombreAtributo;
+	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(condition, nombreAtributo, action,impact);
+		return Objects.hash(condition, atributo, action,impact);
 	}
 
 	@Override
@@ -59,17 +84,24 @@ public class BonusAtributo implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		BonusAtributo other = (BonusAtributo) obj;
-		return  Objects.equals(nombreAtributo, other.getNombreAtributo())
+		return  Objects.equals(atributo, other.getAtributo())
 				&& Objects.equals(action, other.getAction())
 				&& Objects.equals(condition, other.getCondition())
 				&& Objects.equals(impact, other.getImpact());
 	}
-
-	@Override
-	public String toString() {
-		return "Bonus_atributo [idBonus=" + idBonus + ", nombreEquipo=" + nombreEquipo + ", nombreAtributo="
-				+ nombreAtributo + ", valor=" + valor + "]";
+	
+	public Atributo getAtributo() {
+		return atributo;
 	}
+
+	public void setAtributo(Atributo atributo) {
+		/*if(atributo!=null) {
+			this.nombreAtributo = atributo.getNombre();
+		}*/
+		this.atributo = atributo;
+	}
+
+	
 
 	public long getIdBonus() {
 		return idBonus;
@@ -87,13 +119,16 @@ public class BonusAtributo implements Serializable {
 		this.nombreEquipo = nombreEquipo;
 	}
 
-	public String getNombreAtributo() {
+	/*public String getNombreAtributo() {
 		return nombreAtributo;
 	}
 
 	public void setNombreAtributo(String nombreAtributo) {
+		Atributo atributo = new Atributo();
+		atributo.setNombre(nombreAtributo);
+		this.atributo = atributo;
 		this.nombreAtributo = nombreAtributo;
-	}
+	}*/
 
 	public long getValor() {
 		return valor;
@@ -144,7 +179,7 @@ public class BonusAtributo implements Serializable {
 		this.condition = bonus.condition;
 		this.idBonus = bonus.idBonus;
 		this.impact = bonus.impact;
-		this.nombreAtributo = bonus.nombreAtributo;
+		this.atributo = bonus.atributo;
 		this.nombreEquipo = bonus.nombreEquipo;
 		this.time = bonus.time;
 	}

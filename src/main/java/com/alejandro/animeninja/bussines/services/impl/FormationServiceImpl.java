@@ -96,6 +96,8 @@ public class FormationServiceImpl implements FormationService {
 	@Autowired
 	private UserAccesoriesRepository userAccesoriesRepository;
 	
+	private Logger logger = LoggerFactory.getLogger(FormationServiceImpl.class);
+	
 	@Override
 	public FormationNinjaDTO createFormation(HashMap<String, SkillType> request, boolean awakenings)
 			throws InterruptedException, ExecutionException {
@@ -411,7 +413,7 @@ public class FormationServiceImpl implements FormationService {
 			try {
 				result.add(mergeBonus(formation));
 			}catch(Exception e) {
-				
+				logger.error("Error merging formations user solution bonuses");
 			}
 		}
 		

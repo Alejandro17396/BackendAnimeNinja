@@ -9,7 +9,8 @@ public class SkillAttributeKey implements Serializable{
 	private String skillName;
 	private String ninjaName;
 	private SkillType type;
-	private String attributeName;
+	//private String attributeName;
+	private Atributo atributo;
 	private String action;
 	private String impact;
 	
@@ -41,13 +42,13 @@ public class SkillAttributeKey implements Serializable{
 		this.type = type;
 	}
 
-	public String getAttributeName() {
+	/*public String getAttributeName() {
 		return attributeName;
 	}
 
 	public void setAttributeName(String attributeName) {
 		this.attributeName = attributeName;
-	}
+	}*/
 
 	public String getAction() {
 		return action;
@@ -65,7 +66,7 @@ public class SkillAttributeKey implements Serializable{
 		this.impact = impact;
 	}
 
-	@Override
+	/*@Override
 	public int hashCode() {
 		return Objects.hash(action, attributeName, impact, ninjaName, skillName, type);
 	}
@@ -82,12 +83,12 @@ public class SkillAttributeKey implements Serializable{
 		return Objects.equals(action, other.action) && Objects.equals(attributeName, other.attributeName)
 				&& Objects.equals(impact, other.impact) && Objects.equals(ninjaName, other.ninjaName)
 				&& Objects.equals(skillName, other.skillName) && type == other.type;
-	}
+	}*/
 
 	public static SkillAttributeKey createKey(SkillAttribute attribute) {
 		SkillAttributeKey key = new SkillAttributeKey();
 		key.setAction(attribute.getAction());
-		key.setAttributeName(attribute.getAttributeName());
+		key.setAtributo(attribute.getAtributo());
 		key.setImpact(attribute.getImpact());
 		key.setNinjaName(attribute.getNinjaName());
 		key.setSkillName(attribute.getSkillName());
@@ -96,10 +97,18 @@ public class SkillAttributeKey implements Serializable{
 		return key;
 	}
 	
+	public Atributo getAtributo() {
+		return atributo;
+	}
+
+	public void setAtributo(Atributo atributo) {
+		this.atributo = atributo;
+	}
+
 	public static SkillAttributeKey createKey(NinjaAwakeningStat stat) {
 		SkillAttributeKey key = new SkillAttributeKey();
 		key.setAction(stat.getAction());
-		key.setAttributeName(stat.getAttributeName());
+		key.setAtributo(stat.getAtributo());
 		key.setImpact(stat.getImpact());
 		key.setNinjaName(stat.getNinja());
 		key.setSkillName(stat.getName());

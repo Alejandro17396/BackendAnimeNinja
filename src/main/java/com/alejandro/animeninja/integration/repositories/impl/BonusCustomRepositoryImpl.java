@@ -48,7 +48,7 @@ public class BonusCustomRepositoryImpl implements BonusCustomRepository {
 						bonusAtributo.get(BonusAtributo_.NOMBRE_EQUIPO));
 				Predicate joinPredicate2=cb.equal(bonus.get(Bonus_.ID),bonusAtributo.get(BonusAtributo_.ID_BONUS));
 				Predicate attributePredicate= cb.equal(bonusAtributo.get
-						(BonusAtributo_.NOMBRE_ATRIBUTO),a.getNombre());
+						(BonusAtributo_.ATRIBUTO),a);
 				subquerys.add(subquery.select(bonusAtributo).
 						where(joinPredicate,joinPredicate2,attributePredicate));
 			}

@@ -3,10 +3,12 @@ package com.alejandro.animeninja.bussines.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -23,16 +25,27 @@ public class ParteAccesorio implements Serializable {
 	@Column(name="nombre_set")
 	private String nombreSet;
 	
-	@OneToOne
+	@OneToOne(cascade= {CascadeType.PERSIST,CascadeType.MERGE})
 	@JoinColumn(name = "nombre_atributo")
 	private Atributo atributo;
 	
 	@Column(name = "valor")
 	private Long valor;
-
 	
 	@Column(name="tipo")
 	private String tipo;
+	
+	@Lob
+    @Column(name="image", columnDefinition="BLOB")
+    private byte[] image;
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
 	
 	public ParteAccesorio() {
 	

@@ -1,5 +1,6 @@
 package com.alejandro.animeninja.bussines.mappers;
 
+import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.AttributeStat;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAccesorio;
@@ -17,6 +18,7 @@ import com.alejandro.animeninja.bussines.model.SkillAttribute;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
 import com.alejandro.animeninja.bussines.model.UserFormation;
 import com.alejandro.animeninja.bussines.model.UserSet;
+import com.alejandro.animeninja.bussines.model.dto.AtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.AttributeStatDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
@@ -35,14 +37,15 @@ import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-06-10T19:50:21+0200",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2023-08-07T21:33:41+0200",
+    comments = "version: 1.5.2.Final, compiler: Eclipse JDT (IDE) 3.35.0.v20230721-1147, environment: Java 17.0.7 (Eclipse Adoptium)"
 )
 @Component
 public class UserFormationMapperImpl implements UserFormationMapper {
@@ -86,7 +89,12 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         ParteAccesorioDTO parteAccesorioDTO = new ParteAccesorioDTO();
 
+        byte[] image = parteAccesorio.getImage();
+        if ( image != null ) {
+            parteAccesorioDTO.setImage( Arrays.copyOf( image, image.length ) );
+        }
         parteAccesorioDTO.setNombre( parteAccesorio.getNombre() );
+        parteAccesorioDTO.setAtributo( parteAccesorio.getAtributo() );
         parteAccesorioDTO.setValor( parteAccesorio.getValor() );
         parteAccesorioDTO.setTipo( parteAccesorio.getTipo() );
 
@@ -106,6 +114,18 @@ public class UserFormationMapperImpl implements UserFormationMapper {
         return list1;
     }
 
+    protected AtributoDTO atributoToAtributoDTO(Atributo atributo) {
+        if ( atributo == null ) {
+            return null;
+        }
+
+        AtributoDTO atributoDTO = new AtributoDTO();
+
+        atributoDTO.setNombre( atributo.getNombre() );
+
+        return atributoDTO;
+    }
+
     protected BonusAccesorioAtributoDTO bonusAccesorioAtributoToBonusAccesorioAtributoDTO(BonusAccesorioAtributo bonusAccesorioAtributo) {
         if ( bonusAccesorioAtributo == null ) {
             return null;
@@ -120,6 +140,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
         bonusAccesorioAtributoDTO.setCondition( bonusAccesorioAtributo.getCondition() );
         bonusAccesorioAtributoDTO.setTime( bonusAccesorioAtributo.getTime() );
         bonusAccesorioAtributoDTO.setNombreAtributo( bonusAccesorioAtributo.getNombreAtributo() );
+        bonusAccesorioAtributoDTO.setAtributo( atributoToAtributoDTO( bonusAccesorioAtributo.getAtributo() ) );
         bonusAccesorioAtributoDTO.setValor( bonusAccesorioAtributo.getValor() );
 
         return bonusAccesorioAtributoDTO;
@@ -187,6 +208,10 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         ParteDTO parteDTO = new ParteDTO();
 
+        byte[] image = parte.getImage();
+        if ( image != null ) {
+            parteDTO.setImage( Arrays.copyOf( image, image.length ) );
+        }
         parteDTO.setNombre( parte.getNombre() );
         parteDTO.setAtributo( parte.getAtributo() );
         parteDTO.setValor( parte.getValor() );
@@ -215,6 +240,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
         BonusAtributoDTO bonusAtributoDTO = new BonusAtributoDTO();
 
         bonusAtributoDTO.setNombreAtributo( bonusAtributo.getNombreAtributo() );
+        bonusAtributoDTO.setAtributo( atributoToAtributoDTO( bonusAtributo.getAtributo() ) );
         bonusAtributoDTO.setValor( bonusAtributo.getValor() );
         bonusAtributoDTO.setAction( bonusAtributo.getAction() );
         bonusAtributoDTO.setImpact( bonusAtributo.getImpact() );
@@ -286,7 +312,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         AttributeStatDTO attributeStatDTO = new AttributeStatDTO();
 
-        attributeStatDTO.setAttribute_name( attributeStat.getAttribute_name() );
+        attributeStatDTO.setAtributo( atributoToAtributoDTO( attributeStat.getAtributo() ) );
         attributeStatDTO.setValue( attributeStat.getValue() );
 
         return attributeStatDTO;
@@ -338,7 +364,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         SkillAttributeDTO skillAttributeDTO = new SkillAttributeDTO();
 
-        skillAttributeDTO.setAttributeName( skillAttribute.getAttributeName() );
+        skillAttributeDTO.setAtributo( atributoToAtributoDTO( skillAttribute.getAtributo() ) );
         skillAttributeDTO.setAction( skillAttribute.getAction() );
         skillAttributeDTO.setImpact( skillAttribute.getImpact() );
         skillAttributeDTO.setValue( skillAttribute.getValue() );
@@ -399,7 +425,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
         ninjaAwakeningStatDTO.setName( ninjaAwakeningStat.getName() );
         ninjaAwakeningStatDTO.setNinja( ninjaAwakeningStat.getNinja() );
         ninjaAwakeningStatDTO.setLevel( ninjaAwakeningStat.getLevel() );
-        ninjaAwakeningStatDTO.setAttributeName( ninjaAwakeningStat.getAttributeName() );
+        ninjaAwakeningStatDTO.setAtributo( atributoToAtributoDTO( ninjaAwakeningStat.getAtributo() ) );
         ninjaAwakeningStatDTO.setType( ninjaAwakeningStat.getType() );
         ninjaAwakeningStatDTO.setAction( ninjaAwakeningStat.getAction() );
         ninjaAwakeningStatDTO.setImpact( ninjaAwakeningStat.getImpact() );
@@ -459,6 +485,14 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         NinjaDTO ninjaDTO = new NinjaDTO();
 
+        byte[] ninjaImage = ninja.getNinjaImage();
+        if ( ninjaImage != null ) {
+            ninjaDTO.setNinjaImage( Arrays.copyOf( ninjaImage, ninjaImage.length ) );
+        }
+        byte[] ninjaStatImage = ninja.getNinjaStatImage();
+        if ( ninjaStatImage != null ) {
+            ninjaDTO.setNinjaStatImage( Arrays.copyOf( ninjaStatImage, ninjaStatImage.length ) );
+        }
         ninjaDTO.setSex( ninja.getSex() );
         ninjaDTO.setName( ninja.getName() );
         ninjaDTO.setChakraNature( ninja.getChakraNature() );
@@ -512,8 +546,13 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         ParteAccesorio parteAccesorio = new ParteAccesorio();
 
+        byte[] image = parteAccesorioDTO.getImage();
+        if ( image != null ) {
+            parteAccesorio.setImage( Arrays.copyOf( image, image.length ) );
+        }
         parteAccesorio.setTipo( parteAccesorioDTO.getTipo() );
         parteAccesorio.setNombre( parteAccesorioDTO.getNombre() );
+        parteAccesorio.setAtributo( parteAccesorioDTO.getAtributo() );
         parteAccesorio.setValor( parteAccesorioDTO.getValor() );
 
         return parteAccesorio;
@@ -532,6 +571,18 @@ public class UserFormationMapperImpl implements UserFormationMapper {
         return list1;
     }
 
+    protected Atributo atributoDTOToAtributo(AtributoDTO atributoDTO) {
+        if ( atributoDTO == null ) {
+            return null;
+        }
+
+        Atributo atributo = new Atributo();
+
+        atributo.setNombre( atributoDTO.getNombre() );
+
+        return atributo;
+    }
+
     protected BonusAccesorioAtributo bonusAccesorioAtributoDTOToBonusAccesorioAtributo(BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO) {
         if ( bonusAccesorioAtributoDTO == null ) {
             return null;
@@ -539,9 +590,10 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         BonusAccesorioAtributo bonusAccesorioAtributo = new BonusAccesorioAtributo();
 
+        bonusAccesorioAtributo.setNombreAtributo( bonusAccesorioAtributoDTO.getNombreAtributo() );
+        bonusAccesorioAtributo.setAtributo( atributoDTOToAtributo( bonusAccesorioAtributoDTO.getAtributo() ) );
         bonusAccesorioAtributo.setTipoBonus( bonusAccesorioAtributoDTO.getTipoBonus() );
         bonusAccesorioAtributo.setNombreSet( bonusAccesorioAtributoDTO.getNombreSet() );
-        bonusAccesorioAtributo.setNombreAtributo( bonusAccesorioAtributoDTO.getNombreAtributo() );
         bonusAccesorioAtributo.setValor( bonusAccesorioAtributoDTO.getValor() );
         bonusAccesorioAtributo.setAction( bonusAccesorioAtributoDTO.getAction() );
         bonusAccesorioAtributo.setImpact( bonusAccesorioAtributoDTO.getImpact() );
@@ -613,6 +665,10 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         Parte parte = new Parte();
 
+        byte[] image = parteDTO.getImage();
+        if ( image != null ) {
+            parte.setImage( Arrays.copyOf( image, image.length ) );
+        }
         parte.setNombre( parteDTO.getNombre() );
         parte.setAtributo( parteDTO.getAtributo() );
         parte.setValor( parteDTO.getValor() );
@@ -641,6 +697,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
         BonusAtributo bonusAtributo = new BonusAtributo();
 
         bonusAtributo.setNombreAtributo( bonusAtributoDTO.getNombreAtributo() );
+        bonusAtributo.setAtributo( atributoDTOToAtributo( bonusAtributoDTO.getAtributo() ) );
         bonusAtributo.setValor( bonusAtributoDTO.getValor() );
         bonusAtributo.setAction( bonusAtributoDTO.getAction() );
         bonusAtributo.setImpact( bonusAtributoDTO.getImpact() );
@@ -712,8 +769,8 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         AttributeStat attributeStat = new AttributeStat();
 
-        attributeStat.setAttribute_name( attributeStatDTO.getAttribute_name() );
         attributeStat.setValue( attributeStatDTO.getValue() );
+        attributeStat.setAtributo( atributoDTOToAtributo( attributeStatDTO.getAtributo() ) );
 
         return attributeStat;
     }
@@ -768,8 +825,8 @@ public class UserFormationMapperImpl implements UserFormationMapper {
         skillAttribute.setTime( skillAttributeDTO.getTime() );
         skillAttribute.setAction( skillAttributeDTO.getAction() );
         skillAttribute.setImpact( skillAttributeDTO.getImpact() );
-        skillAttribute.setAttributeName( skillAttributeDTO.getAttributeName() );
         skillAttribute.setValue( skillAttributeDTO.getValue() );
+        skillAttribute.setAtributo( atributoDTOToAtributo( skillAttributeDTO.getAtributo() ) );
 
         return skillAttribute;
     }
@@ -829,7 +886,7 @@ public class UserFormationMapperImpl implements UserFormationMapper {
         ninjaAwakeningStat.setName( ninjaAwakeningStatDTO.getName() );
         ninjaAwakeningStat.setNinja( ninjaAwakeningStatDTO.getNinja() );
         ninjaAwakeningStat.setLevel( ninjaAwakeningStatDTO.getLevel() );
-        ninjaAwakeningStat.setAttributeName( ninjaAwakeningStatDTO.getAttributeName() );
+        ninjaAwakeningStat.setAtributo( atributoDTOToAtributo( ninjaAwakeningStatDTO.getAtributo() ) );
         ninjaAwakeningStat.setType( ninjaAwakeningStatDTO.getType() );
         ninjaAwakeningStat.setValue( ninjaAwakeningStatDTO.getValue() );
 
@@ -885,6 +942,14 @@ public class UserFormationMapperImpl implements UserFormationMapper {
 
         Ninja ninja = new Ninja();
 
+        byte[] ninjaImage = ninjaDTO.getNinjaImage();
+        if ( ninjaImage != null ) {
+            ninja.setNinjaImage( Arrays.copyOf( ninjaImage, ninjaImage.length ) );
+        }
+        byte[] ninjaStatImage = ninjaDTO.getNinjaStatImage();
+        if ( ninjaStatImage != null ) {
+            ninja.setNinjaStatImage( Arrays.copyOf( ninjaStatImage, ninjaStatImage.length ) );
+        }
         ninja.setName( ninjaDTO.getName() );
         ninja.setSex( ninjaDTO.getSex() );
         ninja.setChakraNature( ninjaDTO.getChakraNature() );

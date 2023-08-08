@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import com.alejandro.animeninja.bussines.auth.SimpleGrantedAuthorityMixin;
 import com.alejandro.animeninja.bussines.auth.filter.JWTAuthenticationFilter;
+import com.alejandro.animeninja.bussines.exceptions.JwtValidationException;
+import com.alejandro.animeninja.bussines.exceptions.UserException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -66,16 +69,16 @@ public class JWTServiceImpl implements JWTService {
 
 	@Override
 	public Claims getClaims(String token) {
-	try {
-		Claims claims =  Jwts.parserBuilder()
-				.setSigningKey(SECRET_KEY)
-				.build()
-				.parseClaimsJws(resolveToken(token))
-				.getBody();
-		return claims;
-	}catch(JwtException |IllegalArgumentException e) {
-		return null;
-	}
+		try {
+			Claims claims =  Jwts.parserBuilder()
+					.setSigningKey(SECRET_KEY)
+					.build()
+					.parseClaimsJws(resolveToken(token))
+					.getBody();
+			return claims;
+		}catch(JwtException | IllegalArgumentException e) {
+	        throw new JwtValidationException("Token no válido", e);
+	    }
 	}
 
 	@Override
@@ -83,7 +86,11 @@ public class JWTServiceImpl implements JWTService {
 		if(token == null) {
 			return null;
 		}
-		return getClaims(token).getSubject();
+		Claims claims = getClaims(token);
+		if(claims != null) {
+			return claims.getSubject();
+		}
+		return null;
 	}
 
 	@Override

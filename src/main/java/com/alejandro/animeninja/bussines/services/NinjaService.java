@@ -1,5 +1,6 @@
 package com.alejandro.animeninja.bussines.services;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -7,11 +8,13 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.dto.CompareNinjaUserDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateNinjaAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
@@ -29,6 +32,9 @@ public interface NinjaService {
 									boolean or,boolean awakenings);
 	
 	Page <NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,Pageable pageable);
+	
+	Page<NinjaDTO> getNinjaFiltroAndNoPaged(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
+			boolean awakenings,boolean or,Pageable pageable);
 	
 	Page <Ninja>  getAllPaged(Pageable pageable);
 
@@ -63,6 +69,12 @@ public interface NinjaService {
 	boolean deleteNinjaByName(String name,String user);
 	
 	List <NinjaUserFormationDTO> getNinjasByUser(String user);
+	
+	Ninja createNewNinja(CreateNinjaAttributesDTO dto,List<MultipartFile> files) throws IOException;
+	
+	Ninja updateNinja(CreateNinjaAttributesDTO dto,List<MultipartFile> files) throws IOException;
+	
+	boolean deleteNinja(String name);
 	
 	
 

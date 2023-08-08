@@ -1,7 +1,11 @@
 package com.alejandro.animeninja.bussines.mappers;
 
+import com.alejandro.animeninja.bussines.model.Atributo;
+import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAccesorioAtributo;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
+import com.alejandro.animeninja.bussines.model.UserSetBonus;
+import com.alejandro.animeninja.bussines.model.dto.AtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
@@ -17,8 +21,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-06-10T19:50:21+0200",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2023-08-07T21:33:41+0200",
+    comments = "version: 1.5.2.Final, compiler: Eclipse JDT (IDE) 3.35.0.v20230721-1147, environment: Java 17.0.7 (Eclipse Adoptium)"
 )
 @Component
 public class BonusAtributoMapperImpl implements BonusAtributoMapper {
@@ -31,7 +35,7 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
 
         BonusAtributoUtils bonusAtributoUtils = new BonusAtributoUtils();
 
-        bonusAtributoUtils.setAttribute( bonus.getNombreAtributo() );
+        bonusAtributoUtils.setAttribute( bonusAtributoNombre( bonus ) );
         bonusAtributoUtils.setValue( bonus.getValor() );
         bonusAtributoUtils.setAction( bonus.getAction() );
         bonusAtributoUtils.setImpact( bonus.getImpact() );
@@ -42,6 +46,19 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
     }
 
     @Override
+    public UserSetBonus toUserSetBonus(Bonus bonus) {
+        if ( bonus == null ) {
+            return null;
+        }
+
+        UserSetBonus userSetBonus = new UserSetBonus();
+
+        userSetBonus.setId( bonus.getId() );
+
+        return userSetBonus;
+    }
+
+    @Override
     public BonusAtributo toEntity(BonusAtributoUtils bonus) {
         if ( bonus == null ) {
             return null;
@@ -49,7 +66,7 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
 
         BonusAtributo bonusAtributo = new BonusAtributo();
 
-        bonusAtributo.setNombreAtributo( bonus.getAttribute() );
+        bonusAtributo.setAtributo( bonusAtributoUtilsToAtributo( bonus ) );
         if ( bonus.getValue() != null ) {
             bonusAtributo.setValor( bonus.getValue() );
         }
@@ -95,10 +112,11 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
 
         BonusAtributoDTO bonusAtributoDTO = new BonusAtributoDTO();
 
-        bonusAtributoDTO.setNombreAtributo( bonus.getAttributeName() );
+        bonusAtributoDTO.setAtributo( skillAttributeDTOToAtributoDTO( bonus ) );
         if ( bonus.getValue() != null ) {
             bonusAtributoDTO.setValor( bonus.getValue() );
         }
+        bonusAtributoDTO.setColor( bonus.getColor() );
         bonusAtributoDTO.setAction( bonus.getAction() );
         bonusAtributoDTO.setImpact( bonus.getImpact() );
         bonusAtributoDTO.setCondition( bonus.getCondition() );
@@ -165,9 +183,10 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
 
         BonusAccesorioAtributo bonusAccesorioAtributo = new BonusAccesorioAtributo();
 
+        bonusAccesorioAtributo.setNombreAtributo( b.getNombreAtributo() );
+        bonusAccesorioAtributo.setAtributo( b.getAtributo() );
         bonusAccesorioAtributo.setTipoBonus( b.getTipoBonus() );
         bonusAccesorioAtributo.setNombreSet( b.getNombreSet() );
-        bonusAccesorioAtributo.setNombreAtributo( b.getNombreAtributo() );
         bonusAccesorioAtributo.setValor( b.getValor() );
         bonusAccesorioAtributo.setAction( b.getAction() );
         bonusAccesorioAtributo.setImpact( b.getImpact() );
@@ -177,6 +196,33 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
         return bonusAccesorioAtributo;
     }
 
+    private String bonusAtributoNombre(BonusAtributo bonusAtributo) {
+        if ( bonusAtributo == null ) {
+            return null;
+        }
+        Atributo atributo = bonusAtributo.getAtributo();
+        if ( atributo == null ) {
+            return null;
+        }
+        String nombre = atributo.getNombre();
+        if ( nombre == null ) {
+            return null;
+        }
+        return nombre;
+    }
+
+    protected Atributo bonusAtributoUtilsToAtributo(BonusAtributoUtils bonusAtributoUtils) {
+        if ( bonusAtributoUtils == null ) {
+            return null;
+        }
+
+        Atributo atributo = new Atributo();
+
+        atributo.setNombre( bonusAtributoUtils.getAttribute() );
+
+        return atributo;
+    }
+
     protected BonusAccesorioAtributoDTO bonusAtributoDTOToBonusAccesorioAtributoDTO(BonusAtributoDTO bonusAtributoDTO) {
         if ( bonusAtributoDTO == null ) {
             return null;
@@ -184,11 +230,13 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
 
         BonusAccesorioAtributoDTO bonusAccesorioAtributoDTO = new BonusAccesorioAtributoDTO();
 
+        bonusAccesorioAtributoDTO.setColor( bonusAtributoDTO.getColor() );
         bonusAccesorioAtributoDTO.setAction( bonusAtributoDTO.getAction() );
         bonusAccesorioAtributoDTO.setImpact( bonusAtributoDTO.getImpact() );
         bonusAccesorioAtributoDTO.setCondition( bonusAtributoDTO.getCondition() );
         bonusAccesorioAtributoDTO.setTime( bonusAtributoDTO.getTime() );
         bonusAccesorioAtributoDTO.setNombreAtributo( bonusAtributoDTO.getNombreAtributo() );
+        bonusAccesorioAtributoDTO.setAtributo( bonusAtributoDTO.getAtributo() );
         bonusAccesorioAtributoDTO.setValor( bonusAtributoDTO.getValor() );
 
         return bonusAccesorioAtributoDTO;
@@ -214,7 +262,9 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
 
         BonusAtributoDTO bonusAtributoDTO = new BonusAtributoDTO();
 
+        bonusAtributoDTO.setColor( bonusAccesorioAtributoDTO.getColor() );
         bonusAtributoDTO.setNombreAtributo( bonusAccesorioAtributoDTO.getNombreAtributo() );
+        bonusAtributoDTO.setAtributo( bonusAccesorioAtributoDTO.getAtributo() );
         bonusAtributoDTO.setValor( bonusAccesorioAtributoDTO.getValor() );
         bonusAtributoDTO.setAction( bonusAccesorioAtributoDTO.getAction() );
         bonusAtributoDTO.setImpact( bonusAccesorioAtributoDTO.getImpact() );
@@ -235,5 +285,17 @@ public class BonusAtributoMapperImpl implements BonusAtributoMapper {
         }
 
         return list1;
+    }
+
+    protected AtributoDTO skillAttributeDTOToAtributoDTO(SkillAttributeDTO skillAttributeDTO) {
+        if ( skillAttributeDTO == null ) {
+            return null;
+        }
+
+        AtributoDTO atributoDTO = new AtributoDTO();
+
+        atributoDTO.setNombre( skillAttributeDTO.getAttributeName() );
+
+        return atributoDTO;
     }
 }

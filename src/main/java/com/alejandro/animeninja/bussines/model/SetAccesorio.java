@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -22,13 +23,13 @@ public class SetAccesorio implements Serializable{
 	private String nombre;
 	
 	//@Transient
-	@OneToMany
-	@JoinColumn(name="NOMBRE_SET")
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+	@JoinColumn(name="NOMBRE_SET",nullable=false,insertable=false,updatable=false)
 	private List <ParteAccesorio>  partes;
 	
 	//@Transient
-	@OneToMany
-	@JoinColumn(name="NOMBRE_SET_ACCESORIOS")
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+	@JoinColumn(name="NOMBRE_SET_ACCESORIOS",nullable=false,insertable=false,updatable=false)
 	private List <BonusAccesorio> bonuses;
 	
 	public SetAccesorio() {

@@ -1,5 +1,6 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,6 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
@@ -35,6 +40,7 @@ import com.alejandro.animeninja.bussines.model.UserFormation;
 import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
@@ -56,6 +62,7 @@ import com.alejandro.animeninja.integration.repositories.UserSetRepository;
 import com.alejandro.animeninja.integration.specifications.BonusSpecification;
 import com.alejandro.animeninja.integration.specifications.EquipoSpecification;
 import com.alejandro.animeninja.bussines.exceptions.CreateSetException;
+import com.alejandro.animeninja.bussines.exceptions.FileException;
 import com.alejandro.animeninja.bussines.exceptions.SetException;
 import com.alejandro.animeninja.bussines.mappers.BonusAtributoMapper;
 import com.alejandro.animeninja.bussines.mappers.SetMapper;
@@ -186,7 +193,7 @@ public class EquipoServicesImpl implements EquipoServices {
 		Page <Equipo> page = equipoRepository.findAll(pageable);
 		return new PageImpl<SetDTO>(setMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
 
-	}
+	} 
 	
 	@Override
 	public List<Equipo> generateCombinationSetsByBonus(Specification<Bonus> specification, List<Atributo> attributes,
@@ -239,13 +246,13 @@ public class EquipoServicesImpl implements EquipoServices {
 			bonus.setListaBonus(new ArrayList<>());
 			for (Bonus b1 : equipo.getBonuses()) {
 				for (BonusAtributo b : b1.getListaBonus()) {
-					if (!mapa.containsKey(b.getNombreAtributo())) {
-						mapa.put(b.getNombreAtributo(), 0L);
+					if (!mapa.containsKey(b.getAtributo().getNombre())) {
+						mapa.put(b.getAtributo().getNombre(), 0L);
 					}
 				}
 				for (BonusAtributo b : b1.getListaBonus()) {
-					if (mapa.containsKey(b.getNombreAtributo())) {
-						mapa.put(b.getNombreAtributo(), mapa.get(b.getNombreAtributo()) + b.getValor());
+					if (mapa.containsKey(b.getAtributo().getNombre())) {
+						mapa.put(b.getAtributo().getNombre(), mapa.get(b.getAtributo().getNombre()) + b.getValor());
 					}
 				}
 
@@ -253,7 +260,7 @@ public class EquipoServicesImpl implements EquipoServices {
 
 			for (Map.Entry<String, Long> entry : mapa.entrySet()) {
 				BonusAtributo miBonusAtributo = new BonusAtributo();
-				miBonusAtributo.setNombreAtributo(entry.getKey());
+				miBonusAtributo.setAtributo(new Atributo(entry.getKey()));
 				miBonusAtributo.setValor(entry.getValue());
 				bonus.getListaBonus().add(miBonusAtributo);
 			}
@@ -282,10 +289,10 @@ public class EquipoServicesImpl implements EquipoServices {
 		equipos.removeIf(x -> {
 			Map<String, Long> mapa = new HashMap<String, Long>();
 			for (BonusAtributo a : x.getBonuses().get(0).getListaBonus()) {
-				mapa.put(a.getNombreAtributo(), a.getValor());
+				mapa.put(a.getAtributo().getNombre(), a.getValor());
 			}
 			for (BonusAtributo a : attributesFilter) {
-				Long aux = mapa.get(a.getNombreAtributo());
+				Long aux = mapa.get(a.getAtributo().getNombre());
 				if (aux != null && aux < a.getValor()) {
 					return true;
 				}
@@ -444,7 +451,7 @@ public class EquipoServicesImpl implements EquipoServices {
 		Set<String> atributosEquipo = new HashSet<>();
 
 		equipo.getBonuses().forEach(bonus -> bonuses.addAll(bonus.getListaBonus()));
-		bonuses.forEach(bonus -> atributosEquipo.add(bonus.getNombreAtributo()));
+		bonuses.forEach(bonus -> atributosEquipo.add(bonus.getAtributo().getNombre()));
 
 		attributes.removeIf(attribute -> {
 			return atributosEquipo.contains(attribute.getNombre());
@@ -567,7 +574,7 @@ public class EquipoServicesImpl implements EquipoServices {
 	@Override
 	public UserSet createOrUpdateSetByName(CreateSetDTO dto, String user) {
 		
-		if(dto== null) {
+		if(dto== null || dto.getSetName() == null) {
 			return null;
 		}
 		
@@ -776,7 +783,8 @@ public class EquipoServicesImpl implements EquipoServices {
 		}
 		
 		if (filtred) {
-			filterSetDTOByStats(setsDTO, attributes.getAttributesFilter());
+			filterEquipoByStats(setsDTO, attributes.getAttributesFilter());
+			//filterSetDTOByStats(setsDTO, attributes.getAttributesFilter());
 		}
 		if (sorted) {
 			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
@@ -794,16 +802,32 @@ public class EquipoServicesImpl implements EquipoServices {
 	      }
 	      return sb.toString();
 	  }
+	 
+	 public void filterEquipoByStats(List<SetDTO> equipos, List<BonusAtributo> attributesFilter) {
+	        equipos.removeIf(equipo -> 
+	            !attributesFilter.stream().allMatch(filter -> 
+	                equipo.getBonuses().stream().anyMatch(bonus ->
+	                    bonus.getListaBonus().stream().anyMatch(bonusAttribute ->
+	                        bonusAttribute.getAtributo().getNombre().equals(filter.getAtributo().getNombre())
+	                        && bonusAttribute.getValor() >= filter.getValor()
+	                        && (filter.getAction() == null || filter.getAction().equals(bonusAttribute.getAction()))
+	                        && (filter.getImpact() == null || filter.getImpact().equals(bonusAttribute.getImpact()))
+	                        && (filter.getCondition() == null || filter.getCondition().equals(bonusAttribute.getCondition()))
+	                    )
+	                )
+	            )
+	        );
+	    }
 
 	private void filterSetDTOByStats(List<SetDTO> equipos, List<BonusAtributo> attributesFilter) {
 
-		equipos.removeIf(x -> {
+		equipos.removeIf(equipo -> {
 			Map<String, Long> mapa = new HashMap<String, Long>();
-			for (BonusAtributoDTO a : x.getBonuses().get(0).getListaBonus()) {
+			for (BonusAtributoDTO a : equipo.getBonuses().get(0).getListaBonus()) {
 				mapa.put(a.getNombreAtributo(), a.getValor());
 			}
 			for (BonusAtributo a : attributesFilter) {
-				Long aux = mapa.get(a.getNombreAtributo());
+				Long aux = mapa.get(a.getAtributo().getNombre());
 				if (aux != null && aux < a.getValor()) {
 					return true;
 				}
@@ -991,6 +1015,190 @@ public class EquipoServicesImpl implements EquipoServices {
 		}
 		
 		return listToCalculate;
-		
 	}
+	
+	@Transactional
+	@Override
+	public Equipo createNewEquipment(CreateSetAttributesDTO dto,List<MultipartFile> files) {
+		Equipo result = setMapper.toEntity(dto.getSet());
+		Map<String,Atributo>  mapa = new HashMap<>();
+		Map<String,byte[]> images = new HashMap<>();
+		if(files != null) {
+			for(MultipartFile file:files) {
+				String key = FilenameUtils.removeExtension(file.getOriginalFilename());
+				try {
+					images.put(key, file.getBytes());
+				}catch(Exception e) {
+					throw new FileException("400","Error parsing the images createNewEquipment()",HttpStatus.BAD_REQUEST);
+				}
+			}
+		}
+		
+		for(String attribute:dto.getAttributes()) {
+			mapa.put(attribute, new Atributo(attribute));
+		}
+		
+		for(int i = 0; i< result.getPartes().size(); i++) {
+			if(result.getPartes().get(i).getNombre() == null) {
+				result.getPartes().remove(i);
+			}
+		}
+		
+		for(Parte p2: result.getPartes()) {
+			p2.setEquipo(result.getNombre());
+			p2.setAtributo(mapa.get(p2.getAtributo().getNombre()));
+			p2.setImage(images.get(p2.getNombre()));
+		}
+		
+		for(Bonus p2: result.getBonuses()) {
+			if(p2.getNombre().contains("2")) {
+				p2.setId(2L);
+				p2.setEquipo(result.getNombre());
+				continue;
+			}
+			if(p2.getNombre().contains("4")) {
+				p2.setId(4L);
+				p2.setEquipo(result.getNombre());
+				continue;
+			}
+			if(p2.getNombre().contains("6")) {
+				p2.setId(6L);
+				p2.setEquipo(result.getNombre());
+				continue;
+			}
+		}
+		
+		for(Bonus p2: result.getBonuses()) {
+			for(BonusAtributo ba: p2.getListaBonus()) {
+				ba.setNombreEquipo(p2.getEquipo());
+				ba.setIdBonus(p2.getId());
+				ba.setAtributo(mapa.get(ba.getAtributo().getNombre()));
+				//mapa.put(ba.getNombreAtributo(), new Atributo(ba.getNombreAtributo()));
+			}
+		}		
+
+		return equipoRepository.save(result);
+	}
+	
+	@Transactional
+	@Override
+	public Equipo updateEquipment(CreateSetAttributesDTO dto,List<MultipartFile> files) {
+		Equipo result = setMapper.toEntity(dto.getSet());
+		Equipo persist = entityManager.find(Equipo.class, dto.getSet().getNombre());
+		Map<String,Atributo>  mapa = new HashMap<>();
+		/*for(Parte p2: result.getPartes()) {
+			p2.setEquipo(result.getNombre());
+			mapa.put(p2.getAtributo().getNombre(), p2.getAtributo());
+		}*/
+		Map<String,byte[]> images = new HashMap<>();
+		if(files != null) {
+			for(MultipartFile file:files) {
+				String key = FilenameUtils.removeExtension(file.getOriginalFilename());
+				try {
+					images.put(key, file.getBytes());
+				}catch(Exception e) {
+					throw new FileException("400","Error parsing the images createNewEquipment()",HttpStatus.BAD_REQUEST);
+				}
+			}
+		}
+		
+		for(String attribute:dto.getAttributes()) {
+			mapa.put(attribute, new Atributo(attribute));
+		}
+		
+		for(int i = 0; i< result.getPartes().size(); i++) {
+			if(result.getPartes().get(i).getNombre() == null) {
+				result.getPartes().remove(i);
+			}
+		}
+		
+		for(Parte p2: result.getPartes()) {
+			p2.setEquipo(result.getNombre());
+			p2.setAtributo(mapa.get(p2.getAtributo().getNombre()));
+			byte [] image = images.get(p2.getNombre());
+			if(image != null) {
+				p2.setImage(images.get(p2.getNombre()));
+			}
+		}
+		
+		for(Bonus p2: result.getBonuses()) {
+			if(p2.getNombre().contains("2")) {
+				p2.setId(2L);
+				p2.setEquipo(result.getNombre());
+				continue;
+			}
+			if(p2.getNombre().contains("4")) {
+				p2.setId(4L);
+				p2.setEquipo(result.getNombre());
+				continue;
+			}
+			if(p2.getNombre().contains("6")) {
+				p2.setId(6L);
+				p2.setEquipo(result.getNombre());
+				continue;
+			}
+		}
+		
+		for(Bonus p2: result.getBonuses()) {
+			for(BonusAtributo ba: p2.getListaBonus()) {
+				ba.setNombreEquipo(p2.getEquipo());
+				ba.setIdBonus(p2.getId());
+				ba.setAtributo(mapa.get(ba.getAtributo().getNombre()));
+				//mapa.put(ba.getNombreAtributo(), new Atributo(ba.getNombreAtributo()));
+			}
+		}
+		
+		persist.getPartes().clear();
+		persist.getBonuses().clear();
+		persist.getPartes().addAll(result.getPartes());
+		persist.getBonuses().addAll(result.getBonuses());
+		persist.setNombre(result.getNombre());
+		return entityManager.merge(persist);
+
+	}
+	
+	@Autowired
+	private EntityManager entityManager;
+	
+	@Override
+	public boolean deleteSet(String name) {
+		Optional <Equipo> op = equipoRepository.findById(name);
+		if(!op.isPresent()) {
+			return false;
+		}
+		Equipo result = op.get();//entityManager.find(Equipo.class, name);
+		Set<UserSet> userSets  = new HashSet<>();
+		
+		for(Bonus b : result.getBonuses()) {
+			userSets.addAll(userSetRepository.findAllByBonus(b.getId(), b.getEquipo()));
+			userSets.addAll(userSetRepository.findAllByParte(name));
+		}
+		List<CreateSetDTO> sets = new ArrayList<>();
+		for(UserSet set:userSets) {
+			CreateSetDTO aux = new CreateSetDTO();
+			aux.setSetName(set.getNombre());
+			List<String> parts = new ArrayList<>();
+			for(Parte part: set.getPartes()) {
+				if(!part.getEquipo().equals(name)) {
+					parts.add(part.getNombre());
+				}
+			}
+			aux.setEquipment(parts);
+			aux.setUsername(set.getUsername());
+			sets.add(aux);
+		}
+		
+		for(CreateSetDTO aux: sets) {
+			if(aux.getEquipment().size() > 0) {
+				this.UpdateSetByName(aux, aux.getUsername());
+			}else {
+				this.deleteUserSetByName(aux.getSetName(), aux.getUsername());
+			}
+		}
+		
+		equipoRepository.deleteById(name);
+		return true;
+	}
+	
+
 }

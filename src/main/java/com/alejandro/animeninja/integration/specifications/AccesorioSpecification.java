@@ -23,7 +23,7 @@ public class AccesorioSpecification {
 			Predicate joinPredicate= cb.equal(equipo.get(SetAccesorio_.NOMBRE), 
 					bonusAccesorioAtributo.get(BonusAccesorioAtributo_.NOMBRE_SET));
 			Predicate attributePredicate= cb.equal(bonusAccesorioAtributo.get
-					(BonusAccesorioAtributo_.NOMBRE_ATRIBUTO),attribute.getNombre());
+					(BonusAccesorioAtributo_.ATRIBUTO),attribute);
 			
 			return cb.exists(subquery.select(bonusAccesorioAtributo).
 						where(joinPredicate,attributePredicate));

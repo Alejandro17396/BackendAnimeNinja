@@ -3,11 +3,13 @@ package com.alejandro.animeninja.bussines.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -22,7 +24,7 @@ public class Parte implements Serializable {
 	@Column(name = "NOMBRE")
 	private String nombre;
 
-	@OneToOne
+	@OneToOne(cascade= {CascadeType.PERSIST,CascadeType.MERGE})
 	@JoinColumn(name = "nombre_atributo")
 	private Atributo atributo;
 
@@ -31,6 +33,18 @@ public class Parte implements Serializable {
 	
 	@Column(name="nombre_equipo")
 	private String equipo;
+	
+	@Lob
+    @Column(name="image", columnDefinition="BLOB")
+    private byte[] image;
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
 
 	public String getNombre() {
 		return nombre;

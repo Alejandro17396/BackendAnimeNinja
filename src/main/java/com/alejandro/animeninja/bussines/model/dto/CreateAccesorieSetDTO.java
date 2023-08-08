@@ -7,6 +7,15 @@ public class CreateAccesorieSetDTO {
 	private Long id;
 	private List<String> accesories;
 	private String accesorieSetName;
+	private String username;	
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
 	public List<String> getAccesories() {
 		return accesories;

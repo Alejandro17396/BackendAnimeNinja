@@ -10,7 +10,7 @@ public class NinjaAwakeningStatKey implements Serializable{
 	private String name;
 	private String ninja;
 	private String level;
-	private String attributeName;
+	private Atributo atributo;
 	private SkillType type;
 	private String action;
 	private String impact;
@@ -41,15 +41,7 @@ public class NinjaAwakeningStatKey implements Serializable{
 	public void setLevel(String level) {
 		this.level = level;
 	}
-
-	public String getAttributeName() {
-		return attributeName;
-	}
-
-	public void setAttributeName(String attributeName) {
-		this.attributeName = attributeName;
-	}
-
+	
 	public SkillType getType() {
 		return type;
 	}
@@ -76,7 +68,7 @@ public class NinjaAwakeningStatKey implements Serializable{
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(action, attributeName, impact, level, name, ninja, type);
+		return Objects.hash(action, atributo, impact, level, name, ninja, type);
 	}
 
 	@Override
@@ -88,7 +80,7 @@ public class NinjaAwakeningStatKey implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		NinjaAwakeningStatKey other = (NinjaAwakeningStatKey) obj;
-		return Objects.equals(action, other.action) && Objects.equals(attributeName, other.attributeName)
+		return Objects.equals(action, other.action) && Objects.equals(atributo, other.atributo)
 				&& Objects.equals(impact, other.impact) && Objects.equals(level, other.level)
 				&& Objects.equals(name, other.name) && Objects.equals(ninja, other.ninja) && type == other.type;
 	}

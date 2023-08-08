@@ -158,7 +158,7 @@ public class FormationController {
 		}
 		
 		List <UserFormationDTO> formations = formationService.getFormationsByUser(user);
-		if(formations.size() >= Constantes.MAX_SETS) {
+		if(formations != null && formations.size() >= Constantes.MAX_SETS) {
 			throw new UserFormationException("400", "you cant have more formations", HttpStatus.BAD_REQUEST);
 		}
 		

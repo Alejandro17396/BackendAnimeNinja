@@ -1,5 +1,6 @@
 create database naruto;
 use naruto;
+use setsnaruto;
 
 drop table partes;
 drop table bonus_atributo;
@@ -58,8 +59,21 @@ create table bonuses(
 
 );
 
-
 create table bonus_atributo(
+    id_bonus            bigint          not null,
+    nombre_equipo       varchar(200)    not null,
+    nombre_atributo     varchar(200)    not null,
+    valor               bigint          not null,
+    
+    primary key(id_bonus,nombre_equipo,nombre_atributo),
+    
+    foreign key(nombre_equipo) references equipos(nombre),
+    foreign key(nombre_atributo) references atributos(nombre),
+    
+    foreign key(id_bonus, nombre_equipo) references bonuses(id, nombre_equipo)
+);
+
+/*create table bonus_atributo(
 
 	id_bonus			bigint			not null,
     nombre_equipo		varchar(200)	not null,
@@ -71,7 +85,7 @@ create table bonus_atributo(
     foreign key(id_bonus) references bonuses(id),
     foreign key(nombre_atributo) references atributos(nombre)
 
-);
+);*/
 create table set_accesorios(
 
 	nombre		varchar(200)					not null,
@@ -88,6 +102,21 @@ create table BonusAccesorios(
     foreign key(nombre_set_accesorios)  references  set_accesorios(nombre)
 );
 
+create table bonusaccesorios_Atributo(
+
+	tipo_bonus				varchar(200)				not null,
+    nombre_set_accesorios	varchar(200)			not null,
+    nombre_atributo			varchar(200)				not null,
+    valor					bigint						not null,
+    
+    primary key(tipo_bonus,nombre_atributo,nombre_set_accesorios),
+    foreign key(nombre_set_accesorios)	references set_accesorios(nombre),
+    foreign key(tipo_bonus,nombre_set_accesorios) references bonusaccesorios(tipo,nombre_set_accesorios),
+    foreign key(nombre_atributo)  references atributos(nombre)
+);
+
+    foreign key(nombre_set_accesorios)	references set_accesorios(nombre),
+    foreign key(tipo_bonus) references bonusaccesorios(tipo),
 
 create table partes_accesorios(
 	
@@ -102,18 +131,7 @@ create table partes_accesorios(
     foreign key(nombre_atributo)	references	atributos(nombre)
 );
  
-create table bonusaccesorios_Atributo(
 
-	tipo_bonus				varchar(200)				not null,
-    nombre_set_accesorios	varchar(200)			not null,
-    nombre_atributo			varchar(200)				not null,
-    valor					bigint						not null,
-    
-    primary key(tipo_bonus,nombre_atributo,nombre_set_accesorios),
-    foreign key(nombre_set_accesorios)	references set_accesorios(nombre),
-    foreign key(tipo_bonus) references bonusaccesorios(tipo),
-    foreign key(nombre_atributo)  references atributos(nombre)
-);
 
 create table  ninjas(
 
@@ -205,9 +223,13 @@ create table  ninja_awakening_atributo(
     tiempo							varchar(50)								,
     
 	primary key(nivel,ninja,tipo,nombre_atributo,nombre,accion,afecta)						,
-    foreign key(ninja)								references ninjas(nombre)								,
     foreign key(nombre_atributo)					references atributos(nombre)							,
-	foreign key(nombre,tipo,nivel) 					references ninja_awakening(nombre,tipo,nivel)					
+	foreign key(ninja,nombre,tipo,nivel) 					references ninja_awakening(ninja,nombre,tipo,nivel)					
 	
 );
+
+SELECT SUM(data_length + index_length) / (1024 * 1024) AS total_size_mb
+FROM information_schema.tables
+WHERE table_schema = 'naruto';
+
 

@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.presentation.controllers;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,12 +9,14 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,13 +28,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandro.animeninja.bussines.annotation.PageableConstraint;
 import com.alejandro.animeninja.bussines.auth.services.JWTService;
+import com.alejandro.animeninja.bussines.exceptions.SetException;
 import com.alejandro.animeninja.bussines.exceptions.UserException;
 import com.alejandro.animeninja.bussines.mappers.NinjaMapper;
 import com.alejandro.animeninja.bussines.mappers.SkillAttributeMapper;
+import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Ninja;
 import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.NinjaSkill;
@@ -39,9 +46,12 @@ import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.SkillType;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
 import com.alejandro.animeninja.bussines.model.dto.CompareNinjaUserDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateComboNinjaDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateNinjaAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateNinjaEquipmentDTO;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateUserFormationCombosDTO;
 import com.alejandro.animeninja.bussines.model.dto.FinalSkillsAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
@@ -56,6 +66,7 @@ import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
 import com.alejandro.animeninja.bussines.services.FormationService;
+import com.alejandro.animeninja.bussines.services.JsonMapperObjectsService;
 import com.alejandro.animeninja.bussines.services.NinjaService;
 import com.alejandro.animeninja.bussines.services.NinjaSkillService;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
@@ -93,13 +104,28 @@ public class NinjasController {
 	@Autowired
 	private JWTService jwtService;
 	
+	@Autowired(required=true)
+	private JsonMapperObjectsService jsonMapperService;
+	
 	
 	@GetMapping
 	public NinjasDTO getNinjaPaged(Pageable pageable) {
 
 		NinjasDTO response = new NinjasDTO();
-		response.setNinjas(ninjaMapper.toDtoList(ninjaService.getAllPaged(pageable).getContent()));
-		response.setNumber(response.getNinjas().size());
+		Page <Ninja> list = ninjaService.getAllPaged(pageable);
+		response.setNinjas(ninjaMapper.toDtoList(list.getContent()));
+		response.setNumber(Long.valueOf(list.getTotalElements()).intValue());
+		return response;
+		
+	}
+	
+	@GetMapping("/all")
+	public NinjasDTO getAllNinjas() {
+
+		NinjasDTO response = new NinjasDTO();
+		List <Ninja> list = ninjaService.getAll();
+		response.setNinjas(ninjaMapper.toDtoList(list));
+		response.setNumber(list.size());
 		return response;
 		
 	}
@@ -108,13 +134,13 @@ public class NinjasController {
 	public ResponseEntity <Page <NinjaDTO>> getNinjaFiltroAnd(@RequestBody(required = false) CreateComboNinjaDTO attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
-			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			@RequestParam(value = "or", required = false, defaultValue = "false") boolean or,
+			@RequestParam(value = "awakenings", required = false, defaultValue = "true") boolean awakenings,
 			Pageable pageable) {
 
 		validator.validateCreateComboNinjaDTO(attributes);
 		
-		Page <NinjaDTO> responseDTO = ninjaService.getNinjaFiltroAnd(attributes, sorted, filtred,pageable);
+		Page <NinjaDTO> responseDTO = ninjaService.getNinjaFiltroAndNoPaged(attributes, sorted, filtred,awakenings,or,pageable);
 		
 		ResponseEntity <Page <NinjaDTO>> response = null;
 		if(responseDTO.getContent().size() > 0) {
@@ -152,7 +178,7 @@ public class NinjasController {
 			@RequestParam(value = "merge", required = false, defaultValue = "true") boolean merge,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
-			@RequestParam(value = "or", required = false, defaultValue = "true") boolean or,
+			@RequestParam(value = "or", required = false, defaultValue = "false") boolean or,
 			@RequestParam(value = "awakenings", required = false, defaultValue = "true") boolean awakenings,
 			Pageable pageable) {
  
@@ -166,7 +192,7 @@ public class NinjasController {
 		Pagination <FormationNinjaDTO> pagination =  new Pagination <FormationNinjaDTO> 
 		(list,pageable.getPageNumber(),pageable.getPageSize());
 		responseDTO.setFormations(pagination.getPagedList());
-		responseDTO.setNumFormations(responseDTO.getFormations().size());
+		responseDTO.setNumFormations(list.size());
 		
 		if(responseDTO.getNumFormations() > 0) {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
@@ -473,6 +499,110 @@ public class NinjasController {
 		return responseDTO;*/
 		
 		return null;
+	}
+	
+	@PostMapping(value="/ninja/create",consumes = {MediaType.APPLICATION_JSON_VALUE, 
+			 MediaType.MULTIPART_FORM_DATA_VALUE})
+	@Transactional
+	public ResponseEntity<Ninja> createSet(//@RequestBody CreateNinjaAttributesDTO dto){
+			@RequestPart("body") String json,
+			@RequestPart(value ="files",required=false) List<MultipartFile> files) throws IOException{
+		
+		CreateNinjaAttributesDTO dto = jsonMapperService.jsonToCreateNinjaAttributesDTO(json);
+		String name = dto.getNinja().getName();
+		Ninja result = ninjaService.getNinja(name);
+		if(result != null) {
+			throw new SetException("400","There is already an equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result = ninjaService.createNewNinja(dto,files);
+		ResponseEntity <Ninja> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}
+	
+	/*@PostMapping("/ninja/create")
+	@Transactional
+	public ResponseEntity<Ninja> createSet(@RequestBody CreateNinjaAttributesDTO dto){
+
+		
+		String name = dto.getNinja().getName();
+		Ninja result = ninjaService.getNinja(name);
+		if(result != null) {
+			throw new SetException("400","There is already an equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result = ninjaService.createNewNinja(dto);
+		ResponseEntity <Ninja> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}*/
+	
+	@PutMapping(value="/ninja/update")
+	@Transactional
+	public ResponseEntity<Ninja> updateSet(//@RequestBody CreateNinjaAttributesDTO dto){
+			@RequestPart("body") String json,
+			@RequestPart(value ="files",required=false) List<MultipartFile> files) throws IOException{
+		
+		CreateNinjaAttributesDTO dto = jsonMapperService.jsonToCreateNinjaAttributesDTO(json);
+		String name = dto.getNinja().getName();
+		Ninja result = ninjaService.getNinja(name);
+		if(result == null) {
+			throw new SetException("400","There is no equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result =  ninjaService.updateNinja(dto,files);
+		ResponseEntity <Ninja> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}
+	
+	/*@PutMapping("/ninja/update")
+	@Transactional
+	public ResponseEntity<Ninja> updateSet(@RequestBody CreateNinjaAttributesDTO dto){
+
+		String name = dto.getNinja().getName();
+		Ninja result = ninjaService.getNinja(name);
+		if(result == null) {
+			throw new SetException("400","There is no equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result =  ninjaService.updateNinja(dto);
+		ResponseEntity <Ninja> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}*/
+	
+	@DeleteMapping("/ninja/delete/{name}")
+
+	public ResponseEntity<SuccesDTO> deleteSet(@PathVariable String name){
+
+		Boolean result = ninjaService.deleteNinja(name);
+		ResponseEntity <SuccesDTO> responseDTO = null;
+		
+		if(result) {
+			SuccesDTO response = new SuccesDTO();
+			response.setMessage(String.format("equipoment %s deleted succesfully", name));
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			SuccesDTO response = new SuccesDTO();
+			response.setMessage(String.format("equipoment %s doesnt exist", name));
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}
+		
+		return responseDTO;
 	}
 	
 	public void showHeapMemory() {

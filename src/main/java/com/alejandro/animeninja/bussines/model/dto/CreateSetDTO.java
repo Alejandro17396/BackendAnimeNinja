@@ -7,6 +7,15 @@ public class CreateSetDTO {
 	private Long id;
 	private List<String> equipment;
 	private String setName;
+	private String username;	
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
 	public List<String> getEquipment() {
 		return equipment;

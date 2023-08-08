@@ -21,13 +21,13 @@ public class SortEquiposByAttributes implements Comparator<Equipo> {
 		BonusAtributo bonusAtributo2=null;
 		
 		for(BonusAtributo b :bonus1.getListaBonus()) {
-			if(b.getNombreAtributo().equals(attribute)) {
+			if(b.getAtributo().getNombre().equals(attribute)) {
 				bonusAtributo1 = b;
 				break;
 			}
 		}
 		for(BonusAtributo b :bonus2.getListaBonus()) {
-			if(b.getNombreAtributo().equals(attribute)) {
+			if(b.getAtributo().getNombre().equals(attribute)) {
 				bonusAtributo2 = b;
 				break;
 			}

@@ -13,18 +13,18 @@ public abstract class BonusAccesorioAtributo_ {
 	public static volatile SingularAttribute<BonusAccesorioAtributo, String> nombreSet;
 	public static volatile SingularAttribute<BonusAccesorioAtributo, Long> valor;
 	public static volatile SingularAttribute<BonusAccesorioAtributo, String> action;
+	public static volatile SingularAttribute<BonusAccesorioAtributo, Atributo> atributo;
 	public static volatile SingularAttribute<BonusAccesorioAtributo, String> time;
 	public static volatile SingularAttribute<BonusAccesorioAtributo, String> tipoBonus;
-	public static volatile SingularAttribute<BonusAccesorioAtributo, String> nombreAtributo;
 
 	public static final String CONDITION = "condition";
 	public static final String IMPACT = "impact";
 	public static final String NOMBRE_SET = "nombreSet";
 	public static final String VALOR = "valor";
 	public static final String ACTION = "action";
+	public static final String ATRIBUTO = "atributo";
 	public static final String TIME = "time";
 	public static final String TIPO_BONUS = "tipoBonus";
-	public static final String NOMBRE_ATRIBUTO = "nombreAtributo";
 
 }
 

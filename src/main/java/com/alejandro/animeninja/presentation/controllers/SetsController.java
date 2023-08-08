@@ -4,10 +4,15 @@ package com.alejandro.animeninja.presentation.controllers;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alejandro.animeninja.bussines.auth.services.JWTService;
 import com.alejandro.animeninja.bussines.exceptions.SetException;
@@ -32,6 +39,7 @@ import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.Pagination;
 import com.alejandro.animeninja.bussines.model.UserFormation;
 import com.alejandro.animeninja.bussines.model.UserSet;
+import com.alejandro.animeninja.bussines.model.dto.CreateSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
@@ -40,9 +48,11 @@ import com.alejandro.animeninja.bussines.model.dto.SuccesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserFormationDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.services.EquipoServices;
+import com.alejandro.animeninja.bussines.services.JsonMapperObjectsService;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 import com.alejandro.animeninja.integration.repositories.NinjaEquipmentRepository;
 import com.alejandro.animeninja.integration.repositories.UserFormationRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 
@@ -61,8 +71,11 @@ public class SetsController {
 	@Autowired
 	private JWTService jwtService;
 	
+	@Autowired(required=true)
+	private JsonMapperObjectsService jsonMapperService;
+	 
 	@GetMapping
-	public ResponseEntity <Page <SetDTO>> getAll(Pageable pageable) { 
+	public ResponseEntity <Page <SetDTO>> getAllPaged(Pageable pageable) { 
 		
 		Page <SetDTO> responseDTO = equipoServices.getAllPage(pageable);
 		ResponseEntity <Page <SetDTO>> response = null;
@@ -71,6 +84,22 @@ public class SetsController {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
 		}else {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
+		}
+		return response;
+	}
+	
+	//@GetMapping
+	public ResponseEntity <Page <SetDTO>> getAll(Pageable pageable) { 
+		
+		List <SetDTO> responseDTO = setMapper.toDtoList(equipoServices.getAll());
+		ResponseEntity <Page <SetDTO>> response = null;
+		
+		Page <SetDTO> p =new PageImpl<SetDTO>(responseDTO,pageable,responseDTO.size());
+		
+		if(responseDTO.size() > 0) {
+			response = new ResponseEntity <>(p,HttpStatus.OK);
+		}else {
+			response = new ResponseEntity <>(p,HttpStatus.NO_CONTENT);
 		}
 		return response;
 	}
@@ -150,7 +179,7 @@ public class SetsController {
 		}
 		
 		ResponseEntity <List <UserSetDTO>> sets = getSetsByUser(token);
-		if(sets.getBody().size() >= Constantes.MAX_SETS) {
+		if(sets.getBody()!= null && sets.getBody().size() >= Constantes.MAX_SETS) {
 			throw new SetException("400","you cant create more sets update or delete 1", HttpStatus.FORBIDDEN);
 		}
 		
@@ -205,7 +234,7 @@ public class SetsController {
 		return responseDTO;
 	}
 	
-	@GetMapping("/chatgpt")
+	@PostMapping("/chatgpt")
 	public ResponseEntity <SetsDTO> createSet(@RequestBody(required = false) CreateComboSet attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
@@ -213,11 +242,12 @@ public class SetsController {
 		Long ini,fin;
 		ini = System.currentTimeMillis();
 		validator.validateCreateComboSet(attributes);
-		Pagination <SetDTO> pagination =  new Pagination <SetDTO> (equipoServices.generateCombos(attributes,
-				sorted, filtred, null, pageable),pageable.getPageNumber(),pageable.getPageSize());
+		List<SetDTO> lista =equipoServices.generateCombos(attributes,
+				sorted, filtred, null, pageable);
+		Pagination <SetDTO> pagination =  new Pagination <SetDTO> (lista,pageable.getPageNumber(),pageable.getPageSize());
 		SetsDTO responseDTO = new SetsDTO();
 		responseDTO.setSets(pagination.getPagedList());
-		responseDTO.setNumber(pagination.getPagedList().size());
+		responseDTO.setNumber(lista.size());
 		ResponseEntity <SetsDTO> response = null;
 		
 		if(responseDTO.getSets().size() > 0) {
@@ -340,6 +370,120 @@ public class SetsController {
 		
 		if(result != null) {
 			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}
+	
+	@PostMapping(value="/equipment/create", 
+			consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+	@Transactional
+	public ResponseEntity<Equipo> createSet(
+			@RequestPart("body") String json,
+			@RequestPart(value ="files",required=false) List<MultipartFile> files){
+
+		CreateSetAttributesDTO dto = jsonMapperService.jsonToCreateSetAttributeDTO(json);
+		
+		String name = dto.getSet().getNombre();
+		Equipo result = equipoServices.getByNombre(name);
+		if(result != null) {
+			throw new SetException("400","There is already an equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result = equipoServices.createNewEquipment(dto,files);
+		//Equipo result = new Equipo();
+		ResponseEntity <Equipo> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}
+	
+	/*@PostMapping("/equipment/create2")
+	@Transactional
+	public ResponseEntity<Equipo> createSet2(@RequestBody CreateSetAttributesDTO dto){
+
+		
+		String name = dto.getSet().getNombre();
+		Equipo result = equipoServices.getByNombre(name);
+		if(result != null) {
+			throw new SetException("400","There is already an equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result = equipoServices.createNewEquipment(dto);
+		ResponseEntity <Equipo> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}*/
+	
+	/*@PostMapping(value="/equipment/create", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+	@Transactional
+	public ResponseEntity<Equipo> createSet(
+			@RequestPart("body") String json,
+			@RequestPart("files") List<MultipartFile> files){*/
+	
+	@PutMapping(value="/equipment/update",
+			 consumes = {MediaType.APPLICATION_JSON_VALUE, 
+					 MediaType.MULTIPART_FORM_DATA_VALUE})
+	@Transactional
+	public ResponseEntity<SetDTO> updateSet(
+			@RequestPart("body") String json,
+			@RequestPart(value ="files",required=false) List<MultipartFile> files){
+
+		CreateSetAttributesDTO dto = jsonMapperService.jsonToCreateSetAttributeDTO(json);
+		String name = dto.getSet().getNombre();
+		Equipo result = equipoServices.getByNombre(name);
+		if(result == null) {
+			throw new SetException("400","There is no equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result = equipoServices.updateEquipment(dto,files);
+		ResponseEntity <SetDTO> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(setMapper.toDTO(result),HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}
+	
+	/*@PutMapping("/equipment/update")
+	@Transactional
+	public ResponseEntity<Equipo> updateSet(@RequestBody CreateSetAttributesDTO dto){
+
+		String name = dto.getSet().getNombre();
+		Equipo result = equipoServices.getByNombre(name);
+		if(result == null) {
+			throw new SetException("400","There is no equipment named " + name,HttpStatus.BAD_REQUEST);
+		}
+		result = equipoServices.updateEquipment(dto);
+		ResponseEntity <Equipo> responseDTO = null;
+		
+		if(result != null) {
+			responseDTO = new ResponseEntity <>(result,HttpStatus.OK);
+		}
+		
+		return responseDTO;
+	}*/
+	
+	@DeleteMapping("/equipment/delete/{name}")
+
+	public ResponseEntity<SuccesDTO> deleteSet(@PathVariable String name){
+
+		Boolean result = equipoServices.deleteSet(name);
+		ResponseEntity <SuccesDTO> responseDTO = null;
+		
+		if(result) {
+			SuccesDTO response = new SuccesDTO();
+			response.setMessage(String.format("equipoment %s deleted succesfully", name));
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
+		}else {
+			SuccesDTO response = new SuccesDTO();
+			response.setMessage(String.format("equipoment %s doesnt exist", name));
+			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
 		}
 		
 		return responseDTO;

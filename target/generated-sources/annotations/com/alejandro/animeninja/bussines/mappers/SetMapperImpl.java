@@ -1,24 +1,27 @@
 package com.alejandro.animeninja.bussines.mappers;
 
+import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.Bonus;
 import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Parte;
 import com.alejandro.animeninja.bussines.model.UserSet;
+import com.alejandro.animeninja.bussines.model.dto.AtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusAtributoDTO;
 import com.alejandro.animeninja.bussines.model.dto.BonusDTO;
 import com.alejandro.animeninja.bussines.model.dto.ParteDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-06-10T19:50:21+0200",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2023-08-07T21:33:41+0200",
+    comments = "version: 1.5.2.Final, compiler: Eclipse JDT (IDE) 3.35.0.v20230721-1147, environment: Java 17.0.7 (Eclipse Adoptium)"
 )
 @Component
 public class SetMapperImpl implements SetMapper {
@@ -98,6 +101,10 @@ public class SetMapperImpl implements SetMapper {
 
         ParteDTO parteDTO = new ParteDTO();
 
+        byte[] image = parte.getImage();
+        if ( image != null ) {
+            parteDTO.setImage( Arrays.copyOf( image, image.length ) );
+        }
         parteDTO.setNombre( parte.getNombre() );
         parteDTO.setAtributo( parte.getAtributo() );
         parteDTO.setValor( parte.getValor() );
@@ -118,6 +125,18 @@ public class SetMapperImpl implements SetMapper {
         return list1;
     }
 
+    protected AtributoDTO atributoToAtributoDTO(Atributo atributo) {
+        if ( atributo == null ) {
+            return null;
+        }
+
+        AtributoDTO atributoDTO = new AtributoDTO();
+
+        atributoDTO.setNombre( atributo.getNombre() );
+
+        return atributoDTO;
+    }
+
     protected BonusAtributoDTO bonusAtributoToBonusAtributoDTO(BonusAtributo bonusAtributo) {
         if ( bonusAtributo == null ) {
             return null;
@@ -126,6 +145,7 @@ public class SetMapperImpl implements SetMapper {
         BonusAtributoDTO bonusAtributoDTO = new BonusAtributoDTO();
 
         bonusAtributoDTO.setNombreAtributo( bonusAtributo.getNombreAtributo() );
+        bonusAtributoDTO.setAtributo( atributoToAtributoDTO( bonusAtributo.getAtributo() ) );
         bonusAtributoDTO.setValor( bonusAtributo.getValor() );
         bonusAtributoDTO.setAction( bonusAtributo.getAction() );
         bonusAtributoDTO.setImpact( bonusAtributo.getImpact() );
@@ -181,6 +201,10 @@ public class SetMapperImpl implements SetMapper {
 
         Parte parte = new Parte();
 
+        byte[] image = parteDTO.getImage();
+        if ( image != null ) {
+            parte.setImage( Arrays.copyOf( image, image.length ) );
+        }
         parte.setNombre( parteDTO.getNombre() );
         parte.setAtributo( parteDTO.getAtributo() );
         parte.setValor( parteDTO.getValor() );
@@ -201,6 +225,18 @@ public class SetMapperImpl implements SetMapper {
         return list1;
     }
 
+    protected Atributo atributoDTOToAtributo(AtributoDTO atributoDTO) {
+        if ( atributoDTO == null ) {
+            return null;
+        }
+
+        Atributo atributo = new Atributo();
+
+        atributo.setNombre( atributoDTO.getNombre() );
+
+        return atributo;
+    }
+
     protected BonusAtributo bonusAtributoDTOToBonusAtributo(BonusAtributoDTO bonusAtributoDTO) {
         if ( bonusAtributoDTO == null ) {
             return null;
@@ -209,6 +245,7 @@ public class SetMapperImpl implements SetMapper {
         BonusAtributo bonusAtributo = new BonusAtributo();
 
         bonusAtributo.setNombreAtributo( bonusAtributoDTO.getNombreAtributo() );
+        bonusAtributo.setAtributo( atributoDTOToAtributo( bonusAtributoDTO.getAtributo() ) );
         bonusAtributo.setValor( bonusAtributoDTO.getValor() );
         bonusAtributo.setAction( bonusAtributoDTO.getAction() );
         bonusAtributo.setImpact( bonusAtributoDTO.getImpact() );
