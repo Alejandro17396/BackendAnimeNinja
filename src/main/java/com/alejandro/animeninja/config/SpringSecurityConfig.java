@@ -98,15 +98,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
-		/*http.cors().and().csrf().disable().authorizeRequests()
-				.antMatchers("/ninjas/**", "/accesorios/**", "/equipos/**", "/sets/**", "/skills/**", "/partes/**",
-						"/bonuses/**", "/atributos/**", "/accesories/**", "/users/**", "/formation/**", "/users/create")
-				.permitAll()
-				// .antMatchers("/ninjas/**").hasAnyRole("USER")
-				.anyRequest().authenticated().and()
-				.addFilter(new JWTAuthenticationFilter(authenticationManagerBean(), jwtService))
-				.addFilter(new JWTAuthorizationFilter(authenticationManagerBean(), jwtService))
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
+
 		http.cors().and().csrf().disable()
 		.addFilter(new JWTAuthenticationFilter(authenticationManagerBean(), jwtService))
 		.addFilter(new JWTAuthorizationFilter(authenticationManagerBean(), jwtService))
@@ -118,4 +110,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authenticated()*/
 			.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
+	
+	@Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("https://visual-naruto-app.up.railway.app"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }
