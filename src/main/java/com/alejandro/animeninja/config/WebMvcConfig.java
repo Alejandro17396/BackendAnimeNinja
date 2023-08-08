@@ -13,7 +13,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-		.allowedOrigins("http://**")
+		.allowedOrigins("https://visual-naruto-app.up.railway.app")
 		.allowedMethods("GET","POST","PATCH","PUT","DELETE")
 		.allowCredentials(true);
 	}
