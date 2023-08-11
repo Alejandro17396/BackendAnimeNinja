@@ -1,7 +1,9 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
 import com.alejandro.animeninja.bussines.model.SkillType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class NinjaAwakeningStatDTO {
 	
 	

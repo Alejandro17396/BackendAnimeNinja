@@ -512,7 +512,7 @@ public class NinjasController {
 		String name = dto.getNinja().getName();
 		Ninja result = ninjaService.getNinja(name);
 		if(result != null) {
-			throw new SetException("400","There is already an equipment named " + name,HttpStatus.BAD_REQUEST);
+			throw new SetException("400","There is already an ninja named " + name,HttpStatus.BAD_REQUEST);
 		}
 		result = ninjaService.createNewNinja(dto,files);
 		ResponseEntity <Ninja> responseDTO = null;
@@ -554,7 +554,7 @@ public class NinjasController {
 		String name = dto.getNinja().getName();
 		Ninja result = ninjaService.getNinja(name);
 		if(result == null) {
-			throw new SetException("400","There is no equipment named " + name,HttpStatus.BAD_REQUEST);
+			throw new SetException("400","There is no ninja named " + name,HttpStatus.BAD_REQUEST);
 		}
 		result =  ninjaService.updateNinja(dto,files);
 		ResponseEntity <Ninja> responseDTO = null;
@@ -594,11 +594,11 @@ public class NinjasController {
 		
 		if(result) {
 			SuccesDTO response = new SuccesDTO();
-			response.setMessage(String.format("equipoment %s deleted succesfully", name));
+			response.setMessage(String.format("ninja %s deleted succesfully", name));
 			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
 		}else {
 			SuccesDTO response = new SuccesDTO();
-			response.setMessage(String.format("equipoment %s doesnt exist", name));
+			response.setMessage(String.format("ninja %s doesnt exist", name));
 			responseDTO = new ResponseEntity <>(response,HttpStatus.OK);
 		}
 		

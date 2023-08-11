@@ -1511,6 +1511,7 @@ public class NinjaServiceImpl implements NinjaService {
 		for(NinjaAwakening awakening : newNinja.getAwakenings()) {
 			for(NinjaAwakeningStat stat : awakening.getStats()) {
 				stat.setAtributo(mapa.get(stat.getAtributo().getNombre()));
+				stat.setName(awakening.getName());
 			}
 	
 		}
@@ -1518,12 +1519,14 @@ public class NinjaServiceImpl implements NinjaService {
 		for(NinjaStats stats : newNinja.getStats()) {
 			for(AttributeStat stat : stats.getStatsAttributes()) {
 				stat.setAtributo(mapa.get(stat.getAtributo().getNombre()));
+				//stat.setName(newNinja.getName());
 			}
 		}
 		
 		for(NinjaSkill skill : newNinja.getSkills()) {
 			for(SkillAttribute attribute : skill.getAttributes()) {
 				attribute.setAtributo(mapa.get(attribute.getAtributo().getNombre()));
+				//attribute.setName(newNinja.getName());
 			}
 		}
 		
