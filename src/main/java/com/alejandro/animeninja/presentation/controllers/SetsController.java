@@ -88,7 +88,7 @@ public class SetsController {
 		return response;
 	}
 	
-	//@GetMapping
+	@GetMapping("/all")
 	public ResponseEntity <Page <SetDTO>> getAll(Pageable pageable) { 
 		
 		List <SetDTO> responseDTO = setMapper.toDtoList(equipoServices.getAll());

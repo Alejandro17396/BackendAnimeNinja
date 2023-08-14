@@ -89,6 +89,23 @@ public class AccesoriesController {
 		return response;
 	}
 	
+	@GetMapping("/all")
+	public ResponseEntity<Page<SetAccesorioDTO>> getAllNoPage(Pageable pageable) {
+		//Page<SetAccesorioDTO> responseDTO = accesorioServices.getAll(pageable);
+		ResponseEntity<Page<SetAccesorioDTO>> response = null;
+		//responseDTO.getContent().clear();
+		//responseDTO.getContent().addAll(accesorioServices.getAllNoPage());
+		List<SetAccesorioDTO> resp = accesorioServices.getAllNoPage();
+		Page<SetAccesorioDTO> responseDTO =new PageImpl<SetAccesorioDTO>(resp,pageable,resp.size());
+		
+		if (responseDTO.getContent().size() > 0) {
+			response = new ResponseEntity<>(responseDTO, HttpStatus.OK);
+		} else {
+			response = new ResponseEntity<>(responseDTO, HttpStatus.NO_CONTENT);
+		}
+		return response;
+	}
+	
 	@GetMapping("/list")
 	public ResponseEntity<List<SetAccesorioDTO>> getAllN(Pageable pageable) {
 		List<SetAccesorioDTO> responseDTO = accesorioServices.getAllNoPage();
