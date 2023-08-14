@@ -77,7 +77,7 @@ public class Formations {
         }
     }
     
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         // Lista de ninjas
         List<Ninja> ninjas = new ArrayList<>();
 
@@ -106,7 +106,7 @@ public class Formations {
         for (List<Ninja> formation : formations) {
             System.out.println(createName(formation));
         }*/
-    }
+    //}
     
     public static String createName(List <Ninja> formation) {
     	String result = "";

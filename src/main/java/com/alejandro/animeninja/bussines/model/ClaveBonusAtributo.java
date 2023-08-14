@@ -10,6 +10,7 @@ public class ClaveBonusAtributo implements Serializable {
 	private String nombreEquipo;
 	//private String nombreAtributo;
 	private Atributo atributo;
+	private String impact;
 
 	public Atributo getAtributo() {
 		return atributo;
@@ -35,6 +36,15 @@ public class ClaveBonusAtributo implements Serializable {
 	public void setNombreEquipo(String nombreEquipo) {
 		this.nombreEquipo = nombreEquipo;
 	}
+
+	public String getImpact() {
+		return impact;
+	}
+
+	public void setImpact(String impact) {
+		this.impact = impact;
+	}
+	
 	
 	  /*public String getNombreAtributo() { return nombreAtributo; } 
 	  public void setNombreAtributo(String nombreAtributo) {
