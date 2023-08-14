@@ -1603,6 +1603,7 @@ public class NinjaServiceImpl implements NinjaService {
 		for(NinjaAwakening awakening : newNinja.getAwakenings()) {
 			for(NinjaAwakeningStat stat : awakening.getStats()) {
 				stat.setAtributo(mapa.get(stat.getAtributo().getNombre()));
+				stat.setName(awakening.getName());
 			}
 	
 		}
