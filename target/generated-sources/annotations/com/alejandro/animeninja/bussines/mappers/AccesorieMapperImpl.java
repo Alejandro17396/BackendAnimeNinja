@@ -13,18 +13,21 @@ import com.alejandro.animeninja.bussines.model.dto.ParteAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Generated;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-08-15T00:16:50+0200",
+    date = "2023-08-21T01:13:13+0200",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
 public class AccesorieMapperImpl implements AccesorieMapper {
+
+    @Autowired
+    private ParteAccesorioMapper parteAccesorioMapper;
 
     @Override
     public SetAccesorioDTO toDTO(SetAccesorio ninja) {
@@ -35,8 +38,25 @@ public class AccesorieMapperImpl implements AccesorieMapper {
         SetAccesorioDTO setAccesorioDTO = new SetAccesorioDTO();
 
         setAccesorioDTO.setNombre( ninja.getNombre() );
-        setAccesorioDTO.setPartes( parteAccesorioListToParteAccesorioDTOList( ninja.getPartes() ) );
+        setAccesorioDTO.setPartes( parteAccesorioMapper.toListParteDTO( ninja.getPartes() ) );
         setAccesorioDTO.setBonuses( bonusAccesorioListToBonusAccesorioDTOList( ninja.getBonuses() ) );
+        setAccesorioDTO.setFechaSalida( ninja.getFechaSalida() );
+
+        return setAccesorioDTO;
+    }
+
+    @Override
+    public SetAccesorioDTO toDTONoImages(SetAccesorio ninja) {
+        if ( ninja == null ) {
+            return null;
+        }
+
+        SetAccesorioDTO setAccesorioDTO = new SetAccesorioDTO();
+
+        setAccesorioDTO.setPartes( parteAccesorioListToParteAccesorioDTOList( ninja.getPartes() ) );
+        setAccesorioDTO.setNombre( ninja.getNombre() );
+        setAccesorioDTO.setBonuses( bonusAccesorioListToBonusAccesorioDTOList( ninja.getBonuses() ) );
+        setAccesorioDTO.setFechaSalida( ninja.getFechaSalida() );
 
         return setAccesorioDTO;
     }
@@ -49,8 +69,9 @@ public class AccesorieMapperImpl implements AccesorieMapper {
 
         SetAccesorio setAccesorio = new SetAccesorio();
 
+        setAccesorio.setFechaSalida( ninja.getFechaSalida() );
         setAccesorio.setNombre( ninja.getNombre() );
-        setAccesorio.setPartes( parteAccesorioDTOListToParteAccesorioList( ninja.getPartes() ) );
+        setAccesorio.setPartes( parteAccesorioMapper.toListParteEntity( ninja.getPartes() ) );
         setAccesorio.setBonuses( bonusAccesorioDTOListToBonusAccesorioList( ninja.getBonuses() ) );
 
         return setAccesorio;
@@ -88,42 +109,10 @@ public class AccesorieMapperImpl implements AccesorieMapper {
         userAccesoriesDTO.setId( accesories.getId() );
         userAccesoriesDTO.setNombre( accesories.getNombre() );
         userAccesoriesDTO.setUsername( accesories.getUsername() );
-        userAccesoriesDTO.setPartes( parteAccesorioListToParteAccesorioDTOList( accesories.getPartes() ) );
+        userAccesoriesDTO.setPartes( parteAccesorioMapper.toListParteDTO( accesories.getPartes() ) );
         userAccesoriesDTO.setBonuses( bonusAccesorioListToBonusAccesorioDTOList( accesories.getBonuses() ) );
 
         return userAccesoriesDTO;
-    }
-
-    protected ParteAccesorioDTO parteAccesorioToParteAccesorioDTO(ParteAccesorio parteAccesorio) {
-        if ( parteAccesorio == null ) {
-            return null;
-        }
-
-        ParteAccesorioDTO parteAccesorioDTO = new ParteAccesorioDTO();
-
-        byte[] image = parteAccesorio.getImage();
-        if ( image != null ) {
-            parteAccesorioDTO.setImage( Arrays.copyOf( image, image.length ) );
-        }
-        parteAccesorioDTO.setNombre( parteAccesorio.getNombre() );
-        parteAccesorioDTO.setAtributo( parteAccesorio.getAtributo() );
-        parteAccesorioDTO.setValor( parteAccesorio.getValor() );
-        parteAccesorioDTO.setTipo( parteAccesorio.getTipo() );
-
-        return parteAccesorioDTO;
-    }
-
-    protected List<ParteAccesorioDTO> parteAccesorioListToParteAccesorioDTOList(List<ParteAccesorio> list) {
-        if ( list == null ) {
-            return null;
-        }
-
-        List<ParteAccesorioDTO> list1 = new ArrayList<ParteAccesorioDTO>( list.size() );
-        for ( ParteAccesorio parteAccesorio : list ) {
-            list1.add( parteAccesorioToParteAccesorioDTO( parteAccesorio ) );
-        }
-
-        return list1;
     }
 
     protected AtributoDTO atributoToAtributoDTO(Atributo atributo) {
@@ -197,33 +186,14 @@ public class AccesorieMapperImpl implements AccesorieMapper {
         return list1;
     }
 
-    protected ParteAccesorio parteAccesorioDTOToParteAccesorio(ParteAccesorioDTO parteAccesorioDTO) {
-        if ( parteAccesorioDTO == null ) {
-            return null;
-        }
-
-        ParteAccesorio parteAccesorio = new ParteAccesorio();
-
-        byte[] image = parteAccesorioDTO.getImage();
-        if ( image != null ) {
-            parteAccesorio.setImage( Arrays.copyOf( image, image.length ) );
-        }
-        parteAccesorio.setTipo( parteAccesorioDTO.getTipo() );
-        parteAccesorio.setNombre( parteAccesorioDTO.getNombre() );
-        parteAccesorio.setAtributo( parteAccesorioDTO.getAtributo() );
-        parteAccesorio.setValor( parteAccesorioDTO.getValor() );
-
-        return parteAccesorio;
-    }
-
-    protected List<ParteAccesorio> parteAccesorioDTOListToParteAccesorioList(List<ParteAccesorioDTO> list) {
+    protected List<ParteAccesorioDTO> parteAccesorioListToParteAccesorioDTOList(List<ParteAccesorio> list) {
         if ( list == null ) {
             return null;
         }
 
-        List<ParteAccesorio> list1 = new ArrayList<ParteAccesorio>( list.size() );
-        for ( ParteAccesorioDTO parteAccesorioDTO : list ) {
-            list1.add( parteAccesorioDTOToParteAccesorio( parteAccesorioDTO ) );
+        List<ParteAccesorioDTO> list1 = new ArrayList<ParteAccesorioDTO>( list.size() );
+        for ( ParteAccesorio parteAccesorio : list ) {
+            list1.add( parteAccesorioMapper.toDTONoImage( parteAccesorio ) );
         }
 
         return list1;

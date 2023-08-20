@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="PARTES_ACCESORIOS")
@@ -37,6 +38,7 @@ public class ParteAccesorio implements Serializable {
 	
 	@Lob
     @Column(name="image", columnDefinition="BLOB")
+	//@Transient
     private byte[] image;
 
 	public byte[] getImage() {

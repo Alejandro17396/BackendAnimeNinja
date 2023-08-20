@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-08-15T00:16:51+0200",
+    date = "2023-08-21T01:13:12+0200",
     comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 @Component
@@ -26,6 +26,23 @@ public class ParteAccesorioMapperImpl implements ParteAccesorioMapper {
         if ( image != null ) {
             parteAccesorioDTO.setImage( Arrays.copyOf( image, image.length ) );
         }
+        parteAccesorioDTO.setNombre( part.getNombre() );
+        parteAccesorioDTO.setAtributo( part.getAtributo() );
+        parteAccesorioDTO.setValor( part.getValor() );
+        parteAccesorioDTO.setTipo( part.getTipo() );
+
+        return parteAccesorioDTO;
+    }
+
+    @Override
+    public ParteAccesorioDTO toDTONoImage(ParteAccesorio part) {
+        if ( part == null ) {
+            return null;
+        }
+
+        ParteAccesorioDTO parteAccesorioDTO = new ParteAccesorioDTO();
+
+        parteAccesorioDTO.setSetName( part.getNombreSet() );
         parteAccesorioDTO.setNombre( part.getNombre() );
         parteAccesorioDTO.setAtributo( part.getAtributo() );
         parteAccesorioDTO.setValor( part.getValor() );

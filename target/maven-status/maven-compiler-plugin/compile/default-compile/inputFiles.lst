@@ -14,6 +14,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\AttackSkillDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\CreateNinjaEquipmentDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\jsonDeserializers\Base64ToByteArrayDeserializer.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\impl\CompressedCacheServiceImpl.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\ParteServices.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\exceptions\NinjaFilterException.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\NinjaAwakeningStatKey.java
@@ -83,6 +84,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\FormationsNinjaDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\repositories\BonusRepository.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\utils\PruebasReflection.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\CompressedCacheService.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\Parte.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\integration\repositories\EquipoRepository.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\NinjaAwakening.java
@@ -146,6 +148,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\exceptions\ConcurrentNinjaException.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\EquipoServices.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\mappers\NinjaAwakeningStatMapper.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\Intensity.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\services\impl\AccesorioServicesImpl.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\dto\ErrorDTO.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\NinjaType.java
@@ -214,6 +217,7 @@ C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\NinjaSkill.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\validators\ValidatorNinjaService.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\SkillAttribute.java
+C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\config\CacheConfig.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\CreateComboSet.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\bussines\model\NinjaAwakeningKey.java
 C:\Users\Alex\Desktop\spring\Animeninja\BackendAnimeNinja\BackendAnimeNinja\src\main\java\com\alejandro\animeninja\config\SpringSecurityConfig.java

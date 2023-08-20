@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.bussines.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="SET_ACCESORIOS")
@@ -21,6 +24,15 @@ public class SetAccesorio implements Serializable{
 	@Id
 	@Column(name="NOMBRE")
 	private String nombre;
+	
+
+	@Column(name="EDAD")
+	private String edad;
+	
+	// Añadir el campo para la fecha de salida
+	@Temporal(TemporalType.DATE)
+    @Column(name="FECHA_SALIDA")
+    private Date fechaSalida;
 	
 	//@Transient
 	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
@@ -35,6 +47,31 @@ public class SetAccesorio implements Serializable{
 	public SetAccesorio() {
 
 	}
+
+	
+	public String getEdad() {
+		return edad;
+	}
+
+
+
+	public void setEdad(String edad) {
+		this.edad = edad;
+	}
+
+
+
+	public Date getFechaSalida() {
+		return fechaSalida;
+	}
+
+
+
+	public void setFechaSalida(Date fechaSalida) {
+		this.fechaSalida = fechaSalida;
+	}
+
+
 
 	public String getNombre() {
 		return nombre;

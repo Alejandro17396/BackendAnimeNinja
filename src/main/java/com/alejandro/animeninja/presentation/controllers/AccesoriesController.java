@@ -1,10 +1,14 @@
 package com.alejandro.animeninja.presentation.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import org.openjdk.jol.info.GraphLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,10 +35,12 @@ import com.alejandro.animeninja.bussines.exceptions.AccesoriesException;
 import com.alejandro.animeninja.bussines.exceptions.SetException;
 import com.alejandro.animeninja.bussines.exceptions.UserException;
 import com.alejandro.animeninja.bussines.mappers.AccesorieMapper;
+import com.alejandro.animeninja.bussines.mappers.ParteAccesorioMapper;
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Pagination;
+import com.alejandro.animeninja.bussines.model.ParteAccesorio;
 import com.alejandro.animeninja.bussines.model.SetAccesorio;
 import com.alejandro.animeninja.bussines.model.UserAccesories;
 import com.alejandro.animeninja.bussines.model.UserSet;
@@ -42,6 +48,7 @@ import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetAttributesD
 import com.alejandro.animeninja.bussines.model.dto.CreateAccesorieSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
+import com.alejandro.animeninja.bussines.model.dto.ParteAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetsAccesorioDTO;
@@ -50,6 +57,7 @@ import com.alejandro.animeninja.bussines.model.dto.UserAccesoriesDTO;
 import com.alejandro.animeninja.bussines.model.dto.UserSetDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.JsonMapperObjectsService;
+import com.alejandro.animeninja.bussines.services.ParteAccesorioService;
 import com.alejandro.animeninja.bussines.validators.ValidatorNinjaService;
 
 @RestController
@@ -65,6 +73,12 @@ public class AccesoriesController {
 
 	@Autowired
 	private AccesorieMapper accesorieMapper;
+	
+	@Autowired
+	private ParteAccesorioService parteAccesorioService;
+	
+	@Autowired
+	private ParteAccesorioMapper parteAccesorioMapper;
 
 	@Autowired
 	private JWTService jwtService;
@@ -160,6 +174,7 @@ public class AccesoriesController {
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
 			@RequestParam(value = "hardSearch", required = false, defaultValue = "false") boolean hardSearch,
+			@RequestParam(value = "name", required = false) String name,
 			Pageable pageable) {
 
 		validator.validateCreateComboSetAccesorio(attributes);
@@ -169,19 +184,38 @@ public class AccesoriesController {
 		ini = System.currentTimeMillis();
 
 		List <SetAccesorioDTO> result = accesorioServices.createComboAccesories(attributes, sorted, filtred, hardSearch, pageable);
-		Pagination<SetAccesorioDTO> pagination = new Pagination<SetAccesorioDTO>(
-				result,pageable.getPageNumber(), pageable.getPageSize());
+	  
+		//long listSize = GraphLayout.parseInstance(result).totalSize();
+
+        //System.out.println("Memoria2 utilizada por la lista: " + listSize + " bytes");
+		List <SetAccesorioDTO> resultFilter = new ArrayList<>();
 		
-		/*Pagination<SetAccesorioDTO> pagination = new Pagination<SetAccesorioDTO>(
-				result,
-				result.size(), 0);*/
+		if(name != null && !name.isEmpty()) {
+			for(SetAccesorioDTO set : result) {
+				if(set.getNombre().contains(name)) {
+					resultFilter.add(set);
+				}
+			}
+		}else {
+			resultFilter = result;
+		}
+		
+		Pagination<SetAccesorioDTO> pagination = new Pagination<SetAccesorioDTO>(
+				resultFilter,pageable.getPageNumber(), pageable.getPageSize());
 		
 		ResponseEntity<SetsAccesorioDTO> response = null;
 		SetsAccesorioDTO responseDTO = new SetsAccesorioDTO();
 
+		List<ParteAccesorio> partes = parteAccesorioService.getAll();
+		Map<String, ParteAccesorioDTO> map = partes.stream().collect(Collectors.toMap(ParteAccesorio::getNombre, ParteAccesorioMapper.INSTANCE::toDTO));
+		
+		
+		
+		
 		responseDTO.setSets(pagination.getPagedList());
 		responseDTO.setNumber(pageable.getPageSize());
-		responseDTO.setTotal(result.size());
+		responseDTO.setTotal(resultFilter.size());
+		responseDTO.setPartes(map);
 
 		if (responseDTO.getNumber() > 0) {
 			response = new ResponseEntity<>(responseDTO, HttpStatus.OK);

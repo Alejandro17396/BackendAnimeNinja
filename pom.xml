@@ -59,9 +59,29 @@
 		    <scope>runtime</scope>
 		</dependency>
 		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		
+		<!-- Si deseas utilizar un caché basado en Caffeine (caché en memoria recomendado) -->
+		<dependency>
+		    <groupId>com.github.ben-manes.caffeine</groupId>
+		    <artifactId>caffeine</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.openjdk.jol</groupId>
+		    <artifactId>jol-core</artifactId>
+		    <version>0.16</version> <!-- Utiliza la versión más reciente -->
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.github.luben</groupId>
+		    <artifactId>zstd-jni</artifactId>
+		    <version>1.5.0-4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

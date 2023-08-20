@@ -1,8 +1,9 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class BonusAccesorioAtributoDTO {
+public class BonusAccesorioAtributoDTO implements Serializable{
 
 	private String nombreAtributo;
 	private long valor;

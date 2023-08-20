@@ -1,14 +1,21 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
 import java.util.List;
+import java.util.Map;
 
 public class SetsAccesorioDTO {
 
 	private int number;
 	private int total;
 	private List <SetAccesorioDTO> sets;
-
+	private Map<String, ParteAccesorioDTO> partes;
 	
+	public Map<String, ParteAccesorioDTO> getPartes() {
+		return partes;
+	}
+	public void setPartes(Map<String, ParteAccesorioDTO> partes) {
+		this.partes = partes;
+	}
 	public int getTotal() {
 		return total;
 	}

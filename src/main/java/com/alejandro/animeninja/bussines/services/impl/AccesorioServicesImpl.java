@@ -1,5 +1,6 @@
 package com.alejandro.animeninja.bussines.services.impl;
 
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,8 +19,10 @@ import javax.persistence.EntityManager;
 import org.apache.commons.io.FilenameUtils;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -42,6 +45,7 @@ import com.alejandro.animeninja.bussines.model.ClaveBonusAccesorio;
 import com.alejandro.animeninja.bussines.model.Constantes;
 import com.alejandro.animeninja.bussines.model.CreateComboSetAccesorio;
 import com.alejandro.animeninja.bussines.model.Equipo;
+import com.alejandro.animeninja.bussines.model.Intensity;
 import com.alejandro.animeninja.bussines.model.NinjaUserFormation;
 import com.alejandro.animeninja.bussines.model.Parte;
 import com.alejandro.animeninja.bussines.model.ParteAccesorio;
@@ -63,6 +67,7 @@ import com.alejandro.animeninja.bussines.model.utils.Elemento;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.BonusAccesorioService;
 import com.alejandro.animeninja.bussines.services.BonusServices;
+import com.alejandro.animeninja.bussines.services.CompressedCacheService;
 import com.alejandro.animeninja.bussines.services.ParteAccesorioService;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosByAttributes;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosDtoByAttributes;
@@ -98,6 +103,9 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	
 	@Autowired
 	private EntityManager entityManager;
+	
+	@Autowired
+	private CompressedCacheService compressedCacheService;
 
 	@Override
 	public Page<SetAccesorioDTO> getAll(Pageable pageable) {
@@ -613,11 +621,71 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		return result;
 	}
 	
+	private List<SetAccesorio> getSetsInRange(String startSetName, String endSetName, int maxSets,List <String> sets) {
+	    List<SetAccesorio> setsInRange = new ArrayList<>();
+
+	    SetAccesorio startSet = getSetByNombre(startSetName);
+	    SetAccesorio endSet = getSetByNombre(endSetName);
+
+	    // Verificar si los sets existen y si la fecha del startSet es anterior a la del endSet.
+	    if (startSet != null && endSet != null && startSet.getFechaSalida().before(endSet.getFechaSalida())) {
+	        // Aquí puedes realizar una consulta JPA que tome los sets entre estas dos fechas 
+	        // y ordene los resultados de la fecha más reciente a la más antigua, limitando los resultados a maxSets.
+	    	Pageable pageable = PageRequest.of(0, maxSets);
+	    	if(sets == null || sets.isEmpty()) {
+	    		setsInRange = accesorioRepository.findBetweenDatesOrderedByFechaSalidaDescLimit(endSet.getFechaSalida(), startSet.getFechaSalida(), pageable);
+	    	}else {
+	    		setsInRange = accesorioRepository.findBetweenDatesExcludingSetsOrderedByFechaSalidaDesc(endSet.getFechaSalida(), startSet.getFechaSalida(), sets , pageable);
+	    	}
+
+	    }
+
+	    return setsInRange;
+	}
+	
+	
+	/*List<SetAccesorio> setsToUse = new ArrayList<>();
+		 
+		    // Si se proporciona una lista de nombres de sets, obtener los sets correspondientes.
+		    if (attributes.getSets() != null && !attributes.getSets().isEmpty()) {
+		        for (String setName : attributes.getSets()) {
+		            SetAccesorio set = getSetByNombre(setName);
+		            if (set != null) {
+		                setsToUse.add(set);
+		            }
+		        }
+		    }
+
+		    // Si se proporcionan nombres de sets de inicio y final.
+		    if (attributes.getStartSet() != null && attributes.getEndSet() != null) {
+		        int remainingSpace = Constantes.MAX_ACCESORIE_SETS - setsToUse.size();
+		        List<SetAccesorio> setsInRange = getSetsInRange(attributes.getStartSet(), attributes.getEndSet(), remainingSpace);
+		        setsToUse.addAll(setsInRange);
+		    }
+
+		    // Si solo se proporciona la intensidad y setsToUse está vacío.
+		    if (setsToUse.isEmpty() && attributes.getIntensity() != null) {
+		        setsToUse = getLastSetsBasedOnIntensity(attributes.getIntensity());
+		    }
+		    
+		    bonuses = setsToUse.stream()
+		    	    .flatMap(set -> set.getBonuses().stream())
+		    	    .collect(Collectors.toList());*/
+	
 	@Override
+	@Cacheable(value = "combinacionesCache", key = "#attributes.toString() + '-' + #sorted + '-' + #filtred + '-' + #hardSearch")
 	public List<SetAccesorioDTO> createComboAccesories(CreateComboSetAccesorio attributes,
 			boolean sorted,boolean filtred, boolean hardSearch, Pageable pageable) {
 		
-		//List <SetAccesorio> accesorios = accesorioRepository.findAll();
+		 String cacheKey = attributes.toString() + '-' + sorted + '-' + filtred + '-' + hardSearch;
+		    List<SetAccesorioDTO> result;
+			result = (List<SetAccesorioDTO>) compressedCacheService.getFromCache("combinacionesCache",cacheKey);
+			if (result != null) {
+			   return result;
+			}
+			    
+		List <BonusAccesorio> bonuses = new ArrayList<>();
+		/*
 		ParteAccesorio p = null;
 		if(attributes.getSetFilter() != null && !attributes.getSetFilter().isEmpty()) {
 			String nombre = attributes.getSetFilter().replace("accessories", "");
@@ -627,7 +695,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 			p = parteAccesorioService.getById(nombre);
 		}
 		
-		List <BonusAccesorio> bonuses = new ArrayList<>();
+		//List <BonusAccesorio> bonuses = new ArrayList<>();
 		
 		
 		if (p != null) {
@@ -641,7 +709,35 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		}else{
 			bonuses = bonusAccesorioService.getAll();
 		}
+*/
+		
+		List<SetAccesorio> setsToUse = new ArrayList<>();
+		 
+	    // Si se proporciona una lista de nombres de sets, obtener los sets correspondientes.
+	    if (attributes.getSets() != null && !attributes.getSets().isEmpty()) {
+	        for (String setName : attributes.getSets()) {
+	            SetAccesorio set = getSetByNombre(setName);
+	            if (set != null) {
+	                setsToUse.add(set);
+	            }
+	        }
+	    }
 
+	    // Si se proporcionan nombres de sets de inicio y final.
+	    if (attributes.getStartSet() != null && attributes.getEndSet() != null) {
+	        int remainingSpace = Constantes.MAX_ACCESORIE_SETS - setsToUse.size();
+	        List<SetAccesorio> setsInRange = getSetsInRange(attributes.getStartSet(), attributes.getEndSet(), remainingSpace,attributes.getSets());
+	        setsToUse.addAll(setsInRange);
+	    }
+
+	    // Si solo se proporciona la intensidad y setsToUse está vacío.
+	    if (setsToUse.isEmpty() && attributes.getIntensity() != null) {
+	        setsToUse = getLastSetsBasedOnIntensity(attributes.getIntensity());
+	    }
+	    
+	    bonuses = setsToUse.stream()
+	    	    .flatMap(set -> set.getBonuses().stream())
+	    	    .collect(Collectors.toList());
 		
 		bonuses.removeIf(bonus -> bonus.getTipo().equals(Constantes.FULL_SET_BONUS));
 		List <List <BonusAccesorio>> lista = new ArrayList<>();
@@ -654,45 +750,29 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		generarCombinaciones(bonuses, lista, new ArrayList<>(), 0, attributes,sets,mapa,filtred);
 	
 		
-		/*for(List <BonusAccesorio> b : lista) {
-			SetAccesorio set = new SetAccesorio();
-			set.setBonuses(b);
-			set.setNombre(generateNameByBonuses(b));
-			set.setPartes(new ArrayList<>());
-			sets.add(set);
-			
-		}
-		
-		//removeCombosNotMatchAttributes(sets, attributes.getAttributes());
-		
-		/*addPartes(sets);
-		
-		for(SetAccesorio set : sets) {
-			BonusAccesorio aux = bonusService.mergeBonusesEntity(set.getBonuses());
-			aux.setNombreAccesorioSet(set.getNombre());
-			aux.setTipo("Merge");
-			set.getBonuses().clear();
-			set.getBonuses().add(aux);
-			
-			
-		}
-		
-		//removeCombosNotMatchAttributes(sets, attributes.getAttributes());
-		*/
-		if (filtred) {
+		/*if (filtred) {
 			filterSetByStats(sets, attributes.getAttributesFilter());
-		}
-		//List<SetAccesorioDTO>  setsDto= accesorieMapper.toDtoList(sets)
+		}*/
 		if (sorted) {
 			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
 				Collections.sort(sets,
 						new SortSetAccesoriosByAttributes(attributes.getAttributes().get(i).getNombre()));
 			}
 		}
+		result = accesorieMapper.toDtoListNoImages(sets);
+		compressedCacheService.putToCache("combinacionesCache",cacheKey, result);
 		
-		return accesorieMapper.toDtoList(sets);
+	    return result;
 	}
 	
+	private List<SetAccesorio> getLastSetsBasedOnIntensity(Intensity intensity) {
+		int limit = intensity.getValor();
+		Pageable pageable = PageRequest.of(0, limit);
+		List<SetAccesorio> lastSets = accesorioRepository.findByOrderByFechaSalidaDesc(pageable);
+		return lastSets;
+	}
+
+
 	private String generateNameByBonuses(List<BonusAccesorio> bonuses) {
 		StringBuilder sb = new StringBuilder();
 	      for (BonusAccesorio elem : bonuses) {

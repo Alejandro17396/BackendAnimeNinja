@@ -131,6 +131,7 @@ com\alejandro\animeninja\bussines\services\JsonMapperObjectsService.class
 com\alejandro\animeninja\AnimeninjaApplication.class
 com\alejandro\animeninja\bussines\model\NinjaAwakeningStat.class
 com\alejandro\animeninja\bussines\model\dto\ParteDTO.class
+com\alejandro\animeninja\bussines\model\Intensity.class
 com\alejandro\animeninja\bussines\model\SkillAttribute.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortSetDTOByAttributes.class
 com\alejandro\animeninja\bussines\services\AccesorioServices.class
@@ -166,6 +167,7 @@ com\alejandro\animeninja\config\AsynConfig.class
 com\alejandro\animeninja\bussines\exceptions\AccesoriesException.class
 com\alejandro\animeninja\bussines\model\dto\SetsAccesorioDTO.class
 com\alejandro\animeninja\bussines\mappers\NinjaSkillKeyMapper.class
+com\alejandro\animeninja\config\CacheConfig.class
 com\alejandro\animeninja\bussines\model\NinjaAwakeningStat_.class
 com\alejandro\animeninja\bussines\model\dto\CompareNinjaUserDTO.class
 com\alejandro\animeninja\bussines\model\dto\NinjaAwakeningDTO.class
@@ -211,6 +213,7 @@ com\alejandro\animeninja\bussines\services\impl\JpaUserDetailsService.class
 com\alejandro\animeninja\bussines\model\dto\FormationsNinjaDTO.class
 com\alejandro\animeninja\config\SpringSecurityConfig2.class
 com\alejandro\animeninja\bussines\auth\services\JWTService.class
+com\alejandro\animeninja\bussines\services\impl\CompressedCacheServiceImpl.class
 com\alejandro\animeninja\bussines\exceptions\JsonMapperException.class
 com\alejandro\animeninja\bussines\mappers\DummyMapper.class
 com\alejandro\animeninja\bussines\model\ChakraNature.class
@@ -263,6 +266,7 @@ com\alejandro\animeninja\bussines\model\NinjaAwakeningKey.class
 com\alejandro\animeninja\bussines\sort\services\impl\SortSetAccesoriosDtoByAttributes.class
 com\alejandro\animeninja\bussines\validators\impl\ValidatorUserServiceImpl.class
 com\alejandro\animeninja\integration\repositories\ParteAccesorioRepository.class
+com\alejandro\animeninja\bussines\services\CompressedCacheService.class
 com\alejandro\animeninja\bussines\services\impl\EquipoServicesImpl2.class
 com\alejandro\animeninja\bussines\validators\ValidatorCreateNinjaEquipment.class
 com\alejandro\animeninja\bussines\model\UserSet.class

@@ -1,14 +1,15 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
-import com.alejandro.animeninja.bussines.jsonDeserializers.Base64ToByteArrayDeserializer;
+
+import java.io.Serializable;
+
 import com.alejandro.animeninja.bussines.model.Atributo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ParteAccesorioDTO {
+public class ParteAccesorioDTO implements Serializable{
 
 	private String nombre;
 	private Long valor;

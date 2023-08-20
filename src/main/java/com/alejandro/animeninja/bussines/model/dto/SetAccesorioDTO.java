@@ -1,13 +1,16 @@
 package com.alejandro.animeninja.bussines.model.dto;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class SetAccesorioDTO {
+public class SetAccesorioDTO implements Serializable{
 
 	private String nombre;
 	private List<ParteAccesorioDTO> partes;
 	private List<BonusAccesorioDTO> bonuses;
+	private Date fechaSalida;
 
 	public String getNombre() {
 		return nombre;
@@ -59,6 +62,14 @@ public class SetAccesorioDTO {
 			return false;
 		SetAccesorioDTO other = (SetAccesorioDTO) obj;
 		return Objects.equals(nombre, other.nombre);
+	}
+
+	public Date getFechaSalida() {
+		return fechaSalida;
+	}
+
+	public void setFechaSalida(Date fechaSalida) {
+		this.fechaSalida = fechaSalida;
 	}
 	
 	

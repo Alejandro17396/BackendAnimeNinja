@@ -7,11 +7,39 @@ import java.util.Objects;
 public class CreateComboSetAccesorio implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	List<Atributo> attributes;
-	List<BonusAccesorioAtributo> attributesFilter;
-	List<Atributo> order;
-	String setFilter;
-	List <String> sets;
+	private List<Atributo> attributes;
+	private List<BonusAccesorioAtributo> attributesFilter;
+	private List<Atributo> order;
+	private String setFilter;
+	//nuevos campos 
+	private Intensity intensity;
+	private String startSet;
+	private String endSet;
+	private List <String> sets;
+
+	public String getStartSet() {
+		return startSet;
+	}
+
+	public void setStartSet(String startSet) {
+		this.startSet = startSet;
+	}
+
+	public String getEndSet() {
+		return endSet;
+	}
+
+	public void setEndSet(String endSet) {
+		this.endSet = endSet;
+	}
+
+	public Intensity getIntensity() {
+		return intensity;
+	}
+
+	public void setIntensity(Intensity intensity) {
+		this.intensity = intensity;
+	}
 
 	public List<String> getSets() {
 		return sets;
@@ -78,7 +106,10 @@ public class CreateComboSetAccesorio implements Serializable {
 	@Override
 	public String toString() {
 		return "CreateComboSetAccesorio [attributes=" + attributes + ", attributesFilter=" + attributesFilter
-				+ ", order=" + order + "]";
+				+ ", order=" + order + ", setFilter=" + setFilter + ", intensity=" + intensity + ", startSet="
+				+ startSet + ", endSet=" + endSet + ", sets=" + sets + "]";
 	}
+
+	
 
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import com.alejandro.animeninja.bussines.model.Parte;
@@ -19,6 +21,11 @@ public interface ParteAccesorioMapper {
 	ParteAccesorioMapper INSTANCE = Mappers.getMapper(ParteAccesorioMapper.class);
 	
 	ParteAccesorioDTO toDTO (ParteAccesorio part);
+	
+	@Named("toDTONoImageList")
+	@Mapping(target = "image", ignore = true)
+	@Mapping(target = "setName", source="nombreSet")
+	ParteAccesorioDTO toDTONoImage(ParteAccesorio part);
 	
 	ParteAccesorio toEntity (ParteAccesorioDTO part);
 	

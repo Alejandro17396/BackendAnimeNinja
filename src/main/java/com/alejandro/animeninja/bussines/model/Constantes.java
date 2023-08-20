@@ -41,4 +41,5 @@ public interface Constantes {
 	final String IMPACT_ENEMY_UNACTIVATED = "enemy unactived chakra nature";
 	
 	final Long MAX_SETS = 50000L;
+	final Integer MAX_ACCESORIE_SETS = 15;
 }
