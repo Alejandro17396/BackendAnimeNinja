@@ -2,6 +2,7 @@ package com.alejandro.animeninja.presentation.controllers;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -42,6 +43,7 @@ import com.alejandro.animeninja.bussines.model.UserSet;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetAttributesDTO;
 import com.alejandro.animeninja.bussines.model.dto.CreateSetDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
+import com.alejandro.animeninja.bussines.model.dto.SetAccesorioDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SetsDTO;
 import com.alejandro.animeninja.bussines.model.dto.SuccesDTO;
@@ -75,16 +77,18 @@ public class SetsController {
 	private JsonMapperObjectsService jsonMapperService;
 	 
 	@GetMapping
-	public ResponseEntity <Page <SetDTO>> getAllPaged(Pageable pageable) { 
+	public ResponseEntity <Page <SetDTO>> getAllPaged(	Pageable pageable,
+				@RequestParam(value = "name", required = false) String name) { 
 		
-		Page <SetDTO> responseDTO = equipoServices.getAllPage(pageable);
-		ResponseEntity <Page <SetDTO>> response = null;
-		
-		if(responseDTO.getContent().size() > 0) {
-			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		Page<SetDTO> responseDTO;
+		if(name != null && !name.isEmpty()) {
+			responseDTO = equipoServices.getAllPageNameContains(pageable,name);
 		}else {
-			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
+			responseDTO = equipoServices.getAllPage(pageable);
 		}
+		
+		ResponseEntity <Page <SetDTO>> response  = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+
 		return response;
 	}
 	
@@ -238,12 +242,26 @@ public class SetsController {
 	public ResponseEntity <SetsDTO> createSet(@RequestBody(required = false) CreateComboSet attributes,
 			@RequestParam(value = "sorted", required = false, defaultValue = "true") boolean sorted,
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
+			@RequestParam(value = "name", required = false) String name,
 			Pageable pageable){
 		Long ini,fin;
 		ini = System.currentTimeMillis();
 		validator.validateCreateComboSet(attributes);
-		List<SetDTO> lista =equipoServices.generateCombos(attributes,
+		List<SetDTO> result =equipoServices.generateCombos(attributes,
 				sorted, filtred, null, pageable);
+		
+		List <SetDTO> lista = new ArrayList<>();
+		
+		if(name != null && !name.isEmpty()) {
+			for(SetDTO set : result) {
+				if(set.getNombre().contains(name)) {
+					lista.add(set);
+				}
+			}
+		}else {
+			lista = result;
+		}
+		
 		Pagination <SetDTO> pagination =  new Pagination <SetDTO> (lista,pageable.getPageNumber(),pageable.getPageSize());
 		SetsDTO responseDTO = new SetsDTO();
 		responseDTO.setSets(pagination.getPagedList());

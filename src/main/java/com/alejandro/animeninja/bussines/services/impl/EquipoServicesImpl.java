@@ -189,8 +189,16 @@ public class EquipoServicesImpl implements EquipoServices {
 		return equipoRepository.findAll(specification);
 	}
 
+	@Override
 	public Page <SetDTO> getAllPage(Pageable pageable){
 		Page <Equipo> page = equipoRepository.findAll(pageable);
+		return new PageImpl<SetDTO>(setMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
+
+	} 
+	
+	@Override
+	public Page <SetDTO> getAllPageNameContains(Pageable pageable,String texto){
+		Page <Equipo> page = equipoRepository.findByNombreContaining(texto,pageable);
 		return new PageImpl<SetDTO>(setMapper.toDtoList(page.getContent()),pageable,page.getTotalElements());
 
 	} 

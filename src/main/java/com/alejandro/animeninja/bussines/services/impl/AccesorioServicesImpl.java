@@ -115,6 +115,13 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	}
 	
 	@Override
+	public Page<SetAccesorioDTO> getAllByNameContains(Pageable pageable,String texto) {
+		Page<SetAccesorio> page = accesorioRepository.findByNombreContaining(texto,pageable);
+		return new PageImpl<SetAccesorioDTO>(accesorieMapper.toDtoList(page.getContent()), pageable,
+				page.getTotalElements());
+	}
+	
+	@Override
 	public List<SetAccesorioDTO> getAllNoPage() {
 		List<SetAccesorio> page = accesorioRepository.findAll();
 		return accesorieMapper.toDtoList(page);

@@ -40,6 +40,8 @@ public interface EquipoServices {
 	
 	Page <SetDTO> getAllPage(Pageable pageable);
 	
+	Page <SetDTO> getAllPageNameContains(Pageable pageable,String texto);
+	
 	List <SetDTO> generateCombinationSetsByBonus(CreateComboSet attributes,boolean sorted,boolean filtred,String setName, Pageable pageable);
 	
 	UserSet createOrUpdateSetByName(CreateSetDTO dto,String user);

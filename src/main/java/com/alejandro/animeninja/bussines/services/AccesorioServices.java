@@ -26,6 +26,8 @@ public interface AccesorioServices {
 	List<SetAccesorioDTO> getAllNoPage();
 	
 	List<SetAccesorioDTO> getAllElements();
+	
+	Page<SetAccesorioDTO> getAllByNameContains(Pageable pageable,String texto) ;
 
 	Page <SetAccesorioDTO> getBySpecification(List<Atributo> attributes,Pageable pageable);
 

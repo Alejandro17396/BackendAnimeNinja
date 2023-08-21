@@ -87,19 +87,16 @@ public class AccesoriesController {
 	private JsonMapperObjectsService jsonMapperService;
 
 	@GetMapping
-	public ResponseEntity<Page<SetAccesorioDTO>> getAll(Pageable pageable) {
-		Page<SetAccesorioDTO> responseDTO = accesorioServices.getAll(pageable);
-		ResponseEntity<Page<SetAccesorioDTO>> response = null;
-		//responseDTO.getContent().clear();
-		//responseDTO.getContent().addAll(accesorioServices.getAllNoPage());
-		List<SetAccesorioDTO> resp = accesorioServices.getAllNoPage();
-		Page<SetAccesorioDTO> p =new PageImpl<SetAccesorioDTO>(resp,pageable,resp.size());
-		
-		if (p.getContent().size() > 0) {
-			response = new ResponseEntity<>(responseDTO, HttpStatus.OK);
-		} else {
-			response = new ResponseEntity<>(responseDTO, HttpStatus.NO_CONTENT);
+	public ResponseEntity<Page<SetAccesorioDTO>> getAll(Pageable pageable,
+				@RequestParam(value = "name", required = false) String name) {
+		Page<SetAccesorioDTO> responseDTO;
+		if(name != null && !name.isEmpty()) {
+			responseDTO = accesorioServices.getAllByNameContains(pageable,name);
+		}else {
+			responseDTO = accesorioServices.getAll(pageable);
 		}
+		ResponseEntity<Page<SetAccesorioDTO>> response = new ResponseEntity<>(responseDTO, HttpStatus.OK);
+	
 		return response;
 	}
 	
@@ -110,6 +107,7 @@ public class AccesoriesController {
 		//responseDTO.getContent().clear();
 		//responseDTO.getContent().addAll(accesorioServices.getAllNoPage());
 		List<SetAccesorioDTO> resp = accesorioServices.getAllNoPage();
+		
 		Page<SetAccesorioDTO> responseDTO =new PageImpl<SetAccesorioDTO>(resp,pageable,resp.size());
 		
 		if (responseDTO.getContent().size() > 0) {
