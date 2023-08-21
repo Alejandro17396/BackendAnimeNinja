@@ -266,13 +266,13 @@ public class SetsController {
 		SetsDTO responseDTO = new SetsDTO();
 		responseDTO.setSets(pagination.getPagedList());
 		responseDTO.setNumber(lista.size());
-		ResponseEntity <SetsDTO> response = null;
+		ResponseEntity <SetsDTO> response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
 		
-		if(responseDTO.getSets().size() > 0) {
+		/*if(responseDTO.getSets().size() > 0) {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
 		}else {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
-		}
+		}*/
 		
 		fin = System.currentTimeMillis();
 		System.out.println("Tarde "+(fin-ini));
