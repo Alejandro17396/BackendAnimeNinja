@@ -1,9 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.alejandro.animeninja.AnimeninjaApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 5.331 s <<< FAILURE! - in com.alejandro.animeninja.AnimeninjaApplicationTests
-contextLoads  Time elapsed: 0.001 s  <<< ERROR!
-java.lang.IllegalStateException: Failed to load ApplicationContext
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Invocation of init method failed; nested exception is org.hibernate.AnnotationException: Use of @OneToMany or @ManyToMany targeting an unmapped class: com.alejandro.animeninja.bussines.model.NinjaSkill.attributes[com.alejandro.animeninja.bussines.model.SkillAttribute]
-Caused by: org.hibernate.AnnotationException: Use of @OneToMany or @ManyToMany targeting an unmapped class: com.alejandro.animeninja.bussines.model.NinjaSkill.attributes[com.alejandro.animeninja.bussines.model.SkillAttribute]
-
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 23.238 s - in com.alejandro.animeninja.AnimeninjaApplicationTests

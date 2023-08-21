@@ -818,9 +818,9 @@ public class EquipoServicesImpl implements EquipoServices {
 	                    bonus.getListaBonus().stream().anyMatch(bonusAttribute ->
 	                        bonusAttribute.getAtributo().getNombre().equals(filter.getAtributo().getNombre())
 	                        && bonusAttribute.getValor() >= filter.getValor()
-	                        && (filter.getAction() == null || filter.getAction().equals(bonusAttribute.getAction()))
-	                        && (filter.getImpact() == null || filter.getImpact().equals(bonusAttribute.getImpact()))
-	                        && (filter.getCondition() == null || filter.getCondition().equals(bonusAttribute.getCondition()))
+	                        && (filter.getAction() == null || filter.getAction().isEmpty() || filter.getAction().equals(bonusAttribute.getAction()))
+	                        && (filter.getImpact() == null || filter.getAction().isEmpty() || filter.getImpact().equals(bonusAttribute.getImpact()))
+	                        && (filter.getCondition() == null || filter.getAction().isEmpty() || filter.getCondition().equals(bonusAttribute.getCondition()))
 	                    )
 	                )
 	            )
