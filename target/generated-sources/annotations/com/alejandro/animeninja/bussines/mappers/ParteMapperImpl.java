@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-08-22T00:28:57+0200",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2024-03-03T19:43:04+0100",
+    comments = "version: 1.5.2.Final, compiler: Eclipse JDT (IDE) 3.27.0.v20210823-1758, environment: Java 16.0.2 (Oracle Corporation)"
 )
 @Component
 public class ParteMapperImpl implements ParteMapper {

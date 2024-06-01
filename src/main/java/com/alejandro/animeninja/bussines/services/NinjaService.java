@@ -34,7 +34,7 @@ public interface NinjaService {
 	Page <NinjaDTO> getNinjaFiltroAnd(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,Pageable pageable);
 	
 	Page<NinjaDTO> getNinjaFiltroAndNoPaged(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
-			boolean awakenings,boolean or,Pageable pageable);
+			boolean awakenings,boolean or,String name,Pageable pageable);
 	
 	Page <Ninja>  getAllPaged(Pageable pageable);
 

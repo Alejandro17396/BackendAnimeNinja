@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -74,6 +75,7 @@ import com.alejandro.animeninja.bussines.model.dto.FormationNinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaFilterDTO;
 import com.alejandro.animeninja.bussines.model.dto.NinjaUserFormationDTO;
+import com.alejandro.animeninja.bussines.model.dto.SetDTO;
 import com.alejandro.animeninja.bussines.model.dto.SkillAttributeDTO;
 import com.alejandro.animeninja.bussines.services.AccesorioServices;
 import com.alejandro.animeninja.bussines.services.BonusServices;
@@ -169,7 +171,7 @@ public class NinjaServiceImpl implements NinjaService {
 	
 	@Override
 	public Page<NinjaDTO> getNinjaFiltroAndNoPaged(CreateComboNinjaDTO attributes, boolean sorted, boolean filtred,
-			boolean awakenings,boolean or,Pageable pageable) {
+			boolean awakenings,boolean or,String name,Pageable pageable) {
 		Specification<Ninja> specification = null;
 		if(awakenings) {
 			if(or) {
@@ -185,7 +187,20 @@ public class NinjaServiceImpl implements NinjaService {
 			}
 		}
 		//Specification<Ninja> specification = createAndSkillAwakeningSpecification(attributes);
-		List <Ninja> page = ninjaRepository.findAll(specification);
+		List <Ninja> result = ninjaRepository.findAll(specification);
+		
+		List <Ninja> page = new ArrayList<>();
+		
+		if(name != null && !name.isEmpty()) {
+			for(Ninja ninja : result) {
+				//StringUtils.containsIgnoreCase(ninja.getName(), name);
+				if(StringUtils.containsIgnoreCase(ninja.getName(), name)) {
+					page.add(ninja);
+				}
+			}
+		}else {
+			page = result;
+		}
 
 		return new PageImpl<NinjaDTO>(ninjaMapper.toDtoList(page), pageable, page.size());
 	}

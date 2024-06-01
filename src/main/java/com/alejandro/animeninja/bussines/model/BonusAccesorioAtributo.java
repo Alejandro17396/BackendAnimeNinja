@@ -214,6 +214,13 @@ public class BonusAccesorioAtributo implements Serializable {
 	public void setTime(String time) {
 		this.time = time;
 	}
+
+	@Override
+	public String toString() {
+		return "BonusAccesorioAtributo [tipoBonus=" + tipoBonus + ", nombreSet=" + nombreSet + ", atributo=" + atributo
+				+ ", valor=" + valor + ", action=" + action + ", impact=" + impact + ", condition=" + condition
+				+ ", time=" + time + ", nombreAtributo=" + nombreAtributo + "]";
+	}
 	
 	
 	

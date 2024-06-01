@@ -18,9 +18,9 @@ public interface SetMapper {
 
 	SetMapper INSTANCE = Mappers.getMapper(SetMapper.class);
 	
-	SetDTO toDTO(Equipo ninja);
+	SetDTO toDTO(Equipo set);
 	
-	Equipo toEntity(SetDTO ninja);
+	Equipo toEntity(SetDTO set);
 	
 	@Mapping(target="nombre", source="set.nombre")
 	@Mapping(target="partes", source="set.partes")
@@ -29,31 +29,31 @@ public interface SetMapper {
 	
 	UserSetDTO toUserSetDTO(UserSet set);
 	
-	default List<UserSetDTO> toUserSetDTO(List<UserSet> ninjaList){
-		if(ninjaList == null) {
+	default List<UserSetDTO> toUserSetDTO(List<UserSet> setList){
+		if(setList == null) {
 			return new ArrayList<>();
 		}
-		return ninjaList.stream().map(this::toUserSetDTO).collect(Collectors.toList());
+		return setList.stream().map(this::toUserSetDTO).collect(Collectors.toList());
 	}
 	
-	default List<SetDTO> toDtoList(List<Equipo> ninjaList){
-		if(ninjaList == null) {
+	default List<SetDTO> toDtoList(List<Equipo> setList){
+		if(setList == null) {
 			return new ArrayList<>();
 		}
-		return ninjaList.stream().map(this::toDTO).collect(Collectors.toList());
+		return setList.stream().map(this::toDTO).collect(Collectors.toList());
 	}
 	
-	default List<Equipo> toEntityList(List<SetDTO> ninjaList){
-		if(ninjaList == null) {
+	default List<Equipo> toEntityList(List<SetDTO> setList){
+		if(setList == null) {
 			return new ArrayList<>();
 		}
-		return ninjaList.stream().map(this::toEntity).collect(Collectors.toList());
+		return setList.stream().map(this::toEntity).collect(Collectors.toList());
 	}
 	
-	default List<UserSet> toUserSetList(List<Equipo> ninjaList){
-		if(ninjaList == null) {
+	default List<UserSet> toUserSetList(List<Equipo> setList){
+		if(setList == null) {
 			return new ArrayList<>();
 		}
-		return ninjaList.stream().map(this::toUserSet).collect(Collectors.toList());
+		return setList.stream().map(this::toUserSet).collect(Collectors.toList());
 	}
 }

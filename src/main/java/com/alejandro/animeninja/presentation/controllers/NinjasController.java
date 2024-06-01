@@ -112,9 +112,12 @@ public class NinjasController {
 	public NinjasDTO getNinjaPaged(Pageable pageable) {
 
 		NinjasDTO response = new NinjasDTO();
-		Page <Ninja> list = ninjaService.getAllPaged(pageable);
+		/*Page <Ninja> list = ninjaService.getAllPaged(pageable);
 		response.setNinjas(ninjaMapper.toDtoList(list.getContent()));
-		response.setNumber(Long.valueOf(list.getTotalElements()).intValue());
+		response.setNumber(Long.valueOf(list.getTotalElements()).intValue());*/
+		List <Ninja> list = ninjaService.getAll();
+		response.setNinjas(ninjaMapper.toDtoList(list));
+		response.setNumber(list.size());
 		return response;
 		
 	}
@@ -136,18 +139,20 @@ public class NinjasController {
 			@RequestParam(value = "filtred", required = false, defaultValue = "true") boolean filtred,
 			@RequestParam(value = "or", required = false, defaultValue = "false") boolean or,
 			@RequestParam(value = "awakenings", required = false, defaultValue = "true") boolean awakenings,
+			@RequestParam(value = "name", required = false) String name,
 			Pageable pageable) {
 
 		validator.validateCreateComboNinjaDTO(attributes);
 		
-		Page <NinjaDTO> responseDTO = ninjaService.getNinjaFiltroAndNoPaged(attributes, sorted, filtred,awakenings,or,pageable);
+		Page <NinjaDTO> responseDTO = ninjaService.getNinjaFiltroAndNoPaged(attributes, sorted, filtred,awakenings,or,name,pageable);
 		
-		ResponseEntity <Page <NinjaDTO>> response = null;
-		if(responseDTO.getContent().size() > 0) {
+		
+		ResponseEntity <Page <NinjaDTO>> response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
+		/*if(responseDTO.getContent().size() > 0) {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.OK);
 		}else {
 			response = new ResponseEntity <>(responseDTO,HttpStatus.NO_CONTENT);
-		}
+		}*/
 		
 		return response;
 	}

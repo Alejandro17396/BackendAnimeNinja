@@ -1,6 +1,7 @@
 package com.alejandro.animeninja.integration.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -18,4 +19,8 @@ public interface BonusAccesorioRepository extends JpaRepository<BonusAccesorio,C
 	List<BonusAccesorio> findBySets(@Param("valor") Long valor);
 	
 	List<BonusAccesorio> findByNombreAccesorioSet(String name);
+	
+	List<BonusAccesorio> findByTipo(String tipo);
+	
+	List <BonusAccesorio> findByTipoAndNombreAccesorioSet(String tipo, String nombreAccesorioSet);
 }

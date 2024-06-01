@@ -20,38 +20,38 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-08-22T00:28:57+0200",
-    comments = "version: 1.5.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
+    date = "2024-03-03T19:43:03+0100",
+    comments = "version: 1.5.2.Final, compiler: Eclipse JDT (IDE) 3.27.0.v20210823-1758, environment: Java 16.0.2 (Oracle Corporation)"
 )
 @Component
 public class SetMapperImpl implements SetMapper {
 
     @Override
-    public SetDTO toDTO(Equipo ninja) {
-        if ( ninja == null ) {
+    public SetDTO toDTO(Equipo set) {
+        if ( set == null ) {
             return null;
         }
 
         SetDTO setDTO = new SetDTO();
 
-        setDTO.setNombre( ninja.getNombre() );
-        setDTO.setPartes( parteListToParteDTOList( ninja.getPartes() ) );
-        setDTO.setBonuses( bonusListToBonusDTOList( ninja.getBonuses() ) );
+        setDTO.setNombre( set.getNombre() );
+        setDTO.setPartes( parteListToParteDTOList( set.getPartes() ) );
+        setDTO.setBonuses( bonusListToBonusDTOList( set.getBonuses() ) );
 
         return setDTO;
     }
 
     @Override
-    public Equipo toEntity(SetDTO ninja) {
-        if ( ninja == null ) {
+    public Equipo toEntity(SetDTO set) {
+        if ( set == null ) {
             return null;
         }
 
         Equipo equipo = new Equipo();
 
-        equipo.setPartes( parteDTOListToParteList( ninja.getPartes() ) );
-        equipo.setBonuses( bonusDTOListToBonusList( ninja.getBonuses() ) );
-        equipo.setNombre( ninja.getNombre() );
+        equipo.setPartes( parteDTOListToParteList( set.getPartes() ) );
+        equipo.setBonuses( bonusDTOListToBonusList( set.getBonuses() ) );
+        equipo.setNombre( set.getNombre() );
 
         return equipo;
     }

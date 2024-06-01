@@ -1,5 +1,8 @@
 package com.alejandro.animeninja.integration.specifications;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -12,6 +15,7 @@ import com.alejandro.animeninja.bussines.model.BonusAtributo;
 import com.alejandro.animeninja.bussines.model.BonusAtributo_;
 import com.alejandro.animeninja.bussines.model.Equipo;
 import com.alejandro.animeninja.bussines.model.Equipo_;
+import com.alejandro.animeninja.bussines.model.utils.FiltroItemsEquipment;
 
 @Component
 public class EquipoSpecification {
@@ -32,5 +36,18 @@ public class EquipoSpecification {
 						where(joinPredicate,attributePredicate));
 		});
 	}
+	
+	
+	public static Specification<Equipo> hasBonusAtributos(FiltroItemsEquipment filtro) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            
+            for (BonusAtributo bonusAtributo : filtro.getBonusAccesorioAtributo()) {
+                predicates.add(BonusAtributoSpecifications.hasBonusAtributo(bonusAtributo,filtro.getNumberOfParts()).toPredicate(root, query, criteriaBuilder));
+            }
+            
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
 
 }

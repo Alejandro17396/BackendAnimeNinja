@@ -7,11 +7,11 @@ import java.util.Objects;
 public class CreateComboSet implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	List<Atributo> attributes;
-	List<BonusAtributo> attributesFilter;
-	List<Atributo> order;
-	String setName;
-	List<String> sets;
+	private List<Atributo> attributes;
+	private List<BonusAtributo> attributesFilter;
+	private List<Atributo> order;
+	private String setName;
+	private List<String> sets;
 
 	public List<String> getSets() {
 		return sets;

@@ -72,6 +72,7 @@ import com.alejandro.animeninja.bussines.services.ParteAccesorioService;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosByAttributes;
 import com.alejandro.animeninja.bussines.sort.services.impl.SortSetAccesoriosDtoByAttributes;
 import com.alejandro.animeninja.integration.repositories.AccesorioRepository;
+import com.alejandro.animeninja.integration.repositories.BonusAccesorioRepository;
 import com.alejandro.animeninja.integration.repositories.NinjaUserFormationRepository;
 import com.alejandro.animeninja.integration.repositories.UserAccesoriesRepository;
 import com.alejandro.animeninja.integration.specifications.AccesorioSpecification;
@@ -100,6 +101,9 @@ public class AccesorioServicesImpl implements AccesorioServices {
 
 	@Autowired
 	private UserAccesoriesRepository userAccesoriesRepository;
+	
+	@Autowired
+	private BonusAccesorioRepository bonusAccesoriesRepository;
 	
 	@Autowired
 	private EntityManager entityManager;
@@ -449,6 +453,23 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		}
 
 		bonuses = addBonusToAccesorieSet(mapaSetAccesorios);
+		List<ParteAccesorio> keyList = new ArrayList<>(map.keySet());
+		if(keyList != null && keyList.size() == 8) {
+			String setN = keyList.get(0).getNombreSet();
+			boolean isFull = true;
+			for(ParteAccesorio parte : keyList) {
+				if(!parte.getNombreSet().equals(setN)) {
+					isFull = false;
+					break;
+				}
+			}
+			if(isFull) {
+				List<BonusAccesorio> list =bonusAccesoriesRepository.findByTipoAndNombreAccesorioSet(Constantes.FULL_SET_BONUS, setN);
+				if(list != null) {
+					bonuses.addAll(list);
+				}
+			}
+		}
 		set.setPartes(partes);
 		set.setBonuses(bonuses);
 		return set;
@@ -459,7 +480,6 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		List<BonusAccesorio> bonuses = new ArrayList<>();
 
 		for (Map.Entry<SetAccesorio, Map<String, Long>> entry : mapaSetAccesorios.entrySet()) {
-			// Map<String, Long> mapa = entry.getValue();
 			for (Map.Entry<String, Long> entry2 : entry.getValue().entrySet()) {
 				if (entry2.getValue() == 2) {
 					ClaveBonusAccesorio clave = new ClaveBonusAccesorio();
@@ -683,7 +703,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	@Cacheable(value = "combinacionesCache", key = "#attributes.toString() + '-' + #sorted + '-' + #filtred + '-' + #hardSearch")
 	public List<SetAccesorioDTO> createComboAccesories(CreateComboSetAccesorio attributes,
 			boolean sorted,boolean filtred, boolean hardSearch, Pageable pageable) {
-		
+		System.out.println(attributes.toString());
 		 String cacheKey = attributes.toString() + '-' + sorted + '-' + filtred + '-' + hardSearch;
 		    List<SetAccesorioDTO> result;
 			result = (List<SetAccesorioDTO>) compressedCacheService.getFromCache("combinacionesCache",cacheKey);
@@ -763,7 +783,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 		if (sorted) {
 			for (int i = attributes.getAttributes().size() - 1; i >= 0; i--) {
 				Collections.sort(sets,
-						new SortSetAccesoriosByAttributes(attributes.getAttributes().get(i).getNombre()));
+						new SortSetAccesoriosByAttributes(attributes.getAttributes().get(i).getNombre()).reversed());
 			}
 		}
 		result = accesorieMapper.toDtoListNoImages(sets);
@@ -773,7 +793,7 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	}
 	
 	private List<SetAccesorio> getLastSetsBasedOnIntensity(Intensity intensity) {
-		int limit = intensity.getValor();
+		int limit = 40;//intensity.getValor();
 		Pageable pageable = PageRequest.of(0, limit);
 		List<SetAccesorio> lastSets = accesorioRepository.findByOrderByFechaSalidaDesc(pageable);
 		return lastSets;
@@ -924,9 +944,9 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	                .anyMatch(bonusAttribute ->
 	                    bonusAttribute.getAtributo().equals(filter.getAtributo())
 	                    && bonusAttribute.getValor() >= filter.getValor()
-	                    && (filter.getAction() == null || filter.getAction().equals(bonusAttribute.getAction()))
-	                    && (filter.getImpact() == null || filter.getImpact().equals(bonusAttribute.getImpact()))
-	                    && (filter.getCondition() == null || filter.getCondition().equals(bonusAttribute.getCondition()))
+	                    && (filter.getAction() == null || filter.getAction().isEmpty() || filter.getAction().equals(bonusAttribute.getAction()))
+	                    && (filter.getImpact() == null || filter.getImpact().isEmpty() || filter.getImpact().equals(bonusAttribute.getImpact()))
+	                    && (filter.getCondition() == null || filter.getCondition().isEmpty() || filter.getCondition().equals(bonusAttribute.getCondition()))
 	                )
 	            );
 	    }
@@ -934,6 +954,24 @@ public class AccesorioServicesImpl implements AccesorioServices {
 	@Override
 	public List<UserAccesoriesDTO> getNinjasByUser(String user) {
 		List <UserAccesories> accesories = userAccesoriesRepository.findByUsername(user);
+		for(UserAccesories set: accesories) {
+			if(set.getPartes() != null && set.getPartes().size() == 8) {
+				String setN = set.getPartes().get(0).getNombreSet();
+				boolean isFull = true;
+				for(ParteAccesorio parte : set.getPartes()) {
+					if(!parte.getNombreSet().equals(setN)) {
+						isFull = false;
+						break;
+					}
+				}
+				/*if(isFull) {
+					List<BonusAccesorio> list =bonusAccesoriesRepository.findByTipoAndNombreAccesorioSet(Constantes.FULL_SET_BONUS, setN);
+					if(list != null) {
+						set.getBonuses().addAll(list);
+					}
+				}*/
+			}
+		}
 		if(accesories != null && !accesories.isEmpty()) {
 			return accesorieMapper.toUserAccesoriesDTOList(accesories);
 		}
