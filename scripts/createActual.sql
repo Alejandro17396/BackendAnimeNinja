@@ -1,5 +1,4 @@
 
-
 DROP TABLE IF EXISTS `atributos`;
 
 CREATE TABLE `atributos` (
@@ -431,3 +430,4 @@ CREATE TABLE `users_roles` (
 )
 
 INSERT INTO `users_roles` VALUES ('kirotodo','ROLE_USER'),('kirotodo','ROLE_ADMIN'),('FuriaNinja','ROLE_USER');
+>>>>>>> 272c9dc31e05b3df5c0dd5a2244f206584a3cea0
